@@ -39,11 +39,11 @@
     # Overlays
     overlays = import ./overlays {inherit inputs;};
 
-    # Reusable NixOS modules
-    nixosModules = import ./modules/nixos;
+    # Reusable NixOS modules (uncomment when you have modules to export)
+    # nixosModules = import ./modules/nixos;
 
-    # Reusable home-manager modules
-    homeManagerModules = import ./modules/home-manager;
+    # Reusable home-manager modules (uncomment when you have modules to export)
+    # homeManagerModules = import ./modules/home-manager;
 
     # NixOS configuration
     nixosConfigurations = {

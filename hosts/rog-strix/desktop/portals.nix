@@ -4,7 +4,7 @@
   xdg.portal = {
     enable = true;
     # Use KDE portal for Plasma
-    extraPortals = [ pkgs.xdg-desktop-portal-kde ];
+    extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
   };
 
   # GVFS for file manager features (MTP, SMB, trash)
