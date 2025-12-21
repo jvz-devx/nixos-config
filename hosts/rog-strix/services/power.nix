@@ -29,7 +29,9 @@
     AllowHybridSleep=yes
   '';
 
-  # TODO: Suspend-then-hibernate (suspend for X time, then hibernate)
+  # Suspend-then-hibernate: suspend for 2 hours, then hibernate
+  # This saves battery by hibernating after extended suspend
+  # Uncomment and adjust HibernateDelaySec as needed
   # systemd.sleep.extraConfig = ''
   #   HibernateDelaySec=2h
   # '';

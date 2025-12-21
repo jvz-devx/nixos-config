@@ -11,17 +11,9 @@
   };
 
   # Swap configuration
-  # TODO: Configure swap for hibernation
-  # swapDevices = [
-  #   {
-  #     device = "/dev/disk/by-uuid/YOUR-SWAP-UUID";
-  #     # Or use a swapfile on Btrfs (requires specific setup)
-  #   }
-  # ];
-
-  # Hibernation resume
-  # TODO: Set resume device for hibernation
-  # boot.resumeDevice = "/dev/disk/by-uuid/YOUR-SWAP-UUID";
+  # Note: Swap is already configured in hardware-configuration.nix
+  # Swap device: /dev/disk/by-uuid/4d48cb91-7bfa-448e-bc21-93e228ddd729 (34.1G)
+  # Hibernation resume device is configured in boot.nix
 
   # Btrfs scrub (monthly integrity check)
   services.btrfs.autoScrub = {

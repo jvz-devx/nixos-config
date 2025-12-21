@@ -17,14 +17,18 @@
   # boot.kernelPackages = pkgs.linuxPackages_6_12;    # Specific version
   # boot.kernelPackages = pkgs.linuxPackages_cachyos; # CachyOS (needs chaotic input)
 
+  # Hibernation resume device (swap partition)
+  # Swap is configured in hardware-configuration.nix
+  boot.resumeDevice = "/dev/disk/by-uuid/4d48cb91-7bfa-448e-bc21-93e228ddd729";
+
   # Kernel parameters
   boot.kernelParams = [
     # NVIDIA Wayland support
     "nvidia-drm.modeset=1"
     "nvidia-drm.fbdev=1"
 
-    # TODO: Add LUKS resume device for hibernation
-    # "resume=/dev/disk/by-uuid/YOUR-SWAP-UUID"
+    # Hibernation resume (required for hibernate to work)
+    "resume=/dev/disk/by-uuid/4d48cb91-7bfa-448e-bc21-93e228ddd729"
 
     # TODO: Uncomment if brightness control doesn't work
     # "acpi_backlight=native"
