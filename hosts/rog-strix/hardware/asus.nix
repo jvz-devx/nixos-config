@@ -15,11 +15,11 @@
   # Power profiles daemon (integrates with asusd)
   services.power-profiles-daemon.enable = true;
 
-  # TODO: Add ROG-specific packages
-  # environment.systemPackages = with pkgs; [
-  #   asusctl              # CLI for asusd
-  #   supergfxctl          # CLI for supergfxd
-  #   # supergfxctl-plasmoid # KDE widget (if available in nixpkgs)
-  # ];
+  # ROG-specific packages for system control
+  environment.systemPackages = with pkgs; [
+    asusctl              # CLI for asusd (fan control, keyboard LEDs, etc.)
+    supergfxctl          # CLI for supergfxd (GPU mode switching)
+    # supergfxctl-plasmoid # KDE widget (if available in nixpkgs)
+  ];
 }
 

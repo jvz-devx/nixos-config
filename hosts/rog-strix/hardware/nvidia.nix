@@ -40,12 +40,11 @@
         enableOffloadCmd = true;  # Adds `nvidia-offload` command
       };
 
-      # TODO: Get your bus IDs with: nix-shell -p pciutils --run "lspci | grep -E 'VGA|3D'"
-      # Example output: 00:02.0 VGA ... Intel
-      #                 01:00.0 3D ... NVIDIA
-      # Convert to: "PCI:0:2:0" and "PCI:1:0:0"
-      intelBusId = "PCI:0:2:0";   # Intel iGPU bus ID
-      nvidiaBusId = "PCI:1:0:0";  # TODO: Replace with your NVIDIA dGPU bus ID
+      # Bus IDs verified with: lspci | grep -E 'VGA|3D'
+      # Intel iGPU: 00:02.0 → PCI:0:2:0
+      # NVIDIA RTX 4080: 01:00.0 → PCI:1:0:0
+      intelBusId = "PCI:0:2:0";   # Intel iGPU bus ID (verified)
+      nvidiaBusId = "PCI:1:0:0";  # NVIDIA RTX 4080 bus ID (verified)
 
       # Alternative: Sync mode (always use dGPU, worse battery)
       # sync.enable = true;

@@ -66,7 +66,7 @@
       dotnet-sdk_10
    ];
 
-  # TODO: nix-index for command-not-found
+  # nix-index for command-not-found (enabled)
    programs.nix-index = {
      enable = true;
      enableZshIntegration = true;

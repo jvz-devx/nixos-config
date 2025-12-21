@@ -65,8 +65,12 @@
       "docker"
       # "libvirtd"
     ];
-    # TODO: Set initial password or use passwordFile
+    # Password: Set one of the following:
+    # Option 1: Set initial password (will be prompted on first login)
     # initialPassword = "changeme";
+    # Option 2: Use password file (more secure, create with: mkpasswd -m sha-512 > /etc/nixos/secrets/jens-password)
+    # passwordFile = "/etc/nixos/secrets/jens-password";
+    # Option 3: Set password manually after first login: passwd
   };
 
   # Enable zsh system-wide (required for user shell)
