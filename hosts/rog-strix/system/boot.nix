@@ -13,7 +13,7 @@
 
   # Kernel
   # TODO: Choose your kernel:
-  # boot.kernelPackages = pkgs.linuxPackages_latest;  # Latest stable
+   boot.kernelPackages = pkgs.linuxPackages_latest;  # Latest stable
   # boot.kernelPackages = pkgs.linuxPackages_6_12;    # Specific version
   # boot.kernelPackages = pkgs.linuxPackages_cachyos; # CachyOS (needs chaotic input)
 

@@ -44,7 +44,7 @@
       # Example output: 00:02.0 VGA ... Intel
       #                 01:00.0 3D ... NVIDIA
       # Convert to: "PCI:0:2:0" and "PCI:1:0:0"
-      intelBusId = "PCI:0:2:0";   # TODO: Replace with your Intel iGPU bus ID
+      intelBusId = "PCI:0:2:0";   # Intel iGPU bus ID
       nvidiaBusId = "PCI:1:0:0";  # TODO: Replace with your NVIDIA dGPU bus ID
 
       # Alternative: Sync mode (always use dGPU, worse battery)

@@ -62,7 +62,7 @@
       "video"
       "audio"
       # TODO: Add these groups as you enable the services:
-      # "docker"
+      "docker"
       # "libvirtd"
     ];
     # TODO: Set initial password or use passwordFile
