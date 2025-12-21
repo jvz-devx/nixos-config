@@ -3,7 +3,7 @@
   # Docker
   virtualisation.docker = {
     enable = true;
-    # TODO: Rootless mode (more secure, but some compatibility issues)
+    # Rootless mode (more secure, but some compatibility issues)
     # rootless = {
     #   enable = true;
     #   setSocketVariable = true;
@@ -28,7 +28,7 @@
   # Git (basic system-wide, detailed config in home-manager)
   programs.git.enable = true;
 
-  # TODO: Development packages
+  # Development packages
    environment.systemPackages = with pkgs; [
      # Editors
       code-cursor-fhs  # Cursor IDE (needs overlay or FHS)

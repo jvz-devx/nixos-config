@@ -38,12 +38,6 @@ in {
     gamescopeSession.enable = true;
   };
 
-  # Add wrapper and desktop entry to system packages
-  environment.systemPackages = [
-    steamNvidiaWrapper
-    steamDesktopEntry
-  ];
-
   # GameMode - game performance optimizations
   programs.gamemode = {
     enable = true;
@@ -59,24 +53,28 @@ in {
     };
   };
 
-  # TODO: Additional gaming packages
-  # environment.systemPackages = with pkgs; [
-  #   # Proton/Wine
-  #   protonup-qt        # Proton version manager
-  #   wine               # Wine for non-Steam games
-  #   winetricks         # Wine helper scripts
-  #
-  #   # Performance overlay
-  #   mangohud           # FPS/performance overlay
-  #   goverlay           # MangoHud GUI configurator
-  #
-  #   # Gamescope
-  #   gamescope          # Micro-compositor for games
-  #
-  #   # Controllers
-  #   antimicrox         # Gamepad to keyboard mapping
-  # ];
+  # System packages - Steam wrapper and gaming tools
+  environment.systemPackages = with pkgs; [
+    # Steam NVIDIA wrapper and desktop entry
+    steamNvidiaWrapper
+    steamDesktopEntry
 
-  # TODO: Enable 32-bit libraries for Wine/Proton (already enabled via hardware.graphics.enable32Bit)
+    # Proton/Wine
+    protonup-qt        # Proton version manager
+    wine               # Wine for non-Steam games
+    winetricks         # Wine helper scripts
+  
+    # Performance overlay
+    mangohud           # FPS/performance overlay
+    goverlay           # MangoHud GUI configurator
+  
+    # Gamescope
+    gamescope          # Micro-compositor for games
+  
+    # Controllers
+    # antimicrox         # Gamepad to keyboard mapping
+  ];
+
+  # 32-bit libraries for Wine/Proton (already enabled via hardware.graphics.enable32Bit)
 }
 

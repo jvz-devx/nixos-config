@@ -10,9 +10,15 @@
       pull.rebase = true;
       push.autoSetupRemote = true;
 
-      # TODO: GPG signing
+      # GPG signing for commits
+      # TODO: Enable GPG signing by uncommenting the following lines
+      # To enable:
+      # 1. Create a GPG key: gpg --full-generate-key (or use existing key)
+      # 2. Get your key ID: gpg --list-secret-keys --keyid-format LONG
+      # 3. Uncomment and set the signingkey below with your key ID
+      # 4. Add the public key to GitHub: https://github.com/settings/gpg/new
       # commit.gpgsign = true;
-      # user.signingkey = "YOUR_KEY_ID";
+      # user.signingkey = "YOUR_KEY_ID";  # Format: Use the key ID (last 16 chars of the long format)
     };
   };
 
@@ -28,25 +34,6 @@
     };
   };
 
-  # TODO: VS Code / Cursor configuration
-  # programs.vscode = {
-  #   enable = true;
-  #   extensions = with pkgs.vscode-extensions; [
-  #     # Add extensions here
-  #   ];
-  # };
-
-  # TODO: Neovim configuration
-  # programs.neovim = {
-  #   enable = true;
-  #   defaultEditor = true;
-  # };
-
-  # TODO: Terminal emulator (if not using Konsole)
-  # programs.kitty = {
-  #   enable = true;
-  # };
-
   # GPG
   programs.gpg.enable = true;
 
@@ -54,17 +41,15 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;  # Avoid deprecated defaults
-    # TODO: Add your SSH hosts
-    # matchBlocks = {
-    #   "*" = {
-    #     # Default settings for all hosts
-    #   };
-    #   "github.com" = {
-    #     hostname = "github.com";
-    #     user = "git";
-    #     identityFile = "~/.ssh/id_ed25519";
-    #   };
-    # };
+    matchBlocks = {
+      "github.com" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "~/.ssh/id_ed25519";
+        identitiesOnly = true;
+        addKeysToAgent = "yes";  # Automatically add keys to SSH agent
+      };
+    };
   };
 }
 

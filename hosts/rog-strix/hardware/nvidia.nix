@@ -22,7 +22,8 @@
 
     # Use open source kernel module (not nouveau, NVIDIA's open kernel module)
     # Only for Turing+ (RTX 20xx, 30xx, 40xx)
-    open = false;  # TODO: Set to true if you want to try NVIDIA's open kernel module
+    # Keeping false for stability - open module is still experimental
+    open = false;
 
     # NVIDIA settings GUI
     nvidiaSettings = true;

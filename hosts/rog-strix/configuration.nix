@@ -44,12 +44,10 @@
       substituters = [
         "https://cache.nixos.org"  # Official NixOS cache
         "https://chaotic-nyx.cachix.org"  # Chaotic-nyx packages (includes CachyOS kernel)
-        "https://drakon64-nixos-cachyos-kernel.cachix.org"  # Dedicated CachyOS kernel cache
       ];
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="  # Official NixOS
         "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="  # Chaotic-nyx
-        "drakon64-nixos-cachyos-kernel.cachix.org-1:J3gjZ9N6S05pyLA/P0M5y7jXpSxO/i0rshrieQJi5D0="  # CachyOS kernel
       ];
     };
     channel.enable = false;

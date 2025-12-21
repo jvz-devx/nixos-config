@@ -36,12 +36,11 @@ in {
       kdePackages.kde-gtk-config
       kdePackages.breeze-gtk
 
-      # TODO: Add your user packages here
       # Browsers
       google-chrome
 
       # Communication
-      discord
+      vesktop  # Discord with Vencord mod
       teams-for-linux
 
       # Media
@@ -59,6 +58,32 @@ in {
       
       # GitHub Copilot CLI (available in nixpkgs)
       github-copilot-cli
+      
+      # CodeRabbit CLI (custom package) - DISABLED
+      # The CodeRabbit binary is a Bun-based application that checks its execution context
+      # to determine whether to run as CodeRabbit CLI or as generic Bun runtime.
+      # 
+      # Issues encountered:
+      # 1. Manual patchelf: Causes "unsupported version 0 of Verdef record" errors and segfaults
+      #    - The binary has complex ELF structures that manual patchelf can't handle properly
+      # 2. autoPatchelfHook: Successfully patches the binary without crashes, but:
+      #    - The binary always shows Bun help instead of CodeRabbit help
+      #    - Tried exec -a "coderabbit" wrapper to set argv[0] - didn't work
+      #    - Tried symlinks - didn't work
+      #    - The binary appears to check something else (possibly /proc/self/exe, embedded
+      #      resources, or environment variables) rather than just argv[0]
+      # 3. The fresh binary works correctly when downloaded directly, but after Nix patching
+      #    it loses the ability to detect it should run as CodeRabbit
+      #
+      # Possible solutions not yet tried:
+      # - Use buildFHSUserEnv to run in a more traditional Linux environment
+      # - Check if there are environment variables the binary expects
+      # - Investigate if the binary has embedded resources that get corrupted during patching
+      # - Use a different packaging approach (e.g., AppImage-style wrapper)
+      #
+      # For now, users can install CodeRabbit manually:
+      #   curl -fsSL https://cli.coderabbit.ai/install.sh | bash
+      # inputs.self.packages.${system}.coderabbit
       
       # Codex CLI (via flake)
       # Access via: nix run github:sadjow/codex-nix#codex

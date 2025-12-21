@@ -45,9 +45,11 @@
           {
             iconTasks = {
               launchers = [
-                "applications:org.kde.dolphin.desktop"
-                "applications:org.kde.konsole.desktop"
-                "applications:firefox.desktop"
+                "applications:org.kde.dolphin.desktop"  # File manager
+                "applications:org.kde.konsole.desktop"  # Terminal
+                "applications:google-chrome.desktop"    # Chrome browser
+                "applications:vesktop.desktop"          # Vesktop (Discord with Vencord)
+                "applications:cursor.desktop"           # Cursor IDE
               ];
             };
           }
@@ -68,6 +70,7 @@
               time.format = "24h";
             };
           }
+          "org.kde.plasma.showdesktop"
         ];
       }
     ];
@@ -104,6 +107,11 @@
         name = "Launch Dolphin";
         key = "Meta+E";
         command = "dolphin";
+      };
+      "launch-krunner" = {
+        name = "Launch KRunner";
+        key = "Meta+Space";
+        command = "qdbus org.kde.krunner /App display";
       };
     };
 
@@ -145,6 +153,7 @@
       # Enable some nice effects
       effects = {
         shakeCursor.enable = true;
+        blur.enable = true;  # Enable blur effect for transparent windows
       };
     };
 
@@ -166,9 +175,31 @@
       };
       kwinrc.Desktops.Rows = 2;
 
-      # Window decoration buttons (macOS style - close/min/max on left)
-      kwinrc."org.kde.kdecoration2".ButtonsOnLeft = "XIA";
-      kwinrc."org.kde.kdecoration2".ButtonsOnRight = "";
+      # Window decoration buttons (Windows style - min/max/close on right)
+      kwinrc."org.kde.kdecoration2".ButtonsOnLeft = "";
+      kwinrc."org.kde.kdecoration2".ButtonsOnRight = "IAX";
+
+      # Window rules for transparency (via kwinrulesrc)
+      # Rule 1: Konsole transparency
+      kwinrulesrc."1" = {
+        Description = "Konsole transparency";
+        wmclass = "konsole konsole";
+        wmclassmatch = 1;
+        opacity = 85;  # 85% opacity (15% transparent)
+        opacityactive = 85;
+        opacityinactive = 85;
+      };
+      # Rule 2: Cursor transparency
+      kwinrulesrc."2" = {
+        Description = "Cursor transparency";
+        wmclass = "cursor cursor";
+        wmclassmatch = 1;
+        opacity = 90;  # 90% opacity (10% transparent)
+        opacityactive = 90;
+        opacityinactive = 90;
+      };
+      # Enable window rules
+      kwinrulesrc.General.count = 2;
     };
   };
 }

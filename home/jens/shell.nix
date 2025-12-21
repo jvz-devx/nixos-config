@@ -62,6 +62,8 @@
       gl = "git pull";
 
       # TODO: Add your aliases
+      docker-compose = "docker compose";
+      crr = "coderabbit review --plain --uncommitted";
     };
 
     # Extra configuration

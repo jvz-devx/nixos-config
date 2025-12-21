@@ -42,15 +42,6 @@
     # Suppress ACPI BIOS errors (harmless BIOS bugs, but noisy)
     "acpi.debug_level=0"
 
-    # TODO: Uncomment if brightness control doesn't work
-    # "acpi_backlight=native"
   ];
-
-  # TODO: LUKS encryption setup
-  # boot.initrd.luks.devices."cryptroot" = {
-  #   device = "/dev/disk/by-uuid/YOUR-LUKS-UUID";
-  #   preLVM = true;
-  #   allowDiscards = true;
-  # };
 }
 
