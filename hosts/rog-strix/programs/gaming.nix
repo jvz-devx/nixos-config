@@ -1,41 +1,25 @@
 # Gaming configuration - Steam, Proton, GameMode
-{ pkgs, lib, ... }: let
-  # Create a wrapper script that sets NVIDIA PRIME offload environment variables
-  # Games launched by Steam will inherit these variables and use the dGPU
-  steamNvidiaWrapper = pkgs.writeShellScriptBin "steam-nvidia" ''
-    # NVIDIA PRIME offload environment variables
-    # These are inherited by all child processes (games)
-    export __NV_PRIME_RENDER_OFFLOAD=1
-    export __GLX_VENDOR_LIBRARY_NAME=nvidia
-    export __VK_LAYER_NV_optimus=NVIDIA_only
-    
-    # Launch Steam (games will inherit the above variables)
-    exec ${lib.getExe pkgs.steam} "$@"
-  '';
+{ pkgs, lib, ... }: {
+  # NOTE: MUX switch configuration
+  # This laptop has a hardware MUX switch. When in dGPU mode, the NVIDIA GPU
+  # is the only GPU and no PRIME offload is needed. Steam and games will
+  # automatically use the NVIDIA GPU.
+  #
+  # If you switch back to hybrid mode (iGPU active), you'll need to:
+  # 1. Enable PRIME offload in nvidia.nix
+  # 2. Uncomment the Steam NVIDIA wrapper below
 
-  # Desktop entry that overrides the default Steam entry
-  # This ensures Steam launched from the application menu uses the NVIDIA wrapper
-  steamDesktopEntry = pkgs.makeDesktopItem {
-    name = "steam";
-    desktopName = "Steam";
-    exec = "${lib.getExe steamNvidiaWrapper} %U";
-    icon = "steam";
-    comment = "NVIDIA PRIME offload enabled for all games";
-    categories = [ "Game" ];
-    mimeTypes = [ "x-scheme-handler/steam" ];
-    startupNotify = true;
-  };
-in {
-  # Steam with NVIDIA PRIME offload wrapper
-  # This ensures all games (native and Proton) run on NVIDIA dGPU
+  # Steam configuration
   programs.steam = {
     enable = true;
     # Open ports for Steam Remote Play
     remotePlay.openFirewall = true;
     # Open ports for Steam Local Network Game Transfers
     localNetworkGameTransfers.openFirewall = true;
-    # Use Gamescope compositor for Steam
-    gamescopeSession.enable = true;
+    # DISABLED: Gamescope session adds input lag despite good frametimes
+    # Gamescope is a compositor that can cause input lag even with smooth frametimes
+    # Disable it and let KWin handle compositor bypass for better responsiveness
+    gamescopeSession.enable = false;
   };
 
   # GameMode - game performance optimizations
@@ -53,12 +37,8 @@ in {
     };
   };
 
-  # System packages - Steam wrapper and gaming tools
+  # System packages - gaming tools
   environment.systemPackages = with pkgs; [
-    # Steam NVIDIA wrapper and desktop entry
-    steamNvidiaWrapper
-    steamDesktopEntry
-
     # Proton/Wine
     protonup-qt        # Proton version manager
     wine               # Wine for non-Steam games

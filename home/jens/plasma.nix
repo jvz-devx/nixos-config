@@ -35,6 +35,7 @@
         height = 44;
         hiding = "none";
         floating = true;
+        opacity = "translucent";  # Panel transparency: "opaque", "translucent", or "adaptive"
         widgets = [
           {
             kickoff = {
@@ -108,10 +109,10 @@
         key = "Meta+E";
         command = "dolphin";
       };
-      "launch-krunner" = {
-        name = "Launch KRunner";
+      "launch-rofi" = {
+        name = "Launch Rofi";
         key = "Meta+Space";
-        command = "qdbus org.kde.krunner /App display";
+        command = "rofi -show drun";
       };
     };
 
@@ -153,7 +154,7 @@
       # Enable some nice effects
       effects = {
         shakeCursor.enable = true;
-        blur.enable = true;  # Enable blur effect for transparent windows
+        blur.enable = false;  # Disable blur for better gaming performance
       };
     };
 
@@ -165,6 +166,9 @@
 
     # Low-level config tweaks
     configFile = {
+      # Set Kvantum as application style (for transparency/blur)
+      kdeglobals."General"."widgetStyle" = "kvantum";
+      
       # Disable Baloo file indexer (saves battery, reduces disk I/O)
       baloofilerc."Basic Settings"."Indexing-Enabled" = false;
 
@@ -179,27 +183,76 @@
       kwinrc."org.kde.kdecoration2".ButtonsOnLeft = "";
       kwinrc."org.kde.kdecoration2".ButtonsOnRight = "IAX";
 
+      # Gaming optimizations - Fix frame pacing and input lag
+      # Unredirect fullscreen windows (bypasses compositor for fullscreen apps)
+      kwinrc.Compositing.UnredirectFullscreen = true;
+      # VSync mode: "none" (off), "automatic" (adaptive), "full" (always on)
+      # "none" is best for gaming - eliminates input lag from compositor VSync
+      kwinrc.Compositing.VSync = "none";
+      # Allow tearing for fullscreen windows (reduces input lag, requires VSync=none)
+      kwinrc.Compositing.AllowTearing = true;
+      # Disable compositor on fullscreen (CRITICAL for gaming - bypasses compositor entirely)
+      kwinrc.Compositing.SuspendCompositingForFullscreen = true;
+      # Allow applications to block compositing (games can request compositor disable)
+      kwinrc.Compositing.WindowsBlockCompositing = true;
+      # Use OpenGL 2.0 backend (more stable, less overhead than 3.1)
+      kwinrc.Compositing.GLPreferBufferSwap = "a";
+      # Disable texture filtering for better performance
+      kwinrc.Compositing.GLTextureFilter = 0;
+
+      # Panel transparency and blur (via plasmarc)
+      # Enable panel transparency
+      plasmarc."PlasmaViews"."Panel Opacity" = 80;  # 0-100 (80 = 80% opaque, 20% transparent)
+      # Alternative: Set panel opacity mode (0=opaque, 1=adaptive, 2=transparent)
+      plasmarc."PlasmaViews"."Panel Opacity Mode" = 2;  # 2 = transparent mode
+
       # Window rules for transparency (via kwinrulesrc)
-      # Rule 1: Konsole transparency
+      # Note: Window class format is "instance class" (space-separated)
+      # Use wmclassmatch: 0=exact, 1=substring, 2=regex, 4=case insensitive
+      
+      # Rule 1: Konsole transparency (try multiple variations)
       kwinrulesrc."1" = {
         Description = "Konsole transparency";
-        wmclass = "konsole konsole";
-        wmclassmatch = 1;
-        opacity = 85;  # 85% opacity (15% transparent)
-        opacityactive = 85;
-        opacityinactive = 85;
+        wmclass = "konsole";
+        wmclassmatch = 4;  # Case insensitive substring match
+        opacity = 20;
+        opacityactive = 20;
+        opacityinactive = 20;
+        opacityrule = 2;  # 2 = apply opacity rule
       };
-      # Rule 2: Cursor transparency
+      # Rule 2: Cursor transparency (try multiple variations)
       kwinrulesrc."2" = {
         Description = "Cursor transparency";
-        wmclass = "cursor cursor";
-        wmclassmatch = 1;
-        opacity = 90;  # 90% opacity (10% transparent)
-        opacityactive = 90;
-        opacityinactive = 90;
+        wmclass = "cursor";
+        wmclassmatch = 4;  # Case insensitive substring match
+        opacity = 20;
+        opacityactive = 20;
+        opacityinactive = 20;
+        opacityrule = 2;
+      };
+      # Rule 3: Alternative Cursor window class (Code/Cursor IDE)
+      kwinrulesrc."3" = {
+        Description = "Cursor IDE transparency";
+        wmclass = "Code";
+        wmclassmatch = 4;  # Case insensitive substring match
+        opacity = 20;
+        opacityactive = 20;
+        opacityinactive = 20;
+        opacityrule = 2;
+      };
+      # Rule 4: VS Code based (Cursor is based on VS Code)
+      kwinrulesrc."4" = {
+        Description = "VS Code/Cursor transparency";
+        wmclass = "code";
+        wmclassmatch = 4;
+        opacity = 20;
+        opacityactive = 20;
+        opacityinactive = 20;
+        opacityrule = 2;
       };
       # Enable window rules
-      kwinrulesrc.General.count = 2;
+      kwinrulesrc.General.count = 4;
+      kwinrulesrc.General.rules = "1,2,3,4";  # Enable all 4 rules
     };
   };
 }
