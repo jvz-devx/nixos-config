@@ -58,6 +58,27 @@
      man-pages
      firefox
 
+     # Network Tools
+     nmap             # Network scanning and discovery
+     mtr              # Network diagnostic tool (traceroute + ping)
+     iperf3           # Network performance testing
+     speedtest-cli    # Speed testing (CLI)
+     tcpdump          # Packet capture and analysis
+     wireshark        # GUI packet analyzer
+     ethtool          # Ethernet device settings
+     bind             # DNS tools (dig, nslookup, host)
+     whois            # Domain lookup
+     netcat-gnu       # Network utility for reading/writing network connections
+     traceroute       # Network path tracing
+     iftop            # Bandwidth monitoring (per connection)
+     nethogs          # Bandwidth monitoring (per process)
+     bandwhich        # Modern bandwidth utilization tool
+     inetutils        # telnet, ftp, etc.
+     nload            # Network load monitoring
+     iptables         # Firewall management
+     nftables         # Modern firewall
+     wireguard-tools  # WireGuard VPN tools
+
      # Languages (prefer per-project with devShells/direnv)
       go
 #      rustup
