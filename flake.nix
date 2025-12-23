@@ -72,33 +72,28 @@
     # Overlays
     overlays = import ./overlays {inherit inputs;};
 
-    # Reusable NixOS modules (uncomment when you have modules to export)
-    # nixosModules = import ./modules/nixos;
-
-    # Reusable home-manager modules (uncomment when you have modules to export)
-    # homeManagerModules = import ./modules/home-manager;
-
     # NixOS configurations - add new hosts here
     nixosConfigurations = {
-      # ROG Strix G16 laptop (x86_64)
+      # ═══════════════════════════════════════════════════════════════
+      # ROG Strix G16 laptop - Jens
+      # Intel CPU + NVIDIA GPU with ASUS-specific features
+      # ═══════════════════════════════════════════════════════════════
       rog-strix = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {inherit inputs;};
         modules = [
-          # Import chaotic modules for CachyOS kernel
+          # CachyOS kernel (gaming-optimized)
           chaotic.nixosModules.default
           # Host configuration
           ./hosts/rog-strix/configuration.nix
-
-          # Home Manager as NixOS module
+          # Home Manager
           home-manager.nixosModules.home-manager
           {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
               extraSpecialArgs = {inherit inputs;};
-              users.jens = import ./home/jens/home.nix;
-              # Add plasma-manager module to home-manager
+              users.jens = import ./home/jens.nix;
               sharedModules = [
                 plasma-manager.homeModules.plasma-manager
               ];
@@ -107,27 +102,31 @@
         ];
       };
 
-      # Example: Add another host like this:
-      # my-server = nixpkgs.lib.nixosSystem {
-      #   system = "x86_64-linux";  # or "aarch64-linux" for ARM
-      #   specialArgs = {inherit inputs;};
-      #   modules = [
-      #     ./hosts/my-server/configuration.nix
-      #     home-manager.nixosModules.home-manager
-      #     {
-      #       home-manager = {
-      #         useGlobalPkgs = true;
-      #         useUserPackages = true;
-      #         extraSpecialArgs = {inherit inputs;};
-      #         users.jens = import ./home/jens/home.nix;
-      #         sharedModules = [
-      #           plasma-manager.homeModules.plasma-manager
-      #         ];
-      #       };
-      #     }
-      #   ];
-      # };
+      # ═══════════════════════════════════════════════════════════════
+      # PC-02 Desktop - Lisa
+      # AMD CPU + NVIDIA GPU desktop
+      # ═══════════════════════════════════════════════════════════════
+      pc-02 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {inherit inputs;};
+        modules = [
+          # Host configuration
+          ./hosts/pc-02/configuration.nix
+          # Home Manager
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = {inherit inputs;};
+              users.lisa = import ./home/lisa.nix;
+              sharedModules = [
+                plasma-manager.homeModules.plasma-manager
+              ];
+            };
+          }
+        ];
+      };
     };
   };
 }
-
