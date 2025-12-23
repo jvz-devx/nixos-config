@@ -1,6 +1,6 @@
 # KDE Plasma configuration via plasma-manager
 # Shared Plasma module for all users
-{ pkgs, ... }: {
+{ pkgs, osConfig, ... }: {
   programs.plasma = {
     enable = true;
 
@@ -42,7 +42,25 @@
             };
           }
           {
-            iconTasks = { };
+            iconTasks = {
+              launchers =
+                if osConfig.networking.hostName == "pc-02"
+                then [
+                  "applications:org.kde.dolphin.desktop"
+                  "applications:google-chrome.desktop"
+                  "applications:vesktop.desktop"
+                  "applications:steam.desktop"
+                ]
+                else if osConfig.networking.hostName == "rog-strix"
+                then [
+                  "applications:org.kde.dolphin.desktop"
+                  "applications:vesktop.desktop"
+                  "applications:cursor.desktop"
+                  "applications:google-chrome.desktop"
+                  "applications:steam.desktop"
+                ]
+                else [ ];
+            };
           }
           "org.kde.plasma.marginsseparator"
           {
