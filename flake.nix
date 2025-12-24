@@ -131,6 +131,21 @@
           }
         ];
       };
+
+      # ═══════════════════════════════════════════════════════════════
+      # Server-01 - Headless Server
+      # General purpose server with Docker, Tailscale, and essential tools
+      # ═══════════════════════════════════════════════════════════════
+      server-01 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {inherit inputs;};
+        modules = [
+          # All NixOS modules (options & profiles)
+          ./modules/nixos/default.nix
+          # Host configuration
+          ./hosts/server-01/configuration.nix
+        ];
+      };
     };
   };
 }

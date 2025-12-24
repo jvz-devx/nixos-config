@@ -35,6 +35,7 @@
     ./profiles/gaming.nix
     ./profiles/development.nix
     ./profiles/workstation.nix
+    ./profiles/server.nix
   ];
 }
 
