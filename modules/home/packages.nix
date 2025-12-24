@@ -29,6 +29,9 @@ in {
     ytmdesktop
     vlc
 
+    # Games
+    prismlauncher
+
     # Office suite
     libreoffice-qt6
     hunspell

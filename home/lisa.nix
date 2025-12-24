@@ -18,6 +18,9 @@
   home = {
     username = "lisa";
     homeDirectory = "/home/lisa";
+    packages = with pkgs; [
+      spotify
+    ];
   };
 
   # User-specific shell aliases

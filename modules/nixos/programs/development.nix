@@ -76,6 +76,9 @@
     go
     python3
     dotnet-sdk_10
+    gwe           # GreenWithEnvy - NVIDIA overclocking/underclocking
+    nvtopPackages.nvidia # GPU process monitor
+    mission-center # Modern Task Manager for Linux
   ];
 
   # nix-index for command-not-found
