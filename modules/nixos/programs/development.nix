@@ -8,7 +8,8 @@
     virtualisation.docker.enable = true;
 
     # NVIDIA Container Toolkit (for --gpus all support)
-    hardware.nvidia-container-toolkit.enable = true;
+    # Only enable if NVIDIA hardware is configured (not for ISO builds)
+    hardware.nvidia-container-toolkit.enable = lib.mkIf (config.myConfig.hardware.nvidia.enable or false) true;
 
     # GPG agent for signing commits
     programs.gnupg.agent = {

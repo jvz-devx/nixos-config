@@ -62,9 +62,13 @@
         inherit system;
         config.allowUnfree = true;
       };
-  in {
+  in rec {
     # Custom packages - available for all supported systems
-    packages = forAllSystems (system: import ./pkgs (pkgsFor system));
+    packages = forAllSystems (system: import ./pkgs (pkgsFor system)) // {
+      x86_64-linux = (forAllSystems (system: import ./pkgs (pkgsFor system))).x86_64-linux // {
+        isoImage = nixosConfigurations.server-01-iso.config.system.build.isoImage;
+      };
+    };
 
     # Formatter for nix files - available for all supported systems
     formatter = forAllSystems (system: (pkgsFor system).alejandra);
@@ -140,6 +144,22 @@
         system = "x86_64-linux";
         specialArgs = {inherit inputs;};
         modules = [
+          # All NixOS modules (options & profiles)
+          ./modules/nixos/default.nix
+          # Host configuration
+          ./hosts/server-01/configuration.nix
+        ];
+      };
+
+      # Server-01 ISO - bootable installation image
+      server-01-iso = let
+        pkgs = pkgsFor "x86_64-linux";
+      in nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {inherit inputs;};
+        modules = [
+          # ISO installer modules - import the ISO image module
+          "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
           # All NixOS modules (options & profiles)
           ./modules/nixos/default.nix
           # Host configuration

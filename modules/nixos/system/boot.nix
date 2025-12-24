@@ -12,7 +12,7 @@
         editor = false;  # Disable editing boot entries for security
       };
       efi.canTouchEfiVariables = true;
-      timeout = 3;
+      timeout = lib.mkDefault 3;  # Use mkDefault to allow ISO module to override
     };
   };
 }

@@ -74,6 +74,30 @@
     };
   };
 
+  # Copy flake source to /etc/nixos in the ISO/installed system
+  # This ensures the flake is available for rebuilding after installation
+  system.activationScripts.copy-flake = let
+    # Reference the flake root (two levels up from this config file)
+    flakeRoot = builtins.path {
+      path = ../../.;
+      filter = path: type:
+        type == "regular" || type == "directory";
+    };
+  in ''
+    if [ ! -d /etc/nixos/.git ] && [ -d ${toString flakeRoot} ]; then
+      echo "Copying flake source to /etc/nixos..."
+      mkdir -p /etc/nixos
+      # Use rsync if available, otherwise cp
+      if command -v rsync >/dev/null 2>&1; then
+        rsync -a --exclude='.git' ${toString flakeRoot}/ /etc/nixos/ || true
+      else
+        cp -r ${toString flakeRoot}/* /etc/nixos/ 2>/dev/null || true
+      fi
+      chmod -R u+w /etc/nixos
+      echo "Flake source copied to /etc/nixos"
+    fi
+  '';
+
   # Auto-generate hardware-configuration.nix on first boot if it doesn't exist
   systemd.services.generate-hardware-config = {
     description = "Generate hardware-configuration.nix if missing";
@@ -83,6 +107,7 @@
       Type = "oneshot";
       RemainAfterExit = true;
     };
+    path = with pkgs; [ nixos-install-tools ];
     script = let
       hardwareConfig = "/etc/nixos/hosts/server-01/hardware-configuration.nix";
     in ''
@@ -90,13 +115,18 @@
       if ! grep -q "fileSystems" "${hardwareConfig}" 2>/dev/null || grep -q "# Auto-detection:" "${hardwareConfig}" 2>/dev/null; then
         echo "Hardware configuration needs generation. Generating..."
         cd /etc/nixos
-        ${pkgs.nixos}/bin/nixos-generate-config --show-hardware-config > "${hardwareConfig}" || true
+        nixos-generate-config --show-hardware-config > "${hardwareConfig}" || true
         echo "Hardware configuration generated at ${hardwareConfig}"
         echo "Please review the file, then rebuild: sudo nixos-rebuild switch --flake '.#server-01'"
       else
         echo "Hardware configuration already exists with detected hardware."
       fi
     '';
+  };
+
+  # ISO image configuration (only used when building ISO)
+  isoImage = {
+    isoName = "server-01-${config.system.nixos.label}-${pkgs.stdenv.hostPlatform.system}.iso";
   };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
