@@ -66,7 +66,10 @@
     # Custom packages - available for all supported systems
     packages = forAllSystems (system: import ./pkgs (pkgsFor system)) // {
       x86_64-linux = (forAllSystems (system: import ./pkgs (pkgsFor system))).x86_64-linux // {
-        isoImage = nixosConfigurations.server-01-iso.config.system.build.isoImage;
+        # ISO images for all hosts
+        server-01-iso = nixosConfigurations.server-01-iso.config.system.build.isoImage;
+        pc-02-iso = nixosConfigurations.pc-02-iso.config.system.build.isoImage;
+        rog-strix-iso = nixosConfigurations.rog-strix-iso.config.system.build.isoImage;
       };
     };
 
@@ -151,6 +154,10 @@
         ];
       };
 
+      # ═══════════════════════════════════════════════════════════════
+      # ISO Images - Bootable installation media
+      # ═══════════════════════════════════════════════════════════════
+
       # Server-01 ISO - bootable installation image
       server-01-iso = let
         pkgs = pkgsFor "x86_64-linux";
@@ -158,12 +165,72 @@
         system = "x86_64-linux";
         specialArgs = {inherit inputs;};
         modules = [
-          # ISO installer modules - import the ISO image module
+          # ISO installer modules
           "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
           # All NixOS modules (options & profiles)
           ./modules/nixos/default.nix
           # Host configuration
           ./hosts/server-01/configuration.nix
+        ];
+      };
+
+      # PC-02 ISO - Lisa's desktop installation image (with NVIDIA)
+      pc-02-iso = let
+        pkgs = pkgsFor "x86_64-linux";
+      in nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {inherit inputs;};
+        modules = [
+          # ISO installer modules
+          "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
+          # All NixOS modules (options & profiles)
+          ./modules/nixos/default.nix
+          # Host configuration
+          ./hosts/pc-02/configuration.nix
+          # Home Manager
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = {inherit inputs;};
+              users.lisa = import ./home/lisa.nix;
+              sharedModules = [
+                plasma-manager.homeModules.plasma-manager
+              ];
+            };
+          }
+        ];
+      };
+
+      # ROG Strix ISO - Jens' laptop installation image (with NVIDIA + CachyOS)
+      rog-strix-iso = let
+        pkgs = pkgsFor "x86_64-linux";
+      in nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {inherit inputs;};
+        modules = [
+          # ISO installer modules
+          "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
+          # Chaotic-nyx module (provides CachyOS kernel and gaming packages)
+          chaotic.nixosModules.default
+          # All NixOS modules (options & profiles)
+          ./modules/nixos/default.nix
+          # Host configuration
+          ./hosts/rog-strix/configuration.nix
+          # Home Manager
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = {inherit inputs;};
+              users.jens = import ./home/jens.nix;
+              sharedModules = [
+                plasma-manager.homeModules.plasma-manager
+              ];
+            };
+          }
         ];
       };
     };

@@ -19,6 +19,10 @@
   myConfig.profiles.workstation.enable = true;
   myConfig.services.tailscale.enable = true;
 
+  # Enable ISO support (flake copy, hardware detection)
+  myConfig.system.iso.enable = true;
+  myConfig.system.iso.hostName = "rog-strix";
+
   # Hardware configuration
   myConfig.hardware.nvidia.enable = true;
   myConfig.hardware.nvidia.isLaptop = true;

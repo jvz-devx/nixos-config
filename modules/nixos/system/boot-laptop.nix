@@ -33,7 +33,7 @@ in {
         editor = false;
       };
       efi.canTouchEfiVariables = true;
-      timeout = 3;
+      timeout = lib.mkDefault 3;  # Allow ISO module to override
     };
 
     # Custom kernel packages if specified

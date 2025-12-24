@@ -29,6 +29,7 @@
     ./system/boot-laptop.nix
     ./system/disk.nix
     ./system/power.nix
+    ./system/iso-support.nix
 
     # Profiles
     ./profiles/desktop.nix
