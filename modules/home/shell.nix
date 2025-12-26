@@ -44,9 +44,6 @@
         "copyfile"
         "copypath"
         "web-search"
-
-        # NixOS specific
-        "nix-shell"
       ];
     };
 

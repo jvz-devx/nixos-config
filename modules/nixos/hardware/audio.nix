@@ -12,7 +12,6 @@
 
     # Required for modern laptop speakers (SOF firmware)
     hardware.enableRedistributableFirmware = true;
-    hardware.sof-firmware.enable = true;
 
     # PipeWire
     services.pipewire = {
