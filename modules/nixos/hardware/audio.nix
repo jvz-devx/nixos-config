@@ -10,6 +10,10 @@
     # Enable real-time audio priority
     security.rtkit.enable = true;
 
+    # Required for modern laptop speakers (SOF firmware)
+    hardware.enableRedistributableFirmware = true;
+    hardware.sof-firmware.enable = true;
+
     # PipeWire
     services.pipewire = {
       enable = true;

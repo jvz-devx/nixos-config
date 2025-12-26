@@ -35,6 +35,7 @@
     nix-index    # nix-locate command
     comma        # Run programs without installing: , program
     sops         # Secrets management CLI
+    age          # Modern encryption tool for SOPS
 
     # Common CLI
     curl

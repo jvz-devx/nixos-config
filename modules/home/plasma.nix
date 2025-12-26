@@ -229,6 +229,10 @@
       kdeglobals.General.widgetStyle = "kvantum";
       kdeglobals.KDE.SingleClick = false;
 
+      # Fix for FTP "maximum number of clients" error
+      # Disables remote previews to reduce concurrent connections
+      dolphinrc.PreviewSettings.RemoteFiles = false;
+
       # 4 virtual desktops
       kwinrc.Desktops.Number = {
         value = 4;

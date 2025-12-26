@@ -23,6 +23,12 @@
       asusctl              # CLI for asusd (fan control, keyboard LEDs, etc.)
       supergfxctl          # CLI for supergfxd (GPU mode switching)
     ];
+
+    # Audio fixes for ASUS ROG laptops
+    # Often required for speakers and internal mic to be detected correctly
+    boot.extraModprobeConfig = ''
+      options snd-hda-intel model=asus-zenbook
+    '';
   };
 }
 

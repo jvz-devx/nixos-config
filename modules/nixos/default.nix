@@ -23,6 +23,7 @@
     ./services/tailscale.nix
     ./services/maintenance.nix
     ./services/sops.nix
+    ./services/nas.nix
 
     # System modules
     ./system/locale.nix

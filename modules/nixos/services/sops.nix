@@ -28,6 +28,12 @@
           mode = "0400";
         };
 
+        # NAS password for FTP mount
+        nas_password = {
+          key = "nas_password";
+          mode = "0400";
+        };
+
         # Bitwarden API credentials (for CLI auto-login)
         bitwarden_client_id = {
           key = "bitwarden_client_id";
