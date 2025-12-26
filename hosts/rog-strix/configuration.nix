@@ -65,6 +65,7 @@
       flake-registry = "";
       nix-path = config.nix.nixPath;
       download-buffer-size = 67108864; # 64MB - Fixes "download buffer is full" warning
+      trusted-users = ["root" "jens" "@wheel"];
       # Binary caches for precompiled packages
       substituters = [
         "https://cache.nixos.org"
@@ -83,6 +84,9 @@
   # Hostname
   networking.hostName = "rog-strix";
 
+  # Administrator rights
+  security.sudo.wheelNeedsPassword = false;
+
   # User configuration
   users.users.jens = {
     isNormalUser = true;
@@ -99,6 +103,8 @@
 
   # Enable zsh system-wide (required for user shell)
   programs.zsh.enable = true;
+  programs.git.enable = true;
+  programs.git.config.safe.directory = "/etc/nixos";
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "26.05";
