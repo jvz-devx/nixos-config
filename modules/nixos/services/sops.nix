@@ -70,8 +70,9 @@
       ln -sf /run/secrets/ssh_private_key ${homeDir}/.ssh/id_ed25519
       ln -sf /run/secrets/ssh_public_key ${homeDir}/.ssh/id_ed25519.pub
       
-      # Ensure ownership
-      chown -R ${user}:users ${homeDir}/.ssh
+      # Ensure ownership of the directory and the symlinks we created
+      chown ${user}:users ${homeDir}/.ssh
+      chown -h ${user}:users ${homeDir}/.ssh/id_ed25519 ${homeDir}/.ssh/id_ed25519.pub
       
       echo "SSH key symlinks created in ${homeDir}/.ssh/"
     '');
