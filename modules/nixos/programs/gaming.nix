@@ -34,6 +34,7 @@
     environment.systemPackages = with pkgs; [
       # Proton/Wine
       protonup-qt        # Proton version manager
+      protontricks       # Proton helper scripts
       wine               # Wine for non-Steam games
       winetricks         # Wine helper scripts
 
