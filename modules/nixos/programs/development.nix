@@ -36,6 +36,11 @@
     comma        # Run programs without installing: , program
     sops         # Secrets management CLI
     age          # Modern encryption tool for SOPS
+    nix-tree     # Visualize Nix store
+    nix-diff     # Compare Nix derivations
+    nix-output-monitor # Colorize nix-build output
+    deadnix      # Detect dead code in Nix
+    statix       # Nix linter
 
     # Common CLI
     curl
@@ -45,6 +50,13 @@
     unzip
     p7zip
     ripgrep
+    fd            # Faster, more intuitive find
+    bat           # Better cat with syntax highlighting
+    eza           # Modern replacement for ls
+    fzf           # Fuzzy finder - indispensable
+    ncdu          # Interactive disk usage browser
+    ripgrep-all   # Search in PDFs, archives, etc.
+    rsync         # File synchronization tool
     zip
     pciutils
     usbutils
@@ -79,15 +91,42 @@
     nftables         # Modern firewall
     wireguard-tools  # WireGuard VPN tools
 
+    # Git Tools
+    gh              # GitHub CLI - essential
+    lazygit         # Amazing TUI git interface
+    tig             # Text-mode interface for git
+    git-lfs         # Large File Storage support
+
     # Languages (prefer per-project with devShells/direnv)
     go
     python3
     uv             # Python package manager
     sqlit-tui      # User friendly TUI for SQL databases
     dotnet-sdk_10
-    gwe           # GreenWithEnvy - NVIDIA overclocking/underclocking
+    rustc          # Rust compiler
+    cargo          # Rust package manager
+    rust-analyzer  # Rust LSP
+    clang          # C/C++ compiler
+    llvm           # LLVM toolchain
+
+    # DevOps
+    lazydocker     # TUI for Docker management
+    kubectl        # Kubernetes CLI
+    k9s            # Kubernetes TUI
+
+    # System Monitoring
+    glances        # Cross-platform system monitoring
+    iotop          # I/O monitoring
+    s-tui          # Stress TUI
+    stress-ng      # System stress testing
+    lm_sensors     # Hardware sensors
+    gwe            # GreenWithEnvy - NVIDIA overclocking/underclocking
     nvtopPackages.nvidia # GPU process monitor
     mission-center # Modern Task Manager for Linux
+
+    # Databases
+    postgresql     # PostgreSQL server
+    redis          # Redis server
     ];
 
     # nix-index for command-not-found

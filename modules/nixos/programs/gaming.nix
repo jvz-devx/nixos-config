@@ -74,7 +74,24 @@
 
       # Game Streaming
       moonlight-qt       # Moonlight client
+
+      # Emulators
+      dolphin-emu        # GameCube/Wii emulator
     ];
+
+    # Udev rules for GameCube controllers (dolphin-emu)
+    services.udev.packages = with pkgs; [
+      dolphin-emu
+    ];
+
+    # Optional: GCC to USB adapter overclocking for improved polling rates
+    # Uncomment to enable gcadapter-oc-kmod kernel module
+    # boot.extraModulePackages = [
+    #   config.boot.kernelPackages.gcadapter-oc-kmod
+    # ];
+    # boot.kernelModules = [
+    #   "gcadapter_oc"
+    # ];
   };
 }
 

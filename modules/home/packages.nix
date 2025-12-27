@@ -44,12 +44,31 @@
 
     # Games
     prismlauncher
+    heroic         # GOG/Epic Games launcher
+    ludusavi       # Game save backup tool
+    proton-ge-custom # Custom Proton builds
+    rpcs3          # PlayStation 3 emulator
+    cemu           # Wii U emulator
 
     # Office suite
     libreoffice-qt6
     hunspell
     hunspellDicts.en_US
     hunspellDicts.nl_NL
+
+    # Media/Content Creation
+    obs-studio     # Screen recorder/streaming
+    mpv            # Media player
+    handbrake      # Video transcoder
+    audacity       # Audio editing
+    gimp           # Image editing
+    inkscape       # Vector graphics
+
+    # Documentation
+    pandoc         # Document converter (includes CLI)
+
+    # System
+    gparted        # Partition editor
 
     # Development tools
     nodejs_24
