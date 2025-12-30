@@ -220,31 +220,6 @@
       timeout = 60;
     };
 
-    # Konsole configuration
-    konsole = {
-      profiles.Default = {
-        name = "Default";
-        colorScheme = "Nordic";
-        font = {
-          family = "JetBrainsMono Nerd Font";
-          pointSize = 10;
-        };
-        extraConfig = ''
-          [Appearance]
-          Blur=true
-          Opacity=0.85
-
-          [Scrolling]
-          HistoryMode=2
-          HistorySize=10000
-
-          [Terminal Features]
-          BlinkingCursorEnabled=true
-        '';
-      };
-      defaultProfile = "Default";
-    };
-
     # Low-level config tweaks
     configFile = {
       # Disable session restoration (prevents apps like Chrome from autostarting)
@@ -253,6 +228,10 @@
       # Disable Baloo file indexer
       baloofilerc."Basic Settings"."Indexing-Enabled" = false;
       
+      # Konsole
+      "konsolerc"."Desktop Entry"."DefaultProfile" = "Default.profile";
+      "konsolerc"."Favorite Profiles"."Favorites" = "Default.profile";
+
       # General settings
       kdeglobals.General.widgetStyle = "kvantum";
       kdeglobals.KDE.SingleClick = false;
@@ -324,6 +303,26 @@
       theme=Nordic-Darker
     '';
   };
+
+  # Konsole Profile
+  xdg.dataFile."konsole/Default.profile".text = ''
+    [Appearance]
+    ColorScheme=Nordic
+    Font=JetBrainsMono Nerd Font,10,-1,5,50,0,0,0,0,0
+    Blur=true
+    Opacity=0.85
+
+    [General]
+    Name=Default
+    Parent=FALLBACK
+
+    [Scrolling]
+    HistoryMode=2
+    HistorySize=10000
+
+    [Terminal Features]
+    BlinkingCursorEnabled=true
+  '';
 
   # Nordic Konsole Color Scheme
   xdg.dataFile."konsole/Nordic.colorscheme".text = ''
@@ -455,7 +454,7 @@
     tooltip_delay=-1
     tree_branch_line=true
     dark_titlebar=true
-    opaque=QMPlay2,kaffeine,kmplayer,subtitlecomposer,kdenlive,vlc,avidemux,avidemux2_qt4,avidemux3_qt4,avidemux3_qt5,kamoso,QtCreator,VirtualBox,trojita,dragon,digikam
+    opaque=konsole,QMPlay2,kaffeine,kmplayer,subtitlecomposer,kdenlive,vlc,avidemux,avidemux2_qt4,avidemux3_qt4,avidemux3_qt5,kamoso,QtCreator,VirtualBox,trojita,dragon,digikam
     reduce_window_opacity=18
     scrollable_menu=false
     submenu_delay=250
