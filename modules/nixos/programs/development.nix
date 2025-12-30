@@ -77,7 +77,6 @@
     killall
     btop
     man-pages
-    firefox
 
     # Network Tools
     nmap             # Network scanning and discovery

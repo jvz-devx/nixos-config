@@ -18,6 +18,7 @@
     # Enable Tailscale service with automatic authentication
     services.tailscale = {
       enable = true;
+      useRoutingFeatures = "both";
       # Use the decrypted auth key from sops
       authKeyFile = config.sops.secrets.tailscale_auth_key.path;
       # Set operator if specified (allows ktailctl and other GUI tools to work)
@@ -44,10 +45,17 @@
               NeedsLogin|NeedsMachineAuth|Stopped)
                 echo "Server needs authentication, sending auth key"
                 # Use --reset to avoid "requires mentioning all non-default flags" error
-                ${pkgs.tailscale}/bin/tailscale up --reset --auth-key "$(cat ${config.sops.secrets.tailscale_auth_key.path})"
+                ${pkgs.tailscale}/bin/tailscale up --reset \
+                  --exit-node-allow-lan-access \
+                  --advertise-exit-node \
+                  --auth-key "$(cat ${config.sops.secrets.tailscale_auth_key.path})"
                 ;;
               Running)
-                echo "Tailscale is running"
+                echo "Tailscale is running, ensuring flags are set"
+                ${pkgs.tailscale}/bin/tailscale up --reset \
+                  --exit-node-allow-lan-access \
+                  --advertise-exit-node \
+                  --auth-key "$(cat ${config.sops.secrets.tailscale_auth_key.path})"
                 exit 0
                 ;;
               *)

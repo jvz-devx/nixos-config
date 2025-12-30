@@ -17,6 +17,7 @@
     # Theming (required for plasma.nix)
     bibata-cursors
     tela-icon-theme
+    nordzy-icon-theme
     nordic
 
     # Fonts

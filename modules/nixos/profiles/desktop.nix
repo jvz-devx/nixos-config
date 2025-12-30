@@ -8,6 +8,7 @@
     myConfig.desktop.portals.enable = true;
     myConfig.hardware.audio.enable = true;
     myConfig.hardware.bluetooth.enable = true;
+    myConfig.hardware.logitech.enable = true;
     myConfig.system.locale.enable = true;
     myConfig.system.boot.enable = true;
     myConfig.system.disk.enable = true;

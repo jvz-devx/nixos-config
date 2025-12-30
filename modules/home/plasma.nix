@@ -7,12 +7,12 @@
     # Workspace appearance
     workspace = {
       clickItemTo = "select";
+      lookAndFeel = "Nordic-darker";
       cursor = {
         theme = "Bibata-Modern-Classic";
         size = 24;
       };
-      iconTheme = "Tela-dark"; # Updated from capture.nix
-      splashScreen.theme = "Nordic-darker"; # Updated from capture.nix
+      iconTheme = "Nordzy-dark"; # Updated from Tela-dark
     };
 
     # Fonts
@@ -217,7 +217,7 @@
     # Screen locker
     kscreenlocker = {
       lockOnResume = true;
-      timeout = 5;
+      timeout = 60;
     };
 
     # Low-level config tweaks
@@ -228,6 +228,9 @@
       # Disable Baloo file indexer
       baloofilerc."Basic Settings"."Indexing-Enabled" = false;
       
+      # Konsole
+      "konsolerc"."Desktop Entry"."DefaultProfile" = "Default.profile";
+
       # General settings
       kdeglobals.General.widgetStyle = "kvantum";
       kdeglobals.KDE.SingleClick = false;
@@ -284,12 +287,6 @@
     };
   };
 
-  # Disable Stylix and HM GTK management to avoid conflicts with KDE Plasma
-  stylix.targets.gtk.enable = lib.mkForce false;
-  stylix.targets.qt.enable = lib.mkForce false;
-  stylix.targets.kde.enable = lib.mkForce false;
-  gtk.enable = lib.mkForce false;
-
   # Enable Kvantum
   qt = {
     enable = true;
@@ -305,6 +302,94 @@
       theme=Nordic-Darker
     '';
   };
+
+  # Konsole Profile
+  xdg.dataFile."konsole/Default.profile".text = ''
+    [Appearance]
+    ColorScheme=Nordic
+    Font=JetBrainsMono Nerd Font,10,-1,5,50,0,0,0,0,0
+    Blur=true
+    Opacity=0.85
+
+    [General]
+    Name=Default
+    Parent=FALLBACK
+
+    [Scrolling]
+    HistoryMode=2
+    HistorySize=10000
+
+    [Terminal Features]
+    BlinkingCursorEnabled=true
+  '';
+
+  # Nordic Konsole Color Scheme
+  xdg.dataFile."konsole/Nordic.colorscheme".text = ''
+    [Background]
+    Color=46,52,64
+
+    [BackgroundIntense]
+    Color=59,66,82
+
+    [Color0]
+    Color=59,66,82
+
+    [Color0Intense]
+    Color=76,86,106
+
+    [Color1]
+    Color=191,97,106
+
+    [Color1Intense]
+    Color=191,97,106
+
+    [Color2]
+    Color=163,190,140
+
+    [Color2Intense]
+    Color=163,190,140
+
+    [Color3]
+    Color=235,203,139
+
+    [Color3Intense]
+    Color=235,203,139
+
+    [Color4]
+    Color=129,161,193
+
+    [Color4Intense]
+    Color=129,161,193
+
+    [Color5]
+    Color=180,142,173
+
+    [Color5Intense]
+    Color=180,142,173
+
+    [Color6]
+    Color=136,192,208
+
+    [Color6Intense]
+    Color=143,188,187
+
+    [Color7]
+    Color=229,233,240
+
+    [Color7Intense]
+    Color=236,239,244
+
+    [Foreground]
+    Color=216,222,233
+
+    [ForegroundIntense]
+    Color=236,239,244
+
+    [General]
+    Description=Nordic
+    Opacity=0.85
+    Wallpaper=
+  '';
 
   xdg.configFile."Kvantum/Nordic-Darker/Nordic-Darker.kvconfig" = {
     force = true;

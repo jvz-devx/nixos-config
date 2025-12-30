@@ -10,6 +10,7 @@
     ./hardware/nvidia.nix
     ./hardware/nvidia-stability-tweaks.nix
     ./hardware/asus.nix
+    ./hardware/logitech.nix
 
     # Desktop modules
     ./desktop/plasma.nix
@@ -32,7 +33,6 @@
     ./system/disk.nix
     ./system/power.nix
     ./system/iso-support.nix
-    ./system/stylix.nix
 
     # Profiles
     ./profiles/desktop.nix
