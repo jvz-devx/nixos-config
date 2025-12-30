@@ -30,6 +30,7 @@
     kdePackages.kde-gtk-config
     kdePackages.breeze-gtk
     kdePackages.breeze
+    kdePackages.kvantum
     kdePackages.qtstyleplugin-kvantum
     plasma-panel-colorizer
 

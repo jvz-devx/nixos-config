@@ -292,7 +292,7 @@
   # Enable Kvantum
   qt = {
     enable = true;
-    platformTheme.name = "kvantum";
+    platformTheme.name = "kde";
     style.name = "kvantum";
   };
 
@@ -304,6 +304,9 @@
       theme=Nordic-Darker
     '';
   };
+
+  # Symlink the entire Nordic-Darker theme directory for Kvantum
+  xdg.configFile."Kvantum/Nordic-Darker".source = "${pkgs.nordic}/share/Kvantum/Nordic-Darker";
 
   # Konsole Profile
   xdg.dataFile."konsole/Default.profile".text = ''
@@ -392,125 +395,4 @@
     Opacity=0.85
     Wallpaper=
   '';
-
-  xdg.configFile."Kvantum/Nordic-Darker/Nordic-Darker.svg".source = "${pkgs.nordic}/share/Kvantum/Nordic-Darker/Nordic-Darker.svg";
-  xdg.configFile."Kvantum/Nordic-Darker/Nordic-Darker.kvconfig" = {
-    force = true;
-    text = ''
-      [%General]
-    author=Eliver Lara
-    comment=A dark theme created using the awesome Nord color pallete. 
-    x11drag=menubar_and_primary_toolbar
-    alt_mnemonic=true
-    left_tabs=true
-    attach_active_tab=true
-    mirror_doc_tabs=true
-    group_toolbar_buttons=false
-    toolbar_item_spacing=1
-    toolbar_interior_spacing=3
-    spread_progressbar=true
-    composite=true
-    menu_shadow_depth=5
-    menu_separator_height=6
-    tooltip_shadow_depth=6
-    splitter_width=4
-    scroll_width=6
-    scroll_arrows=false
-    scroll_min_extent=60
-    slider_width=2
-    slider_handle_width=18
-    slider_handle_length=18
-    center_toolbar_handle=true
-    check_size=14
-    textless_progressbar=false
-    progressbar_thickness=2
-    menubar_mouse_tracking=true
-    toolbutton_style=1
-    double_click=false
-    translucent_windows=true
-    blurring=true
-    popup_blurring=true
-    vertical_spin_indicators=false
-    spin_button_width=32
-    fill_rubberband=false
-    merge_menubar_with_toolbar=true
-    small_icon_size=16
-    large_icon_size=32
-    button_icon_size=16
-    toolbar_icon_size=22
-    combo_as_lineedit=true
-    animate_states=false
-    button_contents_shift=false
-    combo_menu=true
-    hide_combo_checkboxes=true
-    combo_focus_rect=true
-    groupbox_top_label=true
-    inline_spin_indicators=false
-    joined_inactive_tabs=false
-    layout_spacing=6
-    layout_margin=4
-    scrollbar_in_view=true
-    transient_scrollbar=true
-    transient_groove=false
-    submenu_overlap=0
-    tooltip_delay=-1
-    tree_branch_line=true
-    dark_titlebar=true
-    opaque=konsole,QMPlay2,kaffeine,kmplayer,subtitlecomposer,kdenlive,vlc,avidemux,avidemux2_qt4,avidemux3_qt4,avidemux3_qt5,kamoso,QtCreator,VirtualBox,trojita,dragon,digikam
-    reduce_window_opacity=18
-    scrollable_menu=false
-    submenu_delay=250
-    no_inactiveness=false
-    no_window_pattern=false
-    reduce_menu_opacity=0
-    respect_DE=true
-    contrast=1.00
-    dialog_button_layout=0
-    intensity=1.00
-    saturation=1.00
-
-    [GeneralColors]
-    window.color=#434c5e
-    base.color=#3b4252
-    alt.base.color=#2E353D78
-    button.color=#3c4454
-    light.color=#2e3440
-    mid.light.color=#2e3440
-    dark.color=#2e3440
-    mid.color=#2e3440
-    highlight.color=#4c566a
-    inactive.highlight.color=#4c566a
-    text.color=#d8dee9
-    window.text.color=#d8dee9
-    button.text.color=#d8dee9
-    disabled.text.color=#d8dee978
-    tooltip.text.color=#d8dee9
-    highlight.text.color=#d8dee9
-    link.color=#646464
-    link.visited.color=#7f8c8d
-    progress.indicator.text.color=#d8dee9
-
-    [Hacks]
-    transparent_ktitle_label=true
-    transparent_dolphin_view=true
-    transparent_pcmanfm_sidepane=true
-    blur_translucent=true
-    transparent_menutitle=true
-    respect_darkness=true
-    kcapacitybar_as_progressbar=true
-    force_size_grip=true
-    iconless_pushbutton=false
-    iconless_menu=false
-    disabled_icon_opacity=70
-    lxqtmainmenu_iconsize=22
-    normal_default_pushbutton=true
-    single_top_toolbar=true
-    tint_on_mouseover=0
-    transparent_pcmanfm_view=true
-    middle_click_scroll=false
-    no_selection_tint=false
-    opaque_colors=false
-    scroll_jump_workaround=false
-    '';
-  };
 }
