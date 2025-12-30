@@ -29,6 +29,7 @@
     # KDE extras
     kdePackages.kde-gtk-config
     kdePackages.breeze-gtk
+    kdePackages.breeze
     kdePackages.qtstyleplugin-kvantum
     plasma-panel-colorizer
 

@@ -231,6 +231,7 @@
       # Konsole
       "konsolerc"."Desktop Entry"."DefaultProfile" = "Default.profile";
       "konsolerc"."Favorite Profiles"."Favorites" = "Default.profile";
+      "konsolerc"."UiSettings"."ColorScheme" = "NordicDarker";
 
       # General settings
       kdeglobals.General.widgetStyle = "kvantum";
@@ -392,6 +393,7 @@
     Wallpaper=
   '';
 
+  xdg.configFile."Kvantum/Nordic-Darker/Nordic-Darker.svg".source = "${pkgs.nordic}/share/Kvantum/Nordic-Darker/Nordic-Darker.svg";
   xdg.configFile."Kvantum/Nordic-Darker/Nordic-Darker.kvconfig" = {
     force = true;
     text = ''
