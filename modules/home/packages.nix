@@ -30,7 +30,6 @@
     kdePackages.kde-gtk-config
     kdePackages.breeze-gtk
     kdePackages.breeze
-    kdePackages.kvantum
     kdePackages.qtstyleplugin-kvantum
     plasma-panel-colorizer
 
@@ -49,7 +48,7 @@
     prismlauncher
     heroic         # GOG/Epic Games launcher
     ludusavi       # Game save backup tool
-    proton-ge-custom # Custom Proton builds
+    inputs.chaotic.packages.${pkgs.stdenv.hostPlatform.system}.proton-ge-custom # Custom Proton builds
     rpcs3          # PlayStation 3 emulator
     cemu           # Wii U emulator
 
