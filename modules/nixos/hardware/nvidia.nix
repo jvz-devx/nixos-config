@@ -33,10 +33,14 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    # Enable OpenGL
+    # Enable OpenGL/Vulkan graphics
     hardware.graphics = {
       enable = true;
       enable32Bit = true;
+      extraPackages = with pkgs; [
+        nvidia-vaapi-driver
+        libva-utils
+      ];
     };
 
     # NVIDIA driver (disabled in integrated mode for laptops)
@@ -103,6 +107,7 @@ in {
       (lib.mkIf (!isIntegrated) {
         __GLX_VENDOR_LIBRARY_NAME = "nvidia";
         LIBVA_DRIVER_NAME = "nvidia";
+        NVD_BACKEND = "direct";
         GBM_BACKEND = "nvidia-drm";
         WLR_NO_HARDWARE_CURSORS = "1";
       })

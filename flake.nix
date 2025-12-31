@@ -44,6 +44,9 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Pin nixpkgs for Stremio to avoid qtwebengine build issues
+    nixpkgs-stremio.url = "github:nixos/nixpkgs/5135c59491985879812717f4c9fea69604e7f26f";
   };
 
   outputs = {
@@ -55,6 +58,7 @@
     codex-cli,
     nix-ai-tools,
     sops-nix,
+    nixpkgs-stremio,
     ...
   } @ inputs: let
     # Systems you want to support
