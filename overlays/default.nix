@@ -13,10 +13,23 @@
     };
 
     # Use Vesktop from nixpkgs-master to get the latest version (1.6.3+)
-    vesktop = (import inputs.nixpkgs-master {
-      inherit (final) system;
-      config.allowUnfree = true;
-    }).vesktop;
+    # We override it to fix a permission error (EACCES) during the build phase
+    # where electron-builder tries to modify a read-only electron binary.
+    vesktop = let
+      pkgs-master = import inputs.nixpkgs-master {
+        inherit (final) system;
+        config.allowUnfree = true;
+      };
+    in pkgs-master.vesktop.overrideAttrs (old: {
+      preBuild = (old.preBuild or "") + ''
+        cp -r ${pkgs-master.electron.dist} ./electron-dist
+        chmod -R u+w ./electron-dist
+      '';
+      buildPhase = builtins.replaceStrings
+        ["-c.electronDist=${pkgs-master.electron.dist}"]
+        ["-c.electronDist=./electron-dist"]
+        old.buildPhase;
+    });
   };
 
   # When applied, the stable nixpkgs set (declared in the flake inputs) will
