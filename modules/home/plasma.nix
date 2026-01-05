@@ -515,26 +515,29 @@ in {
   # This allows Cursor to write to the file while we still enforce the font
   home.activation.cursorSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     SETTINGS_FILE="$HOME/.config/Cursor/User/settings.json"
-    mkdir -p "$(dirname "$SETTINGS_FILE")"
     
-    # CRITICAL: If it's a symlink (read-only Nix link), remove it first
-    if [ -L "$SETTINGS_FILE" ]; then
-      rm "$SETTINGS_FILE"
+    # 1. Force remove if it's a symlink or an old read-only file
+    if [ -L "$SETTINGS_FILE" ] || ([ -f "$SETTINGS_FILE" ] && [ ! -w "$SETTINGS_FILE" ]); then
+      rm -f "$SETTINGS_FILE"
     fi
 
-    # Create empty JSON if it doesn't exist
-    if [ ! -f "$SETTINGS_FILE" ] || [ ! -s "$SETTINGS_FILE" ]; then
+    mkdir -p "$(dirname "$SETTINGS_FILE")"
+    
+    # 2. Create fresh if gone
+    if [ ! -f "$SETTINGS_FILE" ]; then
       echo "{}" > "$SETTINGS_FILE"
     fi
 
-    # Use jq to merge our desired font settings into the existing file
-    # This keeps the file WRITABLE for Cursor/Git
-    NEW_SETTINGS=$(${pkgs.jq}/bin/jq --arg userFont "${userFont}" '. + {
+    # 3. Merge settings using jq
+    # We use a temp file to ensure atomic write and avoid "busy" errors
+    TMP_FILE=$(mktemp)
+    ${pkgs.jq}/bin/jq --arg userFont "${userFont}" '. + {
       "editor.fontFamily": ($userFont + ", \"JetBrainsMono Nerd Font\", \"monospace\""),
       "editor.fontLigatures": true,
       "terminal.integrated.fontFamily": $userFont
-    }' "$SETTINGS_FILE")
+    }' "$SETTINGS_FILE" > "$TMP_FILE" && mv "$TMP_FILE" "$SETTINGS_FILE"
 
-    echo "$NEW_SETTINGS" > "$SETTINGS_FILE"
+    # 4. Ensure correct permissions
+    chmod 644 "$SETTINGS_FILE"
   '';
 }
