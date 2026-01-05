@@ -6,7 +6,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Keep a stable reference for packages that need it
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
 
     # Home Manager - following nixpkgs
     home-manager = {
@@ -166,7 +166,13 @@
       # Server-01 - Headless Server
       # General purpose server with Docker, Tailscale, and essential tools
       # ═══════════════════════════════════════════════════════════════
-      server-01 = nixpkgs.lib.nixosSystem {
+      server-01 = let
+        pkgs = import inputs.nixpkgs-stable {
+          system = "x86_64-linux";
+          config.allowUnfree = true;
+        };
+      in nixpkgs.lib.nixosSystem {
+        inherit pkgs;
         system = "x86_64-linux";
         specialArgs = {inherit inputs;};
         modules = [
@@ -199,10 +205,13 @@
 
       # Server-01 ISO - bootable installation image
       server-01-iso = let
-        pkgs = pkgsFor "x86_64-linux";
+        pkgs = import inputs.nixpkgs-stable {
+          system = "x86_64-linux";
+          config.allowUnfree = true;
+        };
       in nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = {inherit inputs;};
+        specialArgs = {inherit inputs pkgs;};
         modules = [
           # ISO installer modules
           "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
