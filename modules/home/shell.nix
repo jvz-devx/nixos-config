@@ -6,6 +6,7 @@
     EDITOR = "nano";
     VISUAL = "nano";
     QT_STYLE_OVERRIDE = "kvantum";
+    SKIP_HOST_UPDATE = "1";
   };
 
   # Zsh

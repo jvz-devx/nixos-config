@@ -13,7 +13,7 @@
         theme = "Bibata-Modern-Classic";
         size = 24;
       };
-      iconTheme = "Nordzy-dark"; # Updated from Tela-dark
+      iconTheme = "Tela-black-dark";
       wallpaper = ../../assets/wallpaper/deyuin6-c7ad1dee-e0ae-423c-8e1a-bc4addf550e0.gif;
     };
 
@@ -40,6 +40,9 @@
         widgets = [
           # Global Menu (Application Menu) on the left
           "org.kde.plasma.appmenu"
+          
+          # Pager (Virtual Desktop Switcher) next to clock
+          "org.kde.plasma.pager"
 
           # Spacer to center the clock
           "org.kde.plasma.panelspacer"
@@ -80,10 +83,7 @@
         opacity = "translucent";
         widgets = [
           {
-            kickoff = {
-              sortAlphabetically = true;
-              icon = "nix-snowflake-white";
-            };
+            kickerdash.icon = "nix-snowflake-white";
           }
           {
             iconTasks = {
