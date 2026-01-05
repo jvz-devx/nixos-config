@@ -206,6 +206,32 @@
         modules = [
           # ISO installer modules
           "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
+          # ISO boot settings (UEFI + BIOS, Proxmox/OVMF-friendly)
+          {
+            isoImage.makeEfiBootable = true;
+            isoImage.makeUsbBootable = true;
+            isoImage.volumeID = "NIXOS_SERVER_01";
+
+            # iso-image.nix provides its own bootloader.
+            boot.loader.systemd-boot.enable = nixpkgs.lib.mkForce false;
+            boot.loader.grub.enable = nixpkgs.lib.mkForce false;
+            boot.loader.efi.canTouchEfiVariables = nixpkgs.lib.mkForce false;
+
+            # Ensure the initrd can see the ISO device in common VM setups.
+            boot.initrd.availableKernelModules = [
+              "virtio_pci"
+              "virtio_blk"
+              "virtio_scsi"
+              "sr_mod"
+              "sd_mod"
+              "ahci"
+              "ata_piix"
+              "xhci_pci"
+              "usbhid"
+              "usb_storage"
+              "uas"
+            ];
+          }
           # sops-nix for secrets management
           sops-nix.nixosModules.sops
           # All NixOS modules (options & profiles)

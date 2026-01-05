@@ -11,7 +11,40 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  # Auto-detection: This will be replaced by the actual hardware config
-  # on first boot by the generate-hardware-config systemd service
+  # Placeholder filesystem config.
+  #
+  # install.sh (disk_install) will overwrite this file with a real
+  # nixos-generate-config output during installation.
+  #
+  # This exists so the flake evaluates (NixOS requires fileSystems."/"),
+  # but it is not expected to match your actual device IDs.
+  fileSystems."/" = {
+    device = "/dev/disk/by-label/nixos";
+    fsType = "btrfs";
+    options = [ "compress=zstd" "subvol=root" ];
+  };
+
+  fileSystems."/home" = {
+    device = "/dev/disk/by-label/nixos";
+    fsType = "btrfs";
+    options = [ "compress=zstd" "subvol=home" ];
+  };
+
+  fileSystems."/nix" = {
+    device = "/dev/disk/by-label/nixos";
+    fsType = "btrfs";
+    options = [ "compress=zstd" "subvol=nix" ];
+  };
+
+  fileSystems."/var/log" = {
+    device = "/dev/disk/by-label/nixos";
+    fsType = "btrfs";
+    options = [ "compress=zstd" "subvol=log" ];
+  };
+
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-label/BOOT";
+    fsType = "vfat";
+  };
 }
 

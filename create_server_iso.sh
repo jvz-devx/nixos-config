@@ -33,7 +33,7 @@ sed -i "s|$PLACEHOLDER|$REAL_PASSWORD|g" "$ISO_SUPPORT_FILE"
 # 3. Build the ISO
 info "Building server-01-iso..."
 if nix build ".#server-01-iso"; then
-    success "Build successful! ISO is at ./result"
+    success "Build successful! ISO is at ./result/iso/*.iso"
 else
     # Ensure we revert even on failure
     sed -i "s|$REAL_PASSWORD|$PLACEHOLDER|g" "$ISO_SUPPORT_FILE"

@@ -27,28 +27,19 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    # ISO-specific user and autologin (only when autologin is enabled)
-    users.users.nixos = lib.mkIf cfg.autologin {
-      isNormalUser = true;
-      extraGroups = [ "wheel" "networkmanager" "video" ];
-      initialPassword = "TEMP_ISO_PASSWORD"; # Replaced by create_server_iso.sh
-    };
-
-    services.getty.autologinUser = lib.mkIf cfg.autologin "nixos";
-
-    # ISO-specific tweaks for UEFI boot in Proxmox
-    # Only apply these when autologin is enabled (ISO mode)
-    # This prevents conflicts with the installed system's bootloader
-    boot.loader.systemd-boot.enable = lib.mkIf cfg.autologin (lib.mkForce false);
-    
-    # Ensure the ISO is explicitly bootable via EFI
-    isoImage.makeEfiBootable = lib.mkIf cfg.autologin true;
-    isoImage.makeUsbBootable = lib.mkIf cfg.autologin true;
-
+      # ISO-specific user and autologin (only when autologin is enabled)
+      users.users.nixos = lib.mkIf cfg.autologin {
+        isNormalUser = true;
+        extraGroups = [ "wheel" "networkmanager" "video" ];
+        initialPassword = "TEMP_ISO_PASSWORD"; # Replaced by create_server_iso.sh
+      };
     # Force US keyboard for ISO environment (avoids Dutch layout confusion during install)
     console.keyMap = lib.mkForce "us";
     services.xserver.xkb.layout = lib.mkForce "us";
     services.xserver.xkb.variant = lib.mkForce "";
+
+
+    services.getty.autologinUser = lib.mkIf cfg.autologin "nixos";
 
     # Copy flake source to /etc/nixos in the ISO/installed system
     # This ensures the flake is available for rebuilding after installation
