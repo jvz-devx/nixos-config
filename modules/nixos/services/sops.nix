@@ -67,6 +67,13 @@
           mode = "0644";
           owner = if config.myConfig.secrets.sshKeyUser != null then config.myConfig.secrets.sshKeyUser else "root";
         };
+
+        # GPG private key
+        gpg_private_key = {
+          key = "gpg_private_key";
+          mode = "0400";
+          owner = if config.myConfig.secrets.sshKeyUser != null then config.myConfig.secrets.sshKeyUser else "root";
+        };
       };
     };
 
@@ -88,6 +95,17 @@
       chown -h ${user}:users ${homeDir}/.ssh/id_ed25519 ${homeDir}/.ssh/id_ed25519.pub
       
       echo "SSH key symlinks created in ${homeDir}/.ssh/"
+    '');
+
+    # Import GPG key for the user
+    system.activationScripts.gpg-key-import = lib.mkIf (config.myConfig.secrets.sshKeyUser != null) (let
+      user = config.myConfig.secrets.sshKeyUser;
+    in ''
+      if [ -f /run/secrets/gpg_private_key ]; then
+        echo "Importing GPG key for ${user}..."
+        # Run as the user to import into their keyring
+        /run/current-system/sw/bin/sudo -u ${user} /run/current-system/sw/bin/gpg --import /run/secrets/gpg_private_key || true
+      fi
     '');
   };
 }

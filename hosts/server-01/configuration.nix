@@ -14,6 +14,7 @@
 
   # Enable server profile
   myConfig.profiles.server.enable = true;
+  myConfig.secrets.sshKeyUser = "admin";  # Deploy SSH/GPG keys to this user
 
   # Enable ISO support (flake copy, hardware detection)
   myConfig.system.iso.enable = true;

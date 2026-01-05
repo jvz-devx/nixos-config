@@ -49,6 +49,91 @@ validate_hostname() {
     error "Invalid hostname '$hostname'. Valid options: ${valid_hosts[*]}"
 }
 
+# Disk installation mode
+disk_install() {
+    local hostname="$1"
+    
+    echo ""
+    warn "!!! DISK INSTALLATION MODE !!!"
+    warn "This will WIPE a disk and perform a fresh NixOS installation."
+    echo ""
+    
+    # 1. List disks
+    info "Available disks:"
+    lsblk -dno NAME,SIZE,MODEL | grep -v "loop" | grep -v "zram"
+    echo ""
+    
+    read -p "Enter the device name to wipe (e.g., sda, vda, nvme0n1): " DISK_NAME
+    local DISK="/dev/$DISK_NAME"
+    
+    if [[ ! -b "$DISK" ]]; then
+        error "Device $DISK not found or not a block device."
+    fi
+    
+    warn "WARNING: Everything on $DISK will be DESTROYED."
+    read -p "Are you absolutely sure? (type 'yes' to continue): " CONFIRM
+    if [[ "$CONFIRM" != "yes" ]]; then
+        error "Installation aborted."
+    fi
+    
+    # 2. Partitioning
+    info "Partitioning $DISK..."
+    $SUDO parted "$DISK" -- mklabel gpt
+    $SUDO parted "$DISK" -- mkpart ESP fat32 1MiB 512MiB
+    $SUDO parted "$DISK" -- set 1 esp on
+    $SUDO parted "$DISK" -- mkpart primary ext4 512MiB 100%
+    
+    # Handle NVMe naming convention (p1, p2) vs SCSI (1, 2)
+    local PART_BOOT="${DISK}1"
+    local PART_ROOT="${DISK}2"
+    if [[ "$DISK" == *"nvme"* ]] || [[ "$DISK" == *"mmcblk"* ]]; then
+        PART_BOOT="${DISK}p1"
+        PART_ROOT="${DISK}p2"
+    fi
+    
+    # 3. Formatting
+    info "Formatting partitions (Btrfs)..."
+    $SUDO mkfs.fat -F 32 "$PART_BOOT"
+    $SUDO mkfs.btrfs -f "$PART_ROOT"
+    
+    # 4. Mounting and subvolumes
+    info "Creating Btrfs subvolumes..."
+    $SUDO mount "$PART_ROOT" /mnt
+    $SUDO btrfs subvolume create /mnt/root
+    $SUDO btrfs subvolume create /mnt/home
+    $SUDO btrfs subvolume create /mnt/nix
+    $SUDO btrfs subvolume create /mnt/log
+    $SUDO umount /mnt
+    
+    info "Mounting subvolumes..."
+    $SUDO mount -o compress=zstd,subvol=root "$PART_ROOT" /mnt
+    $SUDO mkdir -p /mnt/{boot,home,nix,var/log}
+    $SUDO mount -o compress=zstd,subvol=home "$PART_ROOT" /mnt/home
+    $SUDO mount -o compress=zstd,subvol=nix "$PART_ROOT" /mnt/nix
+    $SUDO mount -o compress=zstd,subvol=log "$PART_ROOT" /mnt/var/log
+    $SUDO mount "$PART_BOOT" /mnt/boot
+    
+    # 5. Generate hardware config
+    info "Generating hardware configuration for the new disk..."
+    $SUDO nixos-generate-config --root /mnt --show-hardware-config > "$SCRIPT_DIR/hosts/$hostname/hardware-configuration.nix"
+    
+    # 6. Copy flake to the new system (to /mnt/etc/nixos)
+    info "Copying flake to the new system..."
+    $SUDO mkdir -p /mnt/etc/nixos
+    $SUDO cp -r "$SCRIPT_DIR"/* /mnt/etc/nixos/
+    
+    # 7. Perform the installation
+    info "Starting nixos-install..."
+    if $SUDO nixos-install --flake "/mnt/etc/nixos#$hostname" --no-root-passwd; then
+        success "NixOS successfully installed to $DISK!"
+        echo ""
+        info "You can now reboot into your new system."
+        exit 0
+    else
+        error "nixos-install failed."
+    fi
+}
+
 # Setup sops age key from password-encrypted file
 setup_sops_key() {
     info "Setting up SOPS age key..."
@@ -152,7 +237,19 @@ rebuild_system() {
     
     # Stage all files for git (flake needs them)
     cd "$SCRIPT_DIR"
-    git add -A 2>/dev/null || warn "Not a git repo or git not available"
+    
+    # Initialize git if it's not a repository
+    if [ ! -d ".git" ]; then
+        info "Initializing git repository in $SCRIPT_DIR..."
+        git init
+        git add -A
+        git config user.name "refactor-gremlin"
+        git config user.email "refactor-gremlin@users.noreply.github.com"
+        git remote add origin git@github.com:refactor-gremlin/nixos-config.git
+        success "Git initialized with remote: git@github.com:refactor-gremlin/nixos-config.git"
+    else
+        git add -A 2>/dev/null || warn "Failed to stage files in existing git repo"
+    fi
     
     # Rebuild
     if $SUDO nixos-rebuild switch --flake "$SCRIPT_DIR#$hostname"; then
@@ -190,6 +287,18 @@ main() {
     
     info "Installing configuration for: $hostname"
     echo ""
+    
+    # Check if we should use disk installation mode
+    if [[ -f /etc/NIXOS ]]; then
+        # We are likely in a live ISO environment
+        read -p "Do you want to perform a fresh DISK installation? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            # Ensure sops key is set up before hardware config generation
+            setup_sops_key
+            disk_install "$hostname"
+        fi
+    fi
     
     # Step 1: Setup SOPS key
     setup_sops_key

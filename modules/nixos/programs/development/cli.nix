@@ -43,6 +43,7 @@
       killall
       btop
       man-pages
+      fastfetch     # Modern neofetch replacement
 
       # Network Tools
       nmap             # Network scanning and discovery

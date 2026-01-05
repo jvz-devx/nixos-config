@@ -21,6 +21,15 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    # ISO-specific user and autologin
+    users.users.nixos = {
+      isNormalUser = true;
+      extraGroups = [ "wheel" "networkmanager" "video" ];
+      initialPassword = "TEMP_ISO_PASSWORD"; # Replaced by create_server_iso.sh
+    };
+
+    services.getty.autologinUser = "nixos";
+
     # Copy flake source to /etc/nixos in the ISO/installed system
     # This ensures the flake is available for rebuilding after installation
     system.activationScripts.copy-flake = let
