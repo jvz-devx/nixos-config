@@ -58,6 +58,7 @@ in {
     fontconfig
     procps
     dbus
+    jq
 
     # Fonts
     inter
@@ -422,13 +423,6 @@ in {
   # Symlink the entire Nordic-Darker theme directory for Kvantum
   xdg.configFile."Kvantum/Nordic-Darker".source = "${pkgs.nordic}/share/Kvantum/Nordic-Darker";
 
-  # Cursor/VSCode settings
-  xdg.configFile."Cursor/User/settings.json".text = builtins.toJSON {
-    "editor.fontFamily" = "'${userFont}', 'JetBrainsMono Nerd Font', 'monospace'";
-    "editor.fontLigatures" = true;
-    "terminal.integrated.fontFamily" = "'${userFont}'";
-  };
-
   # Konsole Profile
   xdg.dataFile."konsole/Default.profile".text = ''
     [Appearance]
@@ -515,5 +509,27 @@ in {
     Description=Nordic
     Opacity=0.85
     Wallpaper=
+  '';
+
+  # Use an activation script to merge settings instead of a read-only symlink
+  # This allows Cursor to write to the file while we still enforce the font
+  home.activation.cursorSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    SETTINGS_FILE="$HOME/.config/Cursor/User/settings.json"
+    mkdir -p "$(dirname "$SETTINGS_FILE")"
+    
+    # Create empty JSON if it doesn't exist
+    if [ ! -f "$SETTINGS_FILE" ] || [ ! -s "$SETTINGS_FILE" ]; then
+      echo "{}" > "$SETTINGS_FILE"
+    fi
+
+    # Use jq to merge our desired font settings into the existing file
+    # This keeps the file WRITABLE for Cursor/Git
+    NEW_SETTINGS=$(${pkgs.jq}/bin/jq --arg userFont "${userFont}" '. + {
+      "editor.fontFamily": ($userFont + ", \"JetBrainsMono Nerd Font\", \"monospace\""),
+      "editor.fontLigatures": true,
+      "terminal.integrated.fontFamily": $userFont
+    }' "$SETTINGS_FILE")
+
+    echo "$NEW_SETTINGS" > "$SETTINGS_FILE"
   '';
 }
