@@ -13,6 +13,15 @@
     ../modules/home/plasma.nix
     ../modules/home/packages.nix
     ../modules/home/factory.nix
+
+    # Specialized package modules
+    ../modules/home/packages/stremio.nix
+    ../modules/home/packages/chrome.nix
+    ../modules/home/packages/tailscale.nix
+    ../modules/home/packages/gaming.nix
+    ../modules/home/packages/creative.nix
+    ../modules/home/packages/development.nix
+    ../modules/home/packages/communication.nix
   ];
 
   # Home Manager settings

@@ -1,6 +1,28 @@
 # KDE Plasma configuration via plasma-manager
 # Shared Plasma module for all users
 { pkgs, osConfig, lib, ... }: {
+  home.packages = with pkgs; [
+    # Theming (required for plasma.nix)
+    bibata-cursors
+    tela-icon-theme
+    nordzy-icon-theme
+    nordic
+
+    # Fonts
+    inter
+    noto-fonts-cjk-sans
+    noto-fonts-color-emoji
+    nerd-fonts.jetbrains-mono
+
+    # KDE extras
+    kdePackages.kde-gtk-config
+    kdePackages.breeze-gtk
+    kdePackages.breeze
+    kdePackages.qtstyleplugin-kvantum
+    kdePackages.qtmultimedia
+    smart-video-wallpaper
+  ];
+
   programs.plasma = {
     enable = true;
     overrideConfig = true;  # Force plasma-manager to rewrite configs on rebuild

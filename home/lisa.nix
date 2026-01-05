@@ -12,6 +12,11 @@
     ../modules/home/programs.nix
     ../modules/home/plasma.nix
     ../modules/home/packages.nix
+
+    # Specialized package modules
+    ../modules/home/packages/chrome.nix
+    ../modules/home/packages/stremio.nix
+    ../modules/home/packages/communication.nix
   ];
 
   # Home Manager settings
