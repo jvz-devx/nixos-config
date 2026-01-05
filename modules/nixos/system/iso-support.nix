@@ -8,6 +8,12 @@ in {
   options.myConfig.system.iso = {
     enable = lib.mkEnableOption "ISO support (flake copy, hardware detection)";
     
+    autologin = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable autologin for the nixos user (use for ISO builds only)";
+    };
+
     hostName = lib.mkOption {
       type = lib.types.str;
       description = "The hostname for this configuration (used in hardware config path)";
@@ -21,14 +27,14 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    # ISO-specific user and autologin
-    users.users.nixos = {
+    # ISO-specific user and autologin (only when autologin is enabled)
+    users.users.nixos = lib.mkIf cfg.autologin {
       isNormalUser = true;
       extraGroups = [ "wheel" "networkmanager" "video" ];
       initialPassword = "TEMP_ISO_PASSWORD"; # Replaced by create_server_iso.sh
     };
 
-    services.getty.autologinUser = "nixos";
+    services.getty.autologinUser = lib.mkIf cfg.autologin "nixos";
 
     # Force US keyboard for ISO environment (avoids Dutch layout confusion during install)
     console.keyMap = lib.mkForce "us";

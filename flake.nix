@@ -212,6 +212,8 @@
           ./modules/nixos/default.nix
           # Host configuration
           ./hosts/server-01/configuration.nix
+          # Enable ISO autologin
+          { myConfig.system.iso.autologin = true; }
         ];
       };
 
@@ -230,6 +232,8 @@
           ./modules/nixos/default.nix
           # Host configuration
           ./hosts/pc-02/configuration.nix
+          # Enable ISO autologin
+          { myConfig.system.iso.autologin = true; }
           # Home Manager
           home-manager.nixosModules.home-manager
           {
@@ -265,6 +269,8 @@
           ./modules/nixos/default.nix
           # Host configuration
           ./hosts/rog-strix/configuration.nix
+          # Enable ISO autologin
+          { myConfig.system.iso.autologin = true; }
           # Home Manager
           home-manager.nixosModules.home-manager
           {

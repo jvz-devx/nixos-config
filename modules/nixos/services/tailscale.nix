@@ -29,50 +29,57 @@
 
     # Fix autoconnect service timing - wait for tailscaled to be truly ready
     systemd.services.tailscaled-autoconnect = {
-      after = [ "network-online.target" "tailscaled.service" ];
-      wants = [ "network-online.target" "tailscaled.service" ];
+      description = "Automatic Tailscale authentication";
+      after = [ "network-online.target" "tailscaled.service" "sops-install-secrets.service" ];
+      wants = [ "network-online.target" "tailscaled.service" "sops-install-secrets.service" ];
+      wantedBy = [ "multi-user.target" ];
       
       # Override the built-in script to be more robust and use --reset
       script = lib.mkForce ''
         getState() {
-          ${pkgs.tailscale}/bin/tailscale status --json --peers=false | ${pkgs.jq}/bin/jq -r '.BackendState'
+          ${pkgs.tailscale}/bin/tailscale status --json --peers=false 2>/dev/null | ${pkgs.jq}/bin/jq -r '.BackendState' || echo "Unknown"
         }
 
+        echo "Starting Tailscale autoconnect loop..."
         lastState=""
-        while state="$(getState)"; do
+        while true; do
+          state="$(getState)"
           if [[ "$state" != "$lastState" ]]; then
+            echo "Current Tailscale state: $state"
             case "$state" in
               NeedsLogin|NeedsMachineAuth|Stopped)
                 echo "Server needs authentication, sending auth key"
-                # Use --reset to avoid "requires mentioning all non-default flags" error
-                ${pkgs.tailscale}/bin/tailscale up --reset \
-                  --exit-node-allow-lan-access \
-                  --advertise-exit-node \
-                  --auth-key "$(cat ${config.sops.secrets.tailscale_auth_key.path})"
+                if [[ -f ${config.sops.secrets.tailscale_auth_key.path} ]]; then
+                  ${pkgs.tailscale}/bin/tailscale up --reset \
+                    --exit-node-allow-lan-access \
+                    --advertise-exit-node \
+                    --auth-key "$(cat ${config.sops.secrets.tailscale_auth_key.path})" || echo "tailscale up failed, retrying..."
+                else
+                  echo "Waiting for Tailscale auth key secret to be decrypted..."
+                fi
                 ;;
               Running)
                 echo "Tailscale is running, ensuring flags are set"
-                ${pkgs.tailscale}/bin/tailscale up --reset \
+                ${pkgs.tailscale}/bin/tailscale up \
                   --exit-node-allow-lan-access \
-                  --advertise-exit-node \
-                  --auth-key "$(cat ${config.sops.secrets.tailscale_auth_key.path})"
+                  --advertise-exit-node || echo "tailscale up (refresh) failed"
                 exit 0
                 ;;
               *)
-                echo "Waiting for Tailscale State = Running (current: $state)"
+                echo "Waiting for transition (current: $state)"
                 ;;
             esac
           fi
           lastState="$state"
-          sleep 2
+          sleep 5
         done
       '';
 
       serviceConfig = {
-        ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
+        ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
         # Retry on failure
         Restart = "on-failure";
-        RestartSec = "5s";
+        RestartSec = "10s";
       };
       # Don't fail the entire activation if this fails immediately
       unitConfig = {
