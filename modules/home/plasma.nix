@@ -34,14 +34,20 @@ let
 </fontconfig>
 EOF
 
+    # Update KDE configuration directly (so it persists and is ready for next login/reload)
+    # Regular fonts (10pt)
+    for key in font fixed menuFont toolBarFont activeFont; do
+      ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kdeglobals --group General --key "$key" "$TARGET_FONT,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
+    done
+
+    # Small font (8pt)
+    ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kdeglobals --group General --key smallestReadableFont "$TARGET_FONT,8,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
+
     # 1. Refresh font cache
     ${pkgs.fontconfig}/bin/fc-cache -f
 
-    # 2. Poke KDE/Plasma to refresh settings live
-    # Type 1 = FontChanged
-    ${pkgs.dbus}/bin/dbus-send --type=signal /KGlobalSettings org.kde.KGlobalSettings.notifyChange int32:1 int32:0
-
-    ${pkgs.libnotify}/bin/notify-send "Font Switcher" "Switched to $TARGET_FONT instantly!" -i font
+    # 2. Notify User (Passive approach)
+    ${pkgs.libnotify}/bin/notify-send "Font Switcher" "Switched to $TARGET_FONT.\nPlease log out and back in for full effect." -i font
   '';
 in {
   home.packages = with pkgs; [
@@ -351,11 +357,6 @@ in {
       # Disable Baloo file indexer
       baloofilerc."Basic Settings"."Indexing-Enabled" = false;
       
-      # Konsole
-      "konsolerc"."Desktop Entry"."DefaultProfile" = "Default.profile";
-      "konsolerc"."Favorite Profiles"."Favorites" = "Default.profile";
-      "konsolerc"."UiSettings"."ColorScheme" = "NordicDarker";
-
       # General settings
       kdeglobals.General.widgetStyle = "kvantum";
       kdeglobals.KDE.SingleClick = false;
@@ -423,94 +424,6 @@ in {
 
   # Symlink the entire Nordic-Darker theme directory for Kvantum
   xdg.configFile."Kvantum/Nordic-Darker".source = "${pkgs.nordic}/share/Kvantum/Nordic-Darker";
-
-  # Konsole Profile
-  xdg.dataFile."konsole/Default.profile".text = ''
-    [Appearance]
-    ColorScheme=Nordic
-    Font=${userFont},10,-1,5,50,0,0,0,0,0
-    Blur=true
-    Opacity=0.85
-
-    [General]
-    Name=Default
-    Parent=FALLBACK
-
-    [Scrolling]
-    HistoryMode=2
-    HistorySize=10000
-
-    [Terminal Features]
-    BlinkingCursorEnabled=true
-  '';
-
-  # Nordic Konsole Color Scheme
-  xdg.dataFile."konsole/Nordic.colorscheme".text = ''
-    [Background]
-    Color=46,52,64
-
-    [BackgroundIntense]
-    Color=59,66,82
-
-    [Color0]
-    Color=59,66,82
-
-    [Color0Intense]
-    Color=76,86,106
-
-    [Color1]
-    Color=191,97,106
-
-    [Color1Intense]
-    Color=191,97,106
-
-    [Color2]
-    Color=163,190,140
-
-    [Color2Intense]
-    Color=163,190,140
-
-    [Color3]
-    Color=235,203,139
-
-    [Color3Intense]
-    Color=235,203,139
-
-    [Color4]
-    Color=129,161,193
-
-    [Color4Intense]
-    Color=129,161,193
-
-    [Color5]
-    Color=180,142,173
-
-    [Color5Intense]
-    Color=180,142,173
-
-    [Color6]
-    Color=136,192,208
-
-    [Color6Intense]
-    Color=143,188,187
-
-    [Color7]
-    Color=229,233,240
-
-    [Color7Intense]
-    Color=236,239,244
-
-    [Foreground]
-    Color=216,222,233
-
-    [ForegroundIntense]
-    Color=236,239,244
-
-    [General]
-    Description=Nordic
-    Opacity=0.85
-    Wallpaper=
-  '';
 
   # NOTE: Cursor settings are NOT managed by Nix to avoid conflicts with
   # Cursor's internal file locking and sandbox caching.

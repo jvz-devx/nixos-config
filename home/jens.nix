@@ -11,6 +11,7 @@
     ../modules/home/shell.nix
     ../modules/home/programs.nix
     ../modules/home/plasma.nix
+    ../modules/home/konsole.nix
     ../modules/home/factory.nix
 
     # Specialized package modules
@@ -59,6 +60,9 @@
       identityFile = "~/.ssh/id_ed25519";
       identitiesOnly = true;
       addKeysToAgent = "yes";
+    };
+    "proxmox" = {
+      hostname = config.sops.placeholder.proxmox_host;
     };
   };
 
