@@ -8,6 +8,7 @@
         "--ignore-gpu-blocklist"
         "--enable-gpu-rasterization"
         "--enable-zero-copy"
+        "--enable-blink-features=MiddleClickAutoscroll"
       ];
     })
   ];

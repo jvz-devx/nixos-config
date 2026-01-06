@@ -51,7 +51,7 @@
                 echo "Server needs authentication, sending auth key"
                 if [[ -f ${config.sops.secrets.tailscale_auth_key.path} ]]; then
                   ${pkgs.tailscale}/bin/tailscale up --reset \
-                    --exit-node-allow-lan-access \
+                    ${lib.escapeShellArgs config.services.tailscale.extraSetFlags} \
                     --advertise-exit-node \
                     --auth-key "$(cat ${config.sops.secrets.tailscale_auth_key.path})" || echo "tailscale up failed, retrying..."
                 else
@@ -60,10 +60,9 @@
                 ;;
               Running)
                 echo "Tailscale is running, ensuring flags are set"
-                ${pkgs.tailscale}/bin/tailscale up \
-                  --exit-node-allow-lan-access \
+                ${pkgs.tailscale}/bin/tailscale up --reset \
+                  ${lib.escapeShellArgs config.services.tailscale.extraSetFlags} \
                   --advertise-exit-node || echo "tailscale up (refresh) failed"
-                exit 0
                 ;;
               *)
                 echo "Waiting for transition (current: $state)"
@@ -76,6 +75,7 @@
       '';
 
       serviceConfig = {
+        Type = lib.mkForce "simple";
         ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
         # Retry on failure
         Restart = "on-failure";

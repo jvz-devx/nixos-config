@@ -20,12 +20,12 @@
     ../modules/home/packages/gui/chrome.nix
     ../modules/home/packages/gui/tailscale.nix
     ../modules/home/packages/gui/gaming.nix
+    ../modules/home/packages/gui/proton-run.nix
     ../modules/home/packages/gui/creative.nix
     ../modules/home/packages/cli/development.nix
     ../modules/home/packages/gui/communication.nix
     ../modules/home/packages/cli/base.nix
     ../modules/home/packages/gui/base.nix
-    ../modules/home/packages/gui/kitty.nix
   ];
 
   # Home Manager settings
@@ -45,8 +45,8 @@
 
   # User-specific git config
   programs.git.settings = {
-    user.name = "refactor-gremlin";
-    user.email = "refactor-gremlin@users.noreply.github.com";
+    user.name = "jvz-devx";
+    user.email = "jvz-devx@users.noreply.github.com";
     # Fix for "Bad owner or permissions on ~/.ssh/config" when running in namespaced environments (like Cursor)
     # This bypasses the SSH config file for Git operations and specifies the identity file directly.
     core.sshCommand = "ssh -i /home/jens/.ssh/id_ed25519 -o IdentitiesOnly=yes -F /dev/null";

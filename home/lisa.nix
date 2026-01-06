@@ -19,6 +19,7 @@
     ../modules/home/packages/gui/chrome.nix
     ../modules/home/packages/gui/tailscale.nix
     ../modules/home/packages/gui/gaming.nix
+    ../modules/home/packages/gui/proton-run.nix
     ../modules/home/packages/gui/creative.nix
     ../modules/home/packages/cli/development.nix
     ../modules/home/packages/gui/communication.nix

@@ -29,6 +29,9 @@
 
     # Ensure ksshaskpass is available
     environment.systemPackages = [ pkgs.kdePackages.ksshaskpass ];
+
+    # Enable nix-ld for running unpatched binaries
+    programs.nix-ld.enable = true;
   };
 }
 

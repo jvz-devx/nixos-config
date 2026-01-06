@@ -259,16 +259,16 @@ rebuild_system() {
     if [ ! -d ".git" ]; then
         info "Initializing git repository..."
         git init
-        git remote add origin git@github.com:refactor-gremlin/nixos-config.git
-        git config user.name "refactor-gremlin"
-        git config user.email "refactor-gremlin@users.noreply.github.com"
+        git remote add origin git@github.com:jvz-devx/nixos-config.git
+        git config user.name "jvz-devx"
+        git config user.email "jvz-devx@users.noreply.github.com"
     fi
 
     # 3. Ensure remote is correct
     if ! git remote | grep -q "origin"; then
-        git remote add origin git@github.com:refactor-gremlin/nixos-config.git
+        git remote add origin git@github.com:jvz-devx/nixos-config.git
     else
-        git remote set-url origin git@github.com:refactor-gremlin/nixos-config.git
+        git remote set-url origin git@github.com:jvz-devx/nixos-config.git
     fi
 
     # 4. Try to sync from GitHub if keys are available

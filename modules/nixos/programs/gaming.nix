@@ -60,10 +60,12 @@
     # System packages - gaming tools
     environment.systemPackages = with pkgs; [
       # Proton/Wine
+      bottles            # Wine/Proton prefix manager
       protonup-qt        # Proton version manager
       protontricks       # Proton helper scripts
       wine               # Wine for non-Steam games
       winetricks         # Wine helper scripts
+      wine-wayland       # Better Wine for Wayland/KDE
 
       # Performance overlay
       mangohud           # FPS/performance overlay

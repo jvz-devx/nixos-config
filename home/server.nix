@@ -32,8 +32,8 @@
 
   # User-specific git config
   programs.git.settings = {
-    user.name = "refactor-gremlin";
-    user.email = "refactor-gremlin@users.noreply.github.com";
+    user.name = "jvz-devx";
+    user.email = "jvz-devx@users.noreply.github.com";
     core.sshCommand = "ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -F /dev/null";
   };
 

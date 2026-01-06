@@ -16,7 +16,7 @@ Personal NixOS + Home Manager configuration for multiple machines with automatic
 # 1. Boot into NixOS installer or minimal system
 
 # 2. Clone this repo
-git clone https://github.com/refactor-gremlin/nixos-config /etc/nixos
+git clone https://github.com/jvz-devx/nixos-config /etc/nixos
 cd /etc/nixos
 
 # 3. Run the install script (will prompt for secrets password)
