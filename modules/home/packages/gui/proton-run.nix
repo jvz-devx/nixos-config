@@ -1,5 +1,4 @@
-{ pkgs, ... }: 
-let
+{pkgs, ...}: let
   # A transparent runner that uses standard Wine but wrapped in steam-run
   # for maximum compatibility. It respects existing WINEPREFIX if you are
   # launching from a specific game folder.
@@ -19,7 +18,7 @@ let
     exec ${pkgs.steam-run}/bin/steam-run ${pkgs.wineWowPackages.stable}/bin/wine "$@"
   '';
 in {
-  home.packages = [ proton-run ];
+  home.packages = [proton-run];
 
   # Associate .exe and .msi files with our transparent runner
   xdg.desktopEntries.proton-run = {
@@ -27,11 +26,11 @@ in {
     exec = "${proton-run}/bin/proton-run %f";
     icon = "wine";
     terminal = true; # Open a terminal so you can see errors if it fails
-    mimeType = [ "application/x-ms-dos-executable" "application/x-msi" ];
+    mimeType = ["application/x-ms-dos-executable" "application/x-msi"];
   };
 
   xdg.mimeApps.defaultApplications = {
-    "application/x-ms-dos-executable" = [ "proton-run.desktop" ];
-    "application/x-msi" = [ "proton-run.desktop" ];
+    "application/x-ms-dos-executable" = ["proton-run.desktop"];
+    "application/x-msi" = ["proton-run.desktop"];
   };
 }

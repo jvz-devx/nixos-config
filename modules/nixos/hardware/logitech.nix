@@ -1,7 +1,10 @@
 # Logitech hardware support and mouse tweaks
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.myConfig.hardware.logitech;
 in {
   options.myConfig.hardware.logitech = {
@@ -13,7 +16,7 @@ in {
     services.ratbagd.enable = true;
 
     # Piper is the GUI for ratbagd
-    environment.systemPackages = [ pkgs.piper ];
+    environment.systemPackages = [pkgs.piper];
 
     # Fix for G502 hypersensitive scrolling in games (High-Res Scroll)
     # This disables high-resolution scrolling events which many games misinterpret

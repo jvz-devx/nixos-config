@@ -1,5 +1,9 @@
 # Power configuration for laptop - suspend, hibernate, lid actions
-{ config, lib, ... }: {
+{
+  config,
+  lib,
+  ...
+}: {
   options.myConfig.system.power.enable = lib.mkEnableOption "Laptop power management (suspend, hibernate, lid actions)";
 
   config = lib.mkIf config.myConfig.system.power.enable {
@@ -26,4 +30,3 @@
     '';
   };
 }
-

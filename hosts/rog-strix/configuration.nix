@@ -18,9 +18,9 @@
   # Enable profiles and options
   myConfig.profiles.workstation.enable = true;
   myConfig.services.tailscale.enable = true;
-  myConfig.services.tailscale.operator = "jens";  # Allow ktailctl GUI to work
+  myConfig.services.tailscale.operator = "jens"; # Allow ktailctl GUI to work
   myConfig.services.nas.enable = true;
-  myConfig.secrets.sshKeyUser = "jens";  # Deploy SSH key to this user
+  myConfig.secrets.sshKeyUser = "jens"; # Deploy SSH key to this user
 
   # Enable ISO support (flake copy, hardware detection)
   myConfig.system.iso.enable = true;
@@ -50,7 +50,7 @@
       inputs.self.overlays.additions
       inputs.self.overlays.modifications
       inputs.self.overlays.stable-packages
-      inputs.chaotic.overlays.default  # CachyOS packages overlay
+      inputs.chaotic.overlays.default # CachyOS packages overlay
     ];
     config = {
       allowUnfree = true;

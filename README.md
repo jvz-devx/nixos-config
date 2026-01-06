@@ -1,123 +1,81 @@
-# NixOS Multi-Host Configuration
+# ❄️ NixOS Multi-Host Configuration
 
-Personal NixOS + Home Manager configuration for multiple machines with automatic secrets management.
+[![NixOS Unstable](https://img.shields.io/badge/NixOS-unstable-blue.svg?logo=nixos&logoColor=white)](https://nixos.org)
+[![Plasma 6](https://img.shields.io/badge/Desktop-KDE%20Plasma%206-blue?logo=kde&logoColor=white)](https://kde.org/plasma-desktop/)
+[![Gaming](https://img.shields.io/badge/Gaming-CachyOS%20Kernel-orange?logo=steam&logoColor=white)](https://github.com/chaotic-cx/nyx)
+[![Secrets](https://img.shields.io/badge/Secrets-sops--nix-green?logo=lock&logoColor=white)](https://github.com/Mic92/sops-nix)
 
-## Hosts
+A sophisticated, multi-host NixOS configuration using Flakes and Home Manager. Features declarative desktop environments, gaming optimizations, and automated secrets management.
 
-| Host | Description | User |
-|------|-------------|------|
-| `pc-02` | Desktop - AMD CPU + NVIDIA GPU | Lisa |
-| `rog-strix` | ROG Strix G16 Laptop - Intel CPU + NVIDIA GPU | Jens |
-| `server-01` | Headless Server | - |
+## 🚀 Key Features
 
-## Quick Install (New Machine)
+- **Multi-Host Architecture**: Unified configuration for desktops, laptops, and servers.
+- **KDE Plasma 6**: Declarative desktop configuration via `plasma-manager`.
+- **Gaming Optimized**: CachyOS kernel via `chaotic-nyx`, NVIDIA stability tweaks, and Steam/Heroic/Lutris pre-configured.
+- **Secure Secrets**: Integrated `sops-nix` with `age` encryption for sensitive data.
+- **Automated ISOs**: Generate custom installation media for any host with one command.
+- **Development Ready**: Comprehensive dev environments for Python, Node.js, and Rust.
+
+## 🖥️ Managed Hosts
+
+| Host | Description | Specs | Primary User |
+|------|-------------|-------|--------------|
+| `pc-02` | High-End Desktop | AMD CPU + NVIDIA GPU | Lisa |
+| `rog-strix` | Gaming Laptop | Intel CPU + NVIDIA GPU (ASUS) | Jens |
+| `server-01` | Headless Server | x86_64 Minimal | Admin |
+
+## 🛠️ Project Structure
+
+```text
+.
+├── flake.nix             # System entry point & input management
+├── hosts/                # Host-specific hardware and overrides
+│   ├── pc-02/            # Lisa's desktop configuration
+│   ├── rog-strix/        # Jens' laptop (ASUS specialized)
+│   └── server-01/        # Minimal server setup
+├── home/                 # User-specific Home Manager configs
+├── modules/              # Reusable system and user modules
+│   ├── nixos/            # System-level modules (services, hardware)
+│   └── home/             # User-level modules (programs, dotfiles)
+├── pkgs/                 # Custom package definitions
+├── overlays/             # Nixpkgs overlays and patches
+└── secrets/              # Encrypted secrets via sops-nix
+```
+
+## 📥 Installation
 
 ```bash
-# 1. Boot into NixOS installer or minimal system
-
-# 2. Clone this repo
-git clone https://github.com/jvz-devx/nixos-config /etc/nixos
+# 1. Clone to /etc/nixos
+sudo git clone https://github.com/jvz-devx/nixos-config /etc/nixos
 cd /etc/nixos
 
-# 3. Run the install script (will prompt for secrets password)
-./install.sh <hostname>
-
-# Example:
-./install.sh pc-02
+# 2. Deploy using the install script
+sudo ./install.sh <hostname>
 ```
 
-The install script will:
-1. Decrypt your secrets key (prompts for password)
-2. Generate hardware configuration
-3. Build and switch to the configuration
-4. Auto-authenticate Tailscale
-
-## Structure
-
-```
-.
-├── flake.nix                 # Main entry point
-├── install.sh                # First-time install script
-├── age-key.enc               # Password-encrypted secrets key
-├── secrets/
-│   └── common.yaml           # Encrypted secrets (Tailscale, etc.)
-├── .sops.yaml                # Secrets encryption config
-├── hosts/
-│   ├── pc-02/                # Lisa's desktop
-│   ├── rog-strix/            # Jens' laptop
-│   └── server-01/            # Headless server
-├── home/
-│   ├── lisa.nix              # Lisa's home-manager config
-│   └── jens.nix              # Jens' home-manager config
-├── modules/
-│   ├── nixos/                # System modules
-│   └── home/                 # Home-manager modules
-├── overlays/                 # Package overlays
-└── pkgs/                     # Custom packages
-```
-
-## Daily Usage
+## 🔄 Daily Workflow
 
 ```bash
-# Rebuild system (includes home-manager)
-sudo nixos-rebuild switch --flake /etc/nixos#<hostname>
-
-# Or use the alias (already configured)
+# Rebuild the current system
 rebuild
 
-# Update flake inputs
+# Update all inputs
 nix flake update
 
-# Build without switching (test)
-nixos-rebuild build --flake /etc/nixos#<hostname>
+# Build a custom ISO for a host (useful for server)
+nix build .#<hostname>-iso
 ```
 
-## Secrets Management
+## 🔐 Secrets Management
 
-Secrets are encrypted with [sops-nix](https://github.com/Mic92/sops-nix) using age encryption.
+We use `sops-nix` with `age`. Your private key is stored password-encrypted in `age-key.enc`.
 
-### How It Works
+```bash
+# Edit secrets
+sops secrets/common.yaml
 
-1. Your age key is encrypted with a password → `age-key.enc`
-2. Secrets are encrypted with the age key → `secrets/common.yaml`
-3. On new machines: enter password → decrypt age key → NixOS decrypts secrets
+# Re-encrypt key after change
+age -p -a -o age-key.enc /tmp/new-key.txt
+```
 
-### Add/Edit Secrets
-
-   ```bash
-# Edit secrets (opens in $EDITOR)
-nix-shell -p sops --run 'sops /etc/nixos/secrets/common.yaml'
-   ```
-
-### Regenerate Age Key (if compromised)
-
-   ```bash
-# Generate new key
-nix-shell -p age --run 'age-keygen -o /tmp/new-key.txt'
-
-# Update .sops.yaml with new public key
-# Then re-encrypt all secrets:
-nix-shell -p sops --run 'sops updatekeys secrets/common.yaml'
-
-# Encrypt the new key with password
-nix-shell -p age --run 'age -p -a -o age-key.enc /tmp/new-key.txt'
-
-# Install for current machine
-sudo cp /tmp/new-key.txt /root/.config/sops/age/keys.txt
-rm /tmp/new-key.txt
-   ```
-
-## Building ISOs
-
-   ```bash
-# Build installation ISO for a host
-nix build .#pc-02-iso
-nix build .#rog-strix-iso
-nix build .#server-01-iso
-
-# ISO will be at: result/iso/*.iso
-   ```
-
-## See Also
-
-- [GPU_MODE_GUIDE.md](GPU_MODE_GUIDE.md) — NVIDIA GPU mode switching (laptop)
+---

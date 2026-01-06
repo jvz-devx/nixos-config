@@ -1,6 +1,11 @@
 # Shell configuration - Zsh, Oh-My-Zsh
 # Shared shell module for all users
-{ pkgs, config, lib, ... }: {
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}: {
   # Default editor
   home.sessionVariables = {
     EDITOR = "nano";
@@ -66,7 +71,7 @@
       docker-compose = "docker compose";
 
       # Bitwarden
-      bwu = "bw-unlock";  # Quick unlock alias
+      bwu = "bw-unlock"; # Quick unlock alias
     };
 
     # Shell functions and initialization
@@ -128,5 +133,3 @@
     nix-direnv.enable = true;
   };
 }
-
-

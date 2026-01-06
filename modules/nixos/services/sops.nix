@@ -1,9 +1,13 @@
 # SOPS secrets management configuration
 # Configures sops-nix for decrypting secrets at activation time
-{ config, lib, ... }: {
+{
+  config,
+  lib,
+  ...
+}: {
   options.myConfig.secrets = {
     enable = lib.mkEnableOption "SOPS secrets management";
-    
+
     sshKeyUser = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
@@ -58,21 +62,30 @@
         ssh_private_key = {
           key = "ssh_private_key";
           mode = "0600";
-          owner = if config.myConfig.secrets.sshKeyUser != null then config.myConfig.secrets.sshKeyUser else "root";
+          owner =
+            if config.myConfig.secrets.sshKeyUser != null
+            then config.myConfig.secrets.sshKeyUser
+            else "root";
         };
 
         # SSH public key
         ssh_public_key = {
           key = "ssh_public_key";
           mode = "0644";
-          owner = if config.myConfig.secrets.sshKeyUser != null then config.myConfig.secrets.sshKeyUser else "root";
+          owner =
+            if config.myConfig.secrets.sshKeyUser != null
+            then config.myConfig.secrets.sshKeyUser
+            else "root";
         };
 
         # GPG private key
         gpg_private_key = {
           key = "gpg_private_key";
           mode = "0400";
-          owner = if config.myConfig.secrets.sshKeyUser != null then config.myConfig.secrets.sshKeyUser else "root";
+          owner =
+            if config.myConfig.secrets.sshKeyUser != null
+            then config.myConfig.secrets.sshKeyUser
+            else "root";
         };
       };
     };
@@ -85,15 +98,15 @@
       echo "Setting up SSH key symlinks for ${user}..."
       mkdir -p ${homeDir}/.ssh
       chmod 700 ${homeDir}/.ssh
-      
+
       # Create symlinks to the decrypted secrets
       ln -sf /run/secrets/ssh_private_key ${homeDir}/.ssh/id_ed25519
       ln -sf /run/secrets/ssh_public_key ${homeDir}/.ssh/id_ed25519.pub
-      
+
       # Ensure ownership of the directory and the symlinks we created
       chown ${user}:users ${homeDir}/.ssh
       chown -h ${user}:users ${homeDir}/.ssh/id_ed25519 ${homeDir}/.ssh/id_ed25519.pub
-      
+
       echo "SSH key symlinks created in ${homeDir}/.ssh/"
     '');
 
@@ -109,4 +122,3 @@
     '');
   };
 }
-

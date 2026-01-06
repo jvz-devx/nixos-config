@@ -20,16 +20,20 @@
         inherit (final) system;
         config.allowUnfree = true;
       };
-    in pkgs-master.vesktop.overrideAttrs (old: {
-      preBuild = (old.preBuild or "") + ''
-        cp -r ${pkgs-master.electron.dist} ./electron-dist
-        chmod -R u+w ./electron-dist
-      '';
-      buildPhase = builtins.replaceStrings
-        ["-c.electronDist=${pkgs-master.electron.dist}"]
-        ["-c.electronDist=./electron-dist"]
-        old.buildPhase;
-    });
+    in
+      pkgs-master.vesktop.overrideAttrs (old: {
+        preBuild =
+          (old.preBuild or "")
+          + ''
+            cp -r ${pkgs-master.electron.dist} ./electron-dist
+            chmod -R u+w ./electron-dist
+          '';
+        buildPhase =
+          builtins.replaceStrings
+          ["-c.electronDist=${pkgs-master.electron.dist}"]
+          ["-c.electronDist=./electron-dist"]
+          old.buildPhase;
+      });
   };
 
   # When applied, the stable nixpkgs set (declared in the flake inputs) will
@@ -41,4 +45,3 @@
     };
   };
 }
-

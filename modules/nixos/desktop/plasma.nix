@@ -1,6 +1,11 @@
 # KDE Plasma 6 configuration
 # Shared module for all hosts using Plasma desktop
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   options.myConfig.desktop.plasma.enable = lib.mkEnableOption "KDE Plasma 6 desktop environment";
 
   config = lib.mkIf config.myConfig.desktop.plasma.enable {
@@ -8,7 +13,7 @@
     services.xserver = {
       enable = true;
       # Exclude default X11 packages we don't want
-      excludePackages = [ pkgs.xterm ];
+      excludePackages = [pkgs.xterm];
     };
 
     # Display manager
@@ -28,11 +33,9 @@
     programs.ssh.askPassword = "${pkgs.kdePackages.ksshaskpass}/bin/ksshaskpass";
 
     # Ensure ksshaskpass is available
-    environment.systemPackages = [ pkgs.kdePackages.ksshaskpass ];
+    environment.systemPackages = [pkgs.kdePackages.ksshaskpass];
 
     # Enable nix-ld for running unpatched binaries
     programs.nix-ld.enable = true;
   };
 }
-
-

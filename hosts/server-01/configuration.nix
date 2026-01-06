@@ -14,7 +14,7 @@
 
   # Enable server profile
   myConfig.profiles.server.enable = true;
-  myConfig.secrets.sshKeyUser = "admin";  # Deploy SSH/GPG keys to this user
+  myConfig.secrets.sshKeyUser = "admin"; # Deploy SSH/GPG keys to this user
 
   # Enable ISO support (flake copy, hardware detection)
   myConfig.system.iso.enable = true;
@@ -40,7 +40,7 @@
       experimental-features = "nix-command flakes";
       flake-registry = "";
       nix-path = config.nix.nixPath;
-      trusted-users = [ "root" "admin" "@wheel" ];
+      trusted-users = ["root" "admin" "@wheel"];
     };
     channel.enable = false;
     registry = lib.mapAttrs (_: flake: {inherit flake;}) flakeInputs;
@@ -78,11 +78,10 @@
     enable = true;
     settings = {
       PermitRootLogin = "no";
-      PasswordAuthentication = true;  # Can be disabled after setting up SSH keys
+      PasswordAuthentication = true; # Can be disabled after setting up SSH keys
     };
   };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "25.05";
 }
-

@@ -1,7 +1,7 @@
 # User programs configuration - git, editors, etc.
 # Shared programs module for all users
 # Note: User-specific settings like git name/email should be set in the user's home.nix
-{ pkgs, ... }: {
+{pkgs, ...}: {
   # Git (basic config, user details should be set per-user)
   programs.git = {
     enable = true;
@@ -33,5 +33,3 @@
     enableDefaultConfig = false;
   };
 }
-
-

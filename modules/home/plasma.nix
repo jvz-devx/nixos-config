@@ -1,53 +1,57 @@
 # KDE Plasma configuration via plasma-manager
 # Shared Plasma module for all users
-{ pkgs, osConfig, lib, ... }: 
-let
+{
+  pkgs,
+  osConfig,
+  lib,
+  ...
+}: let
   # This is the "virtual" font name all apps will use.
   # The toggle-font script will point this name to either Monocraft or Miracode.
   userFont = "GlobalUserFont";
 
   # Script to toggle between fonts instantly using fontconfig aliases
   toggle-font = pkgs.writeShellScriptBin "toggle-font" ''
-    CONF_DIR="$HOME/.config/fontconfig/conf.d"
-    CONF_FILE="$CONF_DIR/99-user-font.conf"
-    mkdir -p "$CONF_DIR"
+        CONF_DIR="$HOME/.config/fontconfig/conf.d"
+        CONF_FILE="$CONF_DIR/99-user-font.conf"
+        mkdir -p "$CONF_DIR"
 
-    # Determine current font and swap
-    if grep -q "Monocraft Nerd Font" "$CONF_FILE" 2>/dev/null; then
-      TARGET_FONT="Miracode"
-    else
-      TARGET_FONT="Monocraft Nerd Font"
-    fi
+        # Determine current font and swap
+        if grep -q "Monocraft Nerd Font" "$CONF_FILE" 2>/dev/null; then
+          TARGET_FONT="Miracode"
+        else
+          TARGET_FONT="Monocraft Nerd Font"
+        fi
 
-    # Create the fontconfig alias
-    rm -f "$CONF_FILE"
-    cat > "$CONF_FILE" <<EOF
-<?xml version="1.0"?>
-<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
-<fontconfig>
-  <alias>
-    <family>${userFont}</family>
-    <prefer>
-      <family>$TARGET_FONT</family>
-    </prefer>
-  </alias>
-</fontconfig>
-EOF
+        # Create the fontconfig alias
+        rm -f "$CONF_FILE"
+        cat > "$CONF_FILE" <<EOF
+    <?xml version="1.0"?>
+    <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+    <fontconfig>
+      <alias>
+        <family>${userFont}</family>
+        <prefer>
+          <family>$TARGET_FONT</family>
+        </prefer>
+      </alias>
+    </fontconfig>
+    EOF
 
-    # Update KDE configuration directly (so it persists and is ready for next login/reload)
-    # Regular fonts (10pt)
-    for key in font fixed menuFont toolBarFont activeFont; do
-      ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kdeglobals --group General --key "$key" "$TARGET_FONT,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
-    done
+        # Update KDE configuration directly (so it persists and is ready for next login/reload)
+        # Regular fonts (10pt)
+        for key in font fixed menuFont toolBarFont activeFont; do
+          ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kdeglobals --group General --key "$key" "$TARGET_FONT,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
+        done
 
-    # Small font (8pt)
-    ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kdeglobals --group General --key smallestReadableFont "$TARGET_FONT,8,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
+        # Small font (8pt)
+        ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kdeglobals --group General --key smallestReadableFont "$TARGET_FONT,8,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
 
-    # 1. Refresh font cache
-    ${pkgs.fontconfig}/bin/fc-cache -f
+        # 1. Refresh font cache
+        ${pkgs.fontconfig}/bin/fc-cache -f
 
-    # 2. Notify User (Passive approach)
-    ${pkgs.libnotify}/bin/notify-send "Font Switcher" "Switched to $TARGET_FONT.\nPlease log out and back in for full effect." -i font
+        # 2. Notify User (Passive approach)
+        ${pkgs.libnotify}/bin/notify-send "Font Switcher" "Switched to $TARGET_FONT.\nPlease log out and back in for full effect." -i font
   '';
 in {
   home.packages = with pkgs; [
@@ -101,7 +105,7 @@ in {
 
   programs.plasma = {
     enable = true;
-    overrideConfig = true;  # Force plasma-manager to rewrite configs on rebuild
+    overrideConfig = true; # Force plasma-manager to rewrite configs on rebuild
 
     # Workspace appearance
     workspace = {
@@ -154,7 +158,7 @@ in {
         widgets = [
           # Global Menu (Application Menu) on the left
           "org.kde.plasma.appmenu"
-          
+
           # Pager (Virtual Desktop Switcher) next to clock
           "org.kde.plasma.pager"
 
@@ -191,7 +195,7 @@ in {
         location = "bottom";
         # Thicker panel => visually larger corner radius when floating (more rounded "pill" look)
         height = 58;
-        lengthMode = "fit";  # Fit content instead of full screen width
+        lengthMode = "fit"; # Fit content instead of full screen width
         hiding = "autohide";
         floating = true;
         opacity = "translucent";
@@ -217,7 +221,7 @@ in {
                   "applications:google-chrome.desktop"
                   "applications:steam.desktop"
                 ]
-                else [ ];
+                else [];
             };
           }
         ];
@@ -356,7 +360,7 @@ in {
 
       # Disable Baloo file indexer
       baloofilerc."Basic Settings"."Indexing-Enabled" = false;
-      
+
       # General settings
       kdeglobals.General.widgetStyle = "kvantum";
       kdeglobals.KDE.SingleClick = false;

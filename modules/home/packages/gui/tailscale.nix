@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   home.packages = with pkgs; [
     ktailctl
   ];
@@ -15,4 +15,3 @@
     X-GNOME-Autostart-enabled=true
   '';
 }
-

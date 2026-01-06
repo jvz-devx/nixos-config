@@ -1,6 +1,10 @@
 # Maintenance configuration - GC, store optimization, fwupd
 # Shared maintenance module for all hosts
-{ config, lib, ... }: {
+{
+  config,
+  lib,
+  ...
+}: {
   options.myConfig.services.maintenance.enable = lib.mkEnableOption "System maintenance (GC, store optimization, firmware updates)";
 
   config = lib.mkIf config.myConfig.services.maintenance.enable {
@@ -18,5 +22,3 @@
     services.fwupd.enable = true;
   };
 }
-
-

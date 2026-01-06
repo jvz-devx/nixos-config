@@ -1,6 +1,11 @@
 # Gaming configuration - Steam, Proton, GameMode
 # Shared gaming module for all hosts
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   options.myConfig.programs.gaming = {
     enable = lib.mkEnableOption "Gaming support (Steam, Proton, GameMode)";
     sunshine.enable = lib.mkEnableOption "Sunshine Game Stream";
@@ -60,25 +65,25 @@
     # System packages - gaming tools
     environment.systemPackages = with pkgs; [
       # Proton/Wine
-      bottles            # Wine/Proton prefix manager
-      protonup-qt        # Proton version manager
-      protontricks       # Proton helper scripts
-      wine               # Wine for non-Steam games
-      winetricks         # Wine helper scripts
-      wine-wayland       # Better Wine for Wayland/KDE
+      bottles # Wine/Proton prefix manager
+      protonup-qt # Proton version manager
+      protontricks # Proton helper scripts
+      wine # Wine for non-Steam games
+      winetricks # Wine helper scripts
+      wine-wayland # Better Wine for Wayland/KDE
 
       # Performance overlay
-      mangohud           # FPS/performance overlay
-      goverlay           # MangoHud GUI configurator
+      mangohud # FPS/performance overlay
+      goverlay # MangoHud GUI configurator
 
       # Gamescope
-      gamescope          # Micro-compositor for games
+      gamescope # Micro-compositor for games
 
       # Game Streaming
-      moonlight-qt       # Moonlight client
+      moonlight-qt # Moonlight client
 
       # Emulators
-      dolphin-emu        # GameCube/Wii emulator
+      dolphin-emu # GameCube/Wii emulator
     ];
 
     # Udev rules for GameCube controllers (dolphin-emu)
@@ -96,5 +101,3 @@
     # ];
   };
 }
-
-

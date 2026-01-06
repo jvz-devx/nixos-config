@@ -1,6 +1,11 @@
 # Audio configuration - PipeWire, ALSA, rtkit
 # Shared audio module for all hosts
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   options.myConfig.hardware.audio.enable = lib.mkEnableOption "Audio support (PipeWire, ALSA, rtkit)";
 
   config = lib.mkIf config.myConfig.hardware.audio.enable {
@@ -42,5 +47,3 @@
     };
   };
 }
-
-

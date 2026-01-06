@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   # Ensure the .factory directory exists
   home.activation.createFactoryDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
     $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.factory
@@ -7,12 +12,12 @@
   sops = {
     # Default secrets file
     defaultSopsFile = ../../secrets/common.yaml;
-    
+
     # Age key location (Home Manager needs this if not using system-level sops)
     age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
     # Define the secret we need for the template
-    secrets.zai_api_key = { };
+    secrets.zai_api_key = {};
 
     # Template the config file
     templates."factory-config" = {
@@ -34,4 +39,3 @@
     };
   };
 }
-

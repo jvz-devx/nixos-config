@@ -79,14 +79,18 @@
       };
   in rec {
     # Custom packages - available for all supported systems
-    packages = forAllSystems (system: import ./pkgs (pkgsFor system)) // {
-      x86_64-linux = (forAllSystems (system: import ./pkgs (pkgsFor system))).x86_64-linux // {
-        # ISO images for all hosts
-        server-01-iso = nixosConfigurations.server-01-iso.config.system.build.isoImage;
-        pc-02-iso = nixosConfigurations.pc-02-iso.config.system.build.isoImage;
-        rog-strix-iso = nixosConfigurations.rog-strix-iso.config.system.build.isoImage;
+    packages =
+      forAllSystems (system: import ./pkgs (pkgsFor system))
+      // {
+        x86_64-linux =
+          (forAllSystems (system: import ./pkgs (pkgsFor system))).x86_64-linux
+          // {
+            # ISO images for all hosts
+            server-01-iso = nixosConfigurations.server-01-iso.config.system.build.isoImage;
+            pc-02-iso = nixosConfigurations.pc-02-iso.config.system.build.isoImage;
+            rog-strix-iso = nixosConfigurations.rog-strix-iso.config.system.build.isoImage;
+          };
       };
-    };
 
     # Formatter for nix files - available for all supported systems
     formatter = forAllSystems (system: (pkgsFor system).alejandra);
@@ -171,33 +175,34 @@
           system = "x86_64-linux";
           config.allowUnfree = true;
         };
-      in nixpkgs.lib.nixosSystem {
-        inherit pkgs;
-        system = "x86_64-linux";
-        specialArgs = {inherit inputs;};
-        modules = [
-          # sops-nix for secrets management
-          sops-nix.nixosModules.sops
-          # All NixOS modules (options & profiles)
-          ./modules/nixos/default.nix
-          # Host configuration
-          ./hosts/server-01/configuration.nix
-          # Home Manager
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "backup";
-              extraSpecialArgs = {inherit inputs;};
-              users.admin = import ./home/server.nix;
-              sharedModules = [
-                sops-nix.homeManagerModules.sops
-              ];
-            };
-          }
-        ];
-      };
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit pkgs;
+          system = "x86_64-linux";
+          specialArgs = {inherit inputs;};
+          modules = [
+            # sops-nix for secrets management
+            sops-nix.nixosModules.sops
+            # All NixOS modules (options & profiles)
+            ./modules/nixos/default.nix
+            # Host configuration
+            ./hosts/server-01/configuration.nix
+            # Home Manager
+            home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                backupFileExtension = "backup";
+                extraSpecialArgs = {inherit inputs;};
+                users.admin = import ./home/server.nix;
+                sharedModules = [
+                  sops-nix.homeManagerModules.sops
+                ];
+              };
+            }
+          ];
+        };
 
       # ═══════════════════════════════════════════════════════════════
       # ISO Images - Bootable installation media
@@ -209,120 +214,123 @@
           system = "x86_64-linux";
           config.allowUnfree = true;
         };
-      in nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = {inherit inputs pkgs;};
-        modules = [
-          # ISO installer modules
-          "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
-          # ISO boot settings (UEFI + BIOS, Proxmox/OVMF-friendly)
-          {
-            isoImage.makeEfiBootable = true;
-            isoImage.makeUsbBootable = true;
-            isoImage.volumeID = "NIXOS_SERVER_01";
+      in
+        nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {inherit inputs pkgs;};
+          modules = [
+            # ISO installer modules
+            "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
+            # ISO boot settings (UEFI + BIOS, Proxmox/OVMF-friendly)
+            {
+              isoImage.makeEfiBootable = true;
+              isoImage.makeUsbBootable = true;
+              isoImage.volumeID = "NIXOS_SERVER_01";
 
-            # iso-image.nix provides its own bootloader.
-            boot.loader.systemd-boot.enable = nixpkgs.lib.mkForce false;
-            boot.loader.grub.enable = nixpkgs.lib.mkForce false;
-            boot.loader.efi.canTouchEfiVariables = nixpkgs.lib.mkForce false;
+              # iso-image.nix provides its own bootloader.
+              boot.loader.systemd-boot.enable = nixpkgs.lib.mkForce false;
+              boot.loader.grub.enable = nixpkgs.lib.mkForce false;
+              boot.loader.efi.canTouchEfiVariables = nixpkgs.lib.mkForce false;
 
-            # Ensure the initrd can see the ISO device in common VM setups.
-            boot.initrd.availableKernelModules = [
-              "virtio_pci"
-              "virtio_blk"
-              "virtio_scsi"
-              "sr_mod"
-              "sd_mod"
-              "ahci"
-              "ata_piix"
-              "xhci_pci"
-              "usbhid"
-              "usb_storage"
-              "uas"
-            ];
-          }
-          # sops-nix for secrets management
-          sops-nix.nixosModules.sops
-          # All NixOS modules (options & profiles)
-          ./modules/nixos/default.nix
-          # Host configuration
-          ./hosts/server-01/configuration.nix
-          # Enable ISO autologin
-          { myConfig.system.iso.autologin = true; }
-        ];
-      };
+              # Ensure the initrd can see the ISO device in common VM setups.
+              boot.initrd.availableKernelModules = [
+                "virtio_pci"
+                "virtio_blk"
+                "virtio_scsi"
+                "sr_mod"
+                "sd_mod"
+                "ahci"
+                "ata_piix"
+                "xhci_pci"
+                "usbhid"
+                "usb_storage"
+                "uas"
+              ];
+            }
+            # sops-nix for secrets management
+            sops-nix.nixosModules.sops
+            # All NixOS modules (options & profiles)
+            ./modules/nixos/default.nix
+            # Host configuration
+            ./hosts/server-01/configuration.nix
+            # Enable ISO autologin
+            {myConfig.system.iso.autologin = true;}
+          ];
+        };
 
       # PC-02 ISO - Lisa's desktop installation image (with NVIDIA)
       pc-02-iso = let
         pkgs = pkgsFor "x86_64-linux";
-      in nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = {inherit inputs;};
-        modules = [
-          # ISO installer modules
-          "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
-          # sops-nix for secrets management
-          sops-nix.nixosModules.sops
-          # All NixOS modules (options & profiles)
-          ./modules/nixos/default.nix
-          # Host configuration
-          ./hosts/pc-02/configuration.nix
-          # Enable ISO autologin
-          { myConfig.system.iso.autologin = true; }
-          # Home Manager
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "backup";
-              extraSpecialArgs = {inherit inputs;};
-              users.lisa = import ./home/lisa.nix;
-              sharedModules = [
-                plasma-manager.homeModules.plasma-manager
-                sops-nix.homeManagerModules.sops
-              ];
-            };
-          }
-        ];
-      };
+      in
+        nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {inherit inputs;};
+          modules = [
+            # ISO installer modules
+            "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
+            # sops-nix for secrets management
+            sops-nix.nixosModules.sops
+            # All NixOS modules (options & profiles)
+            ./modules/nixos/default.nix
+            # Host configuration
+            ./hosts/pc-02/configuration.nix
+            # Enable ISO autologin
+            {myConfig.system.iso.autologin = true;}
+            # Home Manager
+            home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                backupFileExtension = "backup";
+                extraSpecialArgs = {inherit inputs;};
+                users.lisa = import ./home/lisa.nix;
+                sharedModules = [
+                  plasma-manager.homeModules.plasma-manager
+                  sops-nix.homeManagerModules.sops
+                ];
+              };
+            }
+          ];
+        };
 
       # ROG Strix ISO - Jens' laptop installation image (with NVIDIA + CachyOS)
       rog-strix-iso = let
         pkgs = pkgsFor "x86_64-linux";
-      in nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = {inherit inputs;};
-        modules = [
-          # ISO installer modules
-          "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
-          # Chaotic-nyx module (provides CachyOS kernel and gaming packages)
-          chaotic.nixosModules.default
-          # sops-nix for secrets management
-          sops-nix.nixosModules.sops
-          # All NixOS modules (options & profiles)
-          ./modules/nixos/default.nix
-          # Host configuration
-          ./hosts/rog-strix/configuration.nix
-          # Enable ISO autologin
-          { myConfig.system.iso.autologin = true; }
-          # Home Manager
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "backup";
-              extraSpecialArgs = {inherit inputs;};
-              users.jens = import ./home/jens.nix;
-              sharedModules = [
-                plasma-manager.homeModules.plasma-manager
-                sops-nix.homeManagerModules.sops
-              ];
-            };
-          }
-        ];
-      };
+      in
+        nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {inherit inputs;};
+          modules = [
+            # ISO installer modules
+            "${pkgs.path}/nixos/modules/installer/cd-dvd/iso-image.nix"
+            # Chaotic-nyx module (provides CachyOS kernel and gaming packages)
+            chaotic.nixosModules.default
+            # sops-nix for secrets management
+            sops-nix.nixosModules.sops
+            # All NixOS modules (options & profiles)
+            ./modules/nixos/default.nix
+            # Host configuration
+            ./hosts/rog-strix/configuration.nix
+            # Enable ISO autologin
+            {myConfig.system.iso.autologin = true;}
+            # Home Manager
+            home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                backupFileExtension = "backup";
+                extraSpecialArgs = {inherit inputs;};
+                users.jens = import ./home/jens.nix;
+                sharedModules = [
+                  plasma-manager.homeModules.plasma-manager
+                  sops-nix.homeManagerModules.sops
+                ];
+              };
+            }
+          ];
+        };
     };
   };
 }

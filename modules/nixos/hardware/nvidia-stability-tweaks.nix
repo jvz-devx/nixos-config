@@ -1,6 +1,11 @@
 # Stability tweaks for NVIDIA GPUs experiencing "fallen off the bus" errors
 # Specific to pc-02 to avoid affecting other hosts
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   options.myConfig.hardware.nvidia.stabilityTweaks = {
     enable = lib.mkEnableOption "NVIDIA stability tweaks (for GPUs experiencing 'fallen off the bus' errors)";
   };

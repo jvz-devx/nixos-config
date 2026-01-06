@@ -1,13 +1,17 @@
 # ISO Support Module - shared configuration for all ISO builds
 # Provides: flake source copying, hardware detection, ISO naming
-{ config, lib, pkgs, options, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  options,
+  ...
+}: let
   cfg = config.myConfig.system.iso;
 in {
   options.myConfig.system.iso = {
     enable = lib.mkEnableOption "ISO support (flake copy, hardware detection)";
-    
+
     autologin = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -18,7 +22,7 @@ in {
       type = lib.types.str;
       description = "The hostname for this configuration (used in hardware config path)";
     };
-    
+
     hardwareConfigPath = lib.mkOption {
       type = lib.types.str;
       default = "/etc/nixos/hosts/${cfg.hostName}/hardware-configuration.nix";
@@ -27,17 +31,16 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-      # ISO-specific user and autologin (only when autologin is enabled)
-      users.users.nixos = lib.mkIf cfg.autologin {
-        isNormalUser = true;
-        extraGroups = [ "wheel" "networkmanager" "video" ];
-        initialPassword = "TEMP_ISO_PASSWORD"; # Replaced by create_server_iso.sh
-      };
+    # ISO-specific user and autologin (only when autologin is enabled)
+    users.users.nixos = lib.mkIf cfg.autologin {
+      isNormalUser = true;
+      extraGroups = ["wheel" "networkmanager" "video"];
+      initialPassword = "TEMP_ISO_PASSWORD"; # Replaced by create_server_iso.sh
+    };
     # Force US keyboard for ISO environment (avoids Dutch layout confusion during install)
     console.keyMap = lib.mkForce "us";
     services.xserver.xkb.layout = lib.mkForce "us";
     services.xserver.xkb.variant = lib.mkForce "";
-
 
     services.getty.autologinUser = lib.mkIf cfg.autologin "nixos";
 
@@ -68,13 +71,13 @@ in {
     # Auto-generate hardware-configuration.nix on first boot if it doesn't exist
     systemd.services.generate-hardware-config = {
       description = "Generate hardware-configuration.nix if missing";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
+      wantedBy = ["multi-user.target"];
+      after = ["network.target"];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
       };
-      path = with pkgs; [ nixos-install-tools ];
+      path = with pkgs; [nixos-install-tools];
       script = ''
         # Check if hardware-configuration.nix has actual hardware detection (fileSystems, etc.)
         if ! grep -q "fileSystems" "${cfg.hardwareConfigPath}" 2>/dev/null || grep -q "# Auto-detection:" "${cfg.hardwareConfigPath}" 2>/dev/null; then
@@ -90,4 +93,3 @@ in {
     };
   };
 }
-

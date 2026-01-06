@@ -1,6 +1,6 @@
 # Module index - imports all NixOS modules
 # This file makes all modules available to all hosts
-{ ... }: {
+{...}: {
   imports = [
     # Hardware modules
     ./hardware/amd-cpu.nix
@@ -42,4 +42,3 @@
     ./profiles/server.nix
   ];
 }
-

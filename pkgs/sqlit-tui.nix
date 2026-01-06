@@ -50,8 +50,7 @@ python3Packages.buildPythonApplication rec {
     description = "A user-friendly TUI for SQL databases";
     homepage = "https://github.com/Maxteabag/sqlit";
     license = licenses.mit;
-    maintainers = with maintainers; [ ];
+    maintainers = with maintainers; [];
     mainProgram = "sqlit";
   };
 }
-

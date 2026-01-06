@@ -15,8 +15,8 @@
   # Enable profiles and options
   myConfig.profiles.workstation.enable = true;
   myConfig.services.tailscale.enable = true;
-  myConfig.services.tailscale.operator = "lisa";  # Allow ktailctl GUI to work
-  myConfig.secrets.sshKeyUser = "lisa";  # Deploy SSH key to this user
+  myConfig.services.tailscale.operator = "lisa"; # Allow ktailctl GUI to work
+  myConfig.secrets.sshKeyUser = "lisa"; # Deploy SSH key to this user
 
   # Enable ISO support (flake copy, hardware detection)
   myConfig.system.iso.enable = true;
@@ -48,7 +48,7 @@
       experimental-features = "nix-command flakes";
       flake-registry = "";
       nix-path = config.nix.nixPath;
-      trusted-users = [ "root" "lisa" "@wheel" ];
+      trusted-users = ["root" "lisa" "@wheel"];
     };
     channel.enable = false;
     registry = lib.mapAttrs (_: flake: {inherit flake;}) flakeInputs;
@@ -86,4 +86,3 @@
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "26.05";
 }
-

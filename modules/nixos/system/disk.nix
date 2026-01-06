@@ -1,6 +1,10 @@
 # Disk configuration - TRIM, Btrfs scrub
 # Shared disk module for all hosts
-{ config, lib, ... }: {
+{
+  config,
+  lib,
+  ...
+}: {
   options.myConfig.system.disk.enable = lib.mkEnableOption "Disk maintenance (TRIM, Btrfs scrub)";
 
   config = lib.mkIf config.myConfig.system.disk.enable {
@@ -19,5 +23,3 @@
     };
   };
 }
-
-

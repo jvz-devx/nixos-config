@@ -1,5 +1,10 @@
 # Development configuration - Shared options and services
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   options.myConfig.programs.development.enable = lib.mkEnableOption "Development tools (Docker, languages, CLI tools)";
 
   imports = [
@@ -16,8 +21,14 @@
     hardware.nvidia-container-toolkit.enable = let
       cfg = config.myConfig.hardware.nvidia;
       isLaptop = cfg.isLaptop or false;
-      gpuMode = cfg.mode or (if isLaptop then "dedicated" else "desktop");
-    in (cfg.enable or false) && gpuMode != "integrated";
+      gpuMode =
+        cfg.mode or (
+          if isLaptop
+          then "dedicated"
+          else "desktop"
+        );
+    in
+      (cfg.enable or false) && gpuMode != "integrated";
 
     # GPG agent for signing commits
     programs.gnupg.agent = {

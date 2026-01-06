@@ -1,10 +1,10 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   home.packages = with pkgs; [
     # Office suite
     libreoffice-qt6
 
     # System
-    gparted        # Partition editor
+    gparted # Partition editor
 
     # Utilities
     rofi
@@ -13,4 +13,3 @@
     bitwarden-desktop
   ];
 }
-

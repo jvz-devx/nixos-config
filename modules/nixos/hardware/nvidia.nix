@@ -1,12 +1,20 @@
 # Unified NVIDIA configuration for desktop and laptop
 # Supports both desktop (single GPU) and laptop (PRIME/hybrid) configurations
-{ config, pkgs, lib, ... }:
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   cfg = config.myConfig.hardware.nvidia;
   # Use myConfig.hardware.nvidia.mode if available, fallback to hardware.gpuMode for backward compatibility
   isLaptop = cfg.isLaptop or false;
-  gpuMode = cfg.mode or config.hardware.gpuMode or (if isLaptop then "dedicated" else "desktop");
+  gpuMode =
+    cfg.mode or config.hardware.gpuMode or (
+      if isLaptop
+      then "dedicated"
+      else "desktop"
+    );
   isDedicated = gpuMode == "dedicated";
   isHybrid = gpuMode == "hybrid";
   isIntegrated = gpuMode == "integrated";
@@ -20,8 +28,11 @@ in {
       description = "Enable laptop-specific features (PRIME/Offload support)";
     };
     mode = lib.mkOption {
-      type = lib.types.enum [ "dedicated" "hybrid" "integrated" "desktop" ];
-      default = if cfg.isLaptop or false then "dedicated" else "desktop";
+      type = lib.types.enum ["dedicated" "hybrid" "integrated" "desktop"];
+      default =
+        if cfg.isLaptop or false
+        then "dedicated"
+        else "desktop";
       description = ''
         GPU mode selection:
         - "dedicated"   : dGPU only (laptop: max performance, poor battery)
@@ -65,10 +76,10 @@ in {
       nvidiaSettings = true;
 
       # Driver version - beta for desktop, stable for laptop
-      package = if isLaptop then
-        config.boot.kernelPackages.nvidiaPackages.stable
-      else
-        config.boot.kernelPackages.nvidiaPackages.beta;
+      package =
+        if isLaptop
+        then config.boot.kernelPackages.nvidiaPackages.stable
+        else config.boot.kernelPackages.nvidiaPackages.beta;
 
       # PRIME Configuration - Only for laptop in hybrid mode
       prime = lib.mkIf (isLaptop && isHybrid) {
@@ -100,7 +111,7 @@ in {
     environment.sessionVariables = lib.mkMerge [
       # Wayland variables (all modes)
       {
-        NIXOS_OZONE_WL = "1";  # Electron apps use Wayland
+        NIXOS_OZONE_WL = "1"; # Electron apps use Wayland
       }
 
       # NVIDIA-specific variables (all modes except integrated)
@@ -114,4 +125,3 @@ in {
     ];
   };
 }
-

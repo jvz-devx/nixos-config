@@ -4,12 +4,16 @@
 #
 # This file uses auto-detection. On first boot, a systemd service will
 # automatically generate the actual hardware configuration and replace this.
-{ config, lib, pkgs, modulesPath, ... }:
-
 {
-  imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
-    ];
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}: {
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
 
   # Placeholder filesystem config.
   #
@@ -21,25 +25,25 @@
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
     fsType = "btrfs";
-    options = [ "compress=zstd" "subvol=root" ];
+    options = ["compress=zstd" "subvol=root"];
   };
 
   fileSystems."/home" = {
     device = "/dev/disk/by-label/nixos";
     fsType = "btrfs";
-    options = [ "compress=zstd" "subvol=home" ];
+    options = ["compress=zstd" "subvol=home"];
   };
 
   fileSystems."/nix" = {
     device = "/dev/disk/by-label/nixos";
     fsType = "btrfs";
-    options = [ "compress=zstd" "subvol=nix" ];
+    options = ["compress=zstd" "subvol=nix"];
   };
 
   fileSystems."/var/log" = {
     device = "/dev/disk/by-label/nixos";
     fsType = "btrfs";
-    options = [ "compress=zstd" "subvol=log" ];
+    options = ["compress=zstd" "subvol=log"];
   };
 
   fileSystems."/boot" = {
@@ -47,4 +51,3 @@
     fsType = "vfat";
   };
 }
-

@@ -1,6 +1,10 @@
 # Locale configuration - timezone, keyboard, i18n
 # Shared locale module (configured for Netherlands)
-{ config, lib, ... }: {
+{
+  config,
+  lib,
+  ...
+}: {
   options.myConfig.system.locale.enable = lib.mkEnableOption "System locale configuration (timezone, keyboard, i18n)";
 
   config = lib.mkIf config.myConfig.system.locale.enable {
@@ -34,5 +38,3 @@
     environment.variables.VISUAL = "nano";
   };
 }
-
-

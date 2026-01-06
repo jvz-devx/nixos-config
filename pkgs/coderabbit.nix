@@ -13,15 +13,18 @@
 # 2. Creating an FHS sandbox environment with standard library paths
 # 3. The wrapper script runs the binary inside the sandbox where it can detect
 #    it should run as CodeRabbit based on its name/context
-
-{ pkgs, lib, runCommand, fetchzip }:
-
-let
+{
+  pkgs,
+  lib,
+  runCommand,
+  fetchzip,
+}: let
   # Version info - check https://cli.coderabbit.ai/releases/latest/VERSION for latest
   version = "0.3.5";
 
   # Extract the binary without patching
-  coderabbit-binary = runCommand "coderabbit-binary-unpatched"
+  coderabbit-binary =
+    runCommand "coderabbit-binary-unpatched"
     {
       pname = "coderabbit-binary";
       inherit version;
@@ -37,7 +40,7 @@ let
       mkdir -p $out/bin
       cp $src/coderabbit $out/bin/coderabbit
       chmod +x $out/bin/coderabbit
-      
+
       # Create 'cr' as a symlink to coderabbit
       ln -s coderabbit $out/bin/cr
     '';
@@ -46,12 +49,13 @@ let
   coderabbit-fhs = pkgs.buildFHSEnv {
     name = "coderabbit-fhs";
     # Libraries provided at standard FHS paths (/usr/lib, /lib/x86_64-linux-gnu/)
-    targetPkgs = pkgs: with pkgs; [
-      glibc
-      zlib
-      openssl
-      libgcc
-    ];
+    targetPkgs = pkgs:
+      with pkgs; [
+        glibc
+        zlib
+        openssl
+        libgcc
+      ];
     runScript = "${coderabbit-binary}/bin/coderabbit";
 
     # FIX: The FHS environment is a sandbox that doesn't inherit the host filesystem by default.
@@ -66,8 +70,14 @@ let
     # 2. Bind mount the host directories to those mount points
     # We bind /home for user projects and /etc/nixos for system config access
     extraBindMounts = [
-      { source = "/home"; target = "/home"; }
-      { source = "/etc/nixos"; target = "/etc/nixos"; }
+      {
+        source = "/home";
+        target = "/home";
+      }
+      {
+        source = "/etc/nixos";
+        target = "/etc/nixos";
+      }
     ];
   };
 
@@ -80,18 +90,16 @@ let
   cr-wrapper = pkgs.writeShellScriptBin "cr" ''
     exec ${coderabbit-fhs}/bin/coderabbit-fhs "$@"
   '';
-
 in
   # Return a combined package with both wrappers
   pkgs.symlinkJoin {
     name = "coderabbit-${version}";
-    paths = [ coderabbit-wrapper cr-wrapper ];
+    paths = [coderabbit-wrapper cr-wrapper];
     meta = with lib; {
       description = "CodeRabbit CLI - AI-powered code review tool";
       homepage = "https://docs.coderabbit.ai/cli";
       license = licenses.unfree;
-      platforms = [ "x86_64-linux" ];
-      maintainers = [ ];
+      platforms = ["x86_64-linux"];
+      maintainers = [];
     };
   }
-
