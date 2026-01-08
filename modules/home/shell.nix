@@ -72,6 +72,9 @@
 
       # Bitwarden
       bwu = "bw-unlock"; # Quick unlock alias
+
+      # System
+      treesize = "sudo ncdu -x --exclude /mnt --exclude /media --exclude /tmp /";
     };
 
     # Shell functions and initialization
