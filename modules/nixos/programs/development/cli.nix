@@ -80,6 +80,9 @@
         tig # Text-mode interface for git
         git-lfs # Large File Storage support
 
+        # AI Tools
+        opencode # AI coding agent for CLI
+
         # Languages (prefer per-project with devShells/direnv)
         go
         python3
