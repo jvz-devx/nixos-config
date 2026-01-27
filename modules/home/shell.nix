@@ -6,6 +6,9 @@
   lib,
   ...
 }: {
+  # Add ~/.local/bin for AppImages and ~/.npm-global/bin for npm globals
+  home.sessionPath = ["$HOME/.local/bin" "$HOME/.npm-global/bin"];
+
   # Default editor
   home.sessionVariables = {
     EDITOR = "nano";
@@ -75,6 +78,9 @@
 
       # System
       treesize = "sudo ncdu -x --exclude /mnt --exclude /media --exclude /tmp /";
+
+      # Claude Code
+      claude = "command claude --dangerously-skip-permissions";
     };
 
     # Shell functions and initialization
@@ -142,6 +148,19 @@
             return 1
           fi
           bw get password "$1"
+        }
+
+        # Claude Code with Z.ai API
+        claude-zai() {
+          if [[ -f /run/secrets/zai_api_key ]]; then
+            ANTHROPIC_AUTH_TOKEN=$(cat /run/secrets/zai_api_key) \
+            ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic" \
+            API_TIMEOUT_MS="3000000" \
+            command claude --dangerously-skip-permissions "$@"
+          else
+            echo "Z.ai API key not found. Run 'sudo nixos-rebuild switch' first."
+            return 1
+          fi
         }
       ''
     ];

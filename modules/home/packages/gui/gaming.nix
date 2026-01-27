@@ -21,6 +21,7 @@
     PATH=$PATH:${pkgs.protonup-rs}/bin
 
     # Install latest GE-Proton to Steam's compatibilitytools.d
-    protonup-rs -q -f
+    # Non-fatal: network may not be available during early boot activation
+    protonup-rs -q -f || echo "ProtonGE update skipped (no network). Run 'protonup-rs -f' manually."
   '';
 }

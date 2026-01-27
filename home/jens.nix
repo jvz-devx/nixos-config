@@ -27,6 +27,9 @@
     ../modules/home/packages/gui/communication.nix
     ../modules/home/packages/cli/base.nix
     ../modules/home/packages/gui/base.nix
+
+    # Speech-to-text
+    ../modules/home/whisper-ptt.nix
   ];
 
   # Home Manager settings

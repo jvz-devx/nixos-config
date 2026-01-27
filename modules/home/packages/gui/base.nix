@@ -11,5 +11,12 @@
 
     # Password management
     bitwarden-desktop
+
+    # Messaging
+    telegram-desktop
+
+    # AI Coding
+    claude-code
+    # chell-desktop - AppImage installed at ~/.local/bin/chell-desktop
   ];
 }

@@ -219,6 +219,7 @@ in {
                 then [
                   "applications:org.kde.dolphin.desktop"
                   "applications:vesktop.desktop"
+                  "applications:ytmdesktop.desktop"
                   "applications:cursor.desktop"
                   "applications:google-chrome.desktop"
                   "applications:steam.desktop"
@@ -298,11 +299,8 @@ in {
       AC = {
         powerButtonAction = "lockScreen";
         autoSuspend.action = "nothing";
-        turnOffDisplay.idleTimeout = 3600;
-        dimDisplay = {
-          enable = true;
-          idleTimeout = 3300;
-        };
+        turnOffDisplay.idleTimeout = "never";
+        dimDisplay.enable = false;
       };
       battery = {
         powerButtonAction = "sleep";
@@ -336,16 +334,20 @@ in {
       };
     };
 
-    # Screen locker
+    # Screen locker - disabled (never lock automatically)
     kscreenlocker = {
-      lockOnResume = true;
-      timeout = 60;
+      lockOnResume = false;
+      timeout = null; # Never lock automatically
     };
 
     # Low-level config tweaks
     configFile = {
       # Disable session restoration (prevents apps like Chrome from autostarting)
       ksmserverrc.General.loginMode = "emptySession";
+
+      # Explicitly disable screen lock timeout (complements kscreenlocker settings above)
+      kscreenlockerrc.Daemon.Timeout = 0;
+      kscreenlockerrc.Daemon.Autolock = false;
 
       # Global Shortcuts Portal permissions (prevents annoying prompts after reboot)
       kglobalshortcutsrc."Global Shortcuts Portal".google-chrome = true;

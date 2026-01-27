@@ -106,6 +106,7 @@
       "video"
       "audio"
       "docker"
+      "input" # Required for whisper-ptt daemon (evtest key monitoring)
     ];
   };
 
