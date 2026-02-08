@@ -12,6 +12,7 @@
     ../modules/home/programs.nix
     ../modules/home/plasma.nix
     ../modules/home/konsole.nix
+    ../modules/home/kitty.nix
     ../modules/home/mangohud.nix
     ../modules/home/factory.nix
 

@@ -19,6 +19,7 @@
     # This creates /dev/uinput and sets up proper permissions
     programs.ydotool.enable = true;
 
+    myConfig.programs.localsend.enable = true;
     myConfig.desktop.plasma.enable = true;
     myConfig.desktop.portals.enable = true;
     myConfig.services.flatpak.enable = true;

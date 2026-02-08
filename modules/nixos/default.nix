@@ -18,6 +18,7 @@
 
     # Program modules
     ./programs/gaming.nix
+    ./programs/localsend.nix
     ./programs/development
 
     # Service modules

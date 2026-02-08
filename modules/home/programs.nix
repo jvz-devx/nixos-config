@@ -24,6 +24,12 @@
     };
   };
 
+  # Tmux
+  programs.tmux = {
+    enable = true;
+    mouse = true;
+  };
+
   # GPG
   programs.gpg.enable = true;
 

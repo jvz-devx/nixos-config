@@ -125,6 +125,9 @@ in {
         LIBVA_DRIVER_NAME = "nvidia";
         NVD_BACKEND = "direct";
         GBM_BACKEND = "nvidia-drm";
+        # Fix for Qt6/KDE6 Wayland EGL decoration context crash
+        # Prevents "QWaylandGLContext: Failed to create decorations EGLContext" error
+        QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
       })
     ];
   };

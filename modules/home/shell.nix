@@ -81,6 +81,11 @@
 
       # Claude Code
       claude = "command claude --dangerously-skip-permissions";
+      claude-team = "claude-team-fn";
+      tmux-list = "tmux list-sessions";
+      tmux-resume = "tmux attach-session -t";
+      tmux-kill = "tmux kill-session -t";
+      tmux-kill-all = "tmux kill-server";
     };
 
     # Shell functions and initialization
@@ -150,6 +155,18 @@
           bw get password "$1"
         }
 
+        # Claude Code team mode (supports multiple sessions)
+        claude-team-fn() {
+          local name="''${1:-claude-$(date +%s)}"
+          local cmd="command claude --dangerously-skip-permissions --teammate-mode tmux"
+          if [[ -n "$TMUX" ]]; then
+            tmux new-session -d -s "$name" "$cmd"
+            tmux switch-client -t "$name"
+          else
+            tmux new-session -s "$name" "$cmd"
+          fi
+        }
+
         # Claude Code with Z.ai API
         claude-zai() {
           if [[ -f /run/secrets/zai_api_key ]]; then
@@ -164,6 +181,22 @@
         }
       ''
     ];
+  };
+
+  # Claude Code global settings (declarative, survives rebuilds)
+  home.file.".claude/settings.json".text = builtins.toJSON {
+    model = "opus";
+    enabledPlugins = {
+      "frontend-design@claude-plugins-official" = true;
+      "rust-analyzer-lsp@claude-plugins-official" = true;
+      "context7@claude-plugins-official" = true;
+    };
+    env = {
+      CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+    };
+    attribution = {
+      commit = "";
+    };
   };
 
   # Direnv integration

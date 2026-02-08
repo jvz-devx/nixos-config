@@ -85,13 +85,14 @@
 
         # Languages (prefer per-project with devShells/direnv)
         go
+        bun # Fast JS runtime, bundler, and package manager
         python3
         uv # Python package manager
         sqlit-tui # User friendly TUI for SQL databases
         dotnet-sdk_10
-        rustc # Rust compiler
-        cargo # Rust package manager
-        rust-analyzer # Rust LSP
+        (rust-bin.stable."1.93.0".default.override {
+          extensions = ["rust-src" "rust-analyzer"];
+        })
         clang # C/C++ compiler
         llvm # LLVM toolchain
 

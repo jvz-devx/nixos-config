@@ -32,8 +32,11 @@
     programs.ssh.startAgent = true;
     programs.ssh.askPassword = "${pkgs.kdePackages.ksshaskpass}/bin/ksshaskpass";
 
-    # Ensure ksshaskpass is available
-    environment.systemPackages = [pkgs.kdePackages.ksshaskpass];
+    # KDE packages
+    environment.systemPackages = with pkgs.kdePackages; [
+      ksshaskpass
+      kcalc
+    ];
 
     # Enable nix-ld for running unpatched binaries
     programs.nix-ld.enable = true;

@@ -22,6 +22,7 @@
   # advertiseExitNode = false (default) allows using Mullvad or other exit nodes via ktailctl
   myConfig.services.nas.enable = true;
   myConfig.secrets.sshKeyUser = "jens"; # Deploy SSH key to this user
+  myConfig.secrets.kubeconfigUser = "jens"; # Deploy kubeconfig to this user
 
   # Enable ISO support (flake copy, hardware detection)
   myConfig.system.iso.enable = true;

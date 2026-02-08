@@ -13,6 +13,12 @@
       default = null;
       description = "Username to deploy SSH key for (null to skip SSH key deployment)";
     };
+
+    kubeconfigUser = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Username to deploy kubeconfig for (null to skip kubeconfig deployment)";
+    };
   };
 
   config = lib.mkIf config.myConfig.secrets.enable {
@@ -87,6 +93,13 @@
             then config.myConfig.secrets.sshKeyUser
             else "root";
         };
+
+        # Kubeconfig for k3s cluster access
+        kubeconfig = lib.mkIf (config.myConfig.secrets.kubeconfigUser != null) {
+          key = "kubeconfig";
+          mode = "0600";
+          owner = config.myConfig.secrets.kubeconfigUser;
+        };
       };
     };
 
@@ -108,6 +121,19 @@
       chown -h ${user}:users ${homeDir}/.ssh/id_ed25519 ${homeDir}/.ssh/id_ed25519.pub
 
       echo "SSH key symlinks created in ${homeDir}/.ssh/"
+    '');
+
+    # Create symlink for kubeconfig in user's .kube directory
+    system.activationScripts.kubeconfig-symlink = lib.mkIf (config.myConfig.secrets.kubeconfigUser != null) (let
+      user = config.myConfig.secrets.kubeconfigUser;
+      homeDir = "/home/${user}";
+    in ''
+      echo "Setting up kubeconfig symlink for ${user}..."
+      mkdir -p ${homeDir}/.kube
+      ln -sf /run/secrets/kubeconfig ${homeDir}/.kube/config
+      chown ${user}:users ${homeDir}/.kube
+      chown -h ${user}:users ${homeDir}/.kube/config
+      echo "Kubeconfig symlink created at ${homeDir}/.kube/config"
     '');
 
     # Import GPG key for the user

@@ -2,6 +2,7 @@
   home.packages = with pkgs; [
     # Basic CLI tools
     nano
+    tmux
     pandoc # Document converter (includes CLI)
     bitwarden-cli
 
