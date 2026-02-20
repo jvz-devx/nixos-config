@@ -35,6 +35,33 @@
       jack.enable = true;
       wireplumber.enable = true;
 
+      # Bluetooth codec support (LDAC, aptX, AAC, SBC-XQ)
+      wireplumber.extraConfig."11-bluetooth-policy" = {
+        "monitor.bluez.properties" = {
+          "bluez5.enable-sbc-xq" = true;
+          "bluez5.enable-msbc" = true;
+          "bluez5.enable-hw-volume" = true;
+          "bluez5.roles" = ["a2dp_sink" "a2dp_source" "bap_sink" "bap_source" "hsp_hs" "hsp_ag" "hfp_hf" "hfp_ag"];
+        };
+      };
+
+      # Bluetooth codec quality rules (LDAC high quality, hardware volume)
+      wireplumber.extraConfig."12-bluetooth-codec-quality" = {
+        "monitor.bluez.rules" = [
+          {
+            matches = [{"device.name" = "~bluez_card.*";}];
+            actions = {
+              update-props = {
+                "bluez5.a2dp.ldac.quality" = "hq";
+                "bluez5.a2dp.aac.bitratemode" = 0;
+                "bluez5.auto-connect" = ["hfp_hf" "hsp_hs" "a2dp_sink"];
+                "bluez5.hw-volume" = ["hfp_hf" "hsp_hs" "a2dp_sink" "hfp_ag" "hsp_ag" "a2dp_source"];
+              };
+            };
+          }
+        ];
+      };
+
       # Stable audio configuration with adaptive latency
       extraConfig.pipewire."92-low-latency" = {
         context.properties = {

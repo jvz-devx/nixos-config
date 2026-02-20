@@ -11,6 +11,12 @@
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;
+      settings = {
+        General = {
+          Experimental = true; # LE Audio, battery reporting
+          KernelExperimental = true; # Kernel-side LE Audio (ISO channels)
+        };
+      };
     };
   };
 }
