@@ -278,10 +278,15 @@ in {
 
     # Hotkeys for launching apps
     hotkeys.commands = {
-      "launch-konsole" = {
-        name = "Launch Konsole";
+      "launch-wezterm" = {
+        name = "Launch WezTerm";
         key = "Meta+Return";
-        command = "konsole";
+        command = "wezterm";
+      };
+      "launch-wezterm-alt" = {
+        name = "Launch WezTerm (Ctrl+Alt+T)";
+        key = "Ctrl+Alt+T";
+        command = "wezterm";
       };
       "launch-dolphin" = {
         name = "Launch Dolphin";

@@ -13,7 +13,7 @@
   # └─────────────────────────────────────────────────────────────────┘
 
   # Set GPU mode using the new myConfig option
-  myConfig.hardware.nvidia.mode = "integrated";
+  myConfig.hardware.nvidia.mode = "dedicated";
 }
 # ═══════════════════════════════════════════════════════════════════════
 # MODE DESCRIPTIONS

@@ -12,7 +12,8 @@
     ../modules/home/programs.nix
     ../modules/home/plasma.nix
     ../modules/home/konsole.nix
-    ../modules/home/kitty.nix
+    ../modules/home/wezterm.nix
+
     ../modules/home/mangohud.nix
 
     # Specialized package modules

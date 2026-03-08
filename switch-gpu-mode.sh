@@ -217,12 +217,15 @@ switch_mode() {
     sed -i "s/myConfig.hardware.nvidia.mode = \".*\"/myConfig.hardware.nvidia.mode = \"$new_mode\"/" "$GPU_MODE_FILE"
     echo -e "  ${GREEN}✓${NC} Configuration updated"
 
-    # Rebuild
+    # Rebuild (exit code 4 = activation warnings like failed services, not a build failure)
     echo -e "  ${BLUE}Rebuilding NixOS...${NC}"
     echo ""
-    if sudo nixos-rebuild switch --flake "$SCRIPT_DIR#rog-strix"; then
+    local rc=0
+    sudo nixos-rebuild switch --flake "$SCRIPT_DIR#rog-strix" || rc=$?
+    if [[ $rc -eq 0 || $rc -eq 4 ]]; then
         echo ""
         echo -e "  ${GREEN}${BOLD}✓ Rebuild complete${NC}"
+        [[ $rc -eq 4 ]] && echo -e "  ${YELLOW}(some services had warnings, this is normal)${NC}"
     else
         echo ""
         echo -e "  ${RED}${BOLD}✗ Rebuild failed!${NC} Reverting to $current_mode..."

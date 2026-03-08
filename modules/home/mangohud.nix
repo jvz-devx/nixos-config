@@ -1,7 +1,7 @@
 {pkgs, ...}: {
   programs.mangohud = {
     enable = true;
-    enableSessionWide = true;
+    enableSessionWide = false;
     settings = {
       legacy_layout = false;
       horizontal = false;
