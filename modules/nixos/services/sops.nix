@@ -100,6 +100,20 @@
           mode = "0600";
           owner = config.myConfig.secrets.kubeconfigUser;
         };
+
+        # TrainWaker Android keystore (base64-encoded)
+        trainwaker_keystore_b64 = lib.mkIf (config.myConfig.secrets.sshKeyUser != null) {
+          key = "trainwaker_keystore_b64";
+          mode = "0400";
+          owner = config.myConfig.secrets.sshKeyUser;
+        };
+
+        # TrainWaker keystore password
+        trainwaker_keystore_password = lib.mkIf (config.myConfig.secrets.sshKeyUser != null) {
+          key = "trainwaker_keystore_password";
+          mode = "0400";
+          owner = config.myConfig.secrets.sshKeyUser;
+        };
       };
     };
 
@@ -134,6 +148,22 @@
       chown ${user}:users ${homeDir}/.kube
       chown -h ${user}:users ${homeDir}/.kube/config
       echo "Kubeconfig symlink created at ${homeDir}/.kube/config"
+    '');
+
+    # Decode TrainWaker keystore from base64 to a fixed path
+    system.activationScripts.trainwaker-keystore = lib.mkIf (config.myConfig.secrets.sshKeyUser != null) (let
+      user = config.myConfig.secrets.sshKeyUser;
+      homeDir = "/home/${user}";
+      keystorePath = "${homeDir}/.config/trainwaker/release.keystore";
+    in ''
+      if [ -f /run/secrets/trainwaker_keystore_b64 ]; then
+        echo "Decoding TrainWaker keystore for ${user}..."
+        mkdir -p ${homeDir}/.config/trainwaker
+        ${config.system.path}/bin/base64 -d /run/secrets/trainwaker_keystore_b64 > ${keystorePath}
+        chmod 400 ${keystorePath}
+        chown ${user}:users ${homeDir}/.config/trainwaker
+        chown ${user}:users ${keystorePath}
+      fi
     '');
 
     # Import GPG key for the user

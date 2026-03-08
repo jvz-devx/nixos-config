@@ -14,13 +14,18 @@
       enableUserService = true;
     };
 
+    # Limit battery charge to 80% to reduce wear
+    services.udev.extraRules = ''
+      SUBSYSTEM=="power_supply", ATTR{charge_control_end_threshold}=="[0-9]*", ATTR{charge_control_end_threshold}="80"
+    '';
+
     # GPU switching daemon (Hybrid/Integrated/dGPU modes)
     services.supergfxd.enable = true;
 
     # Fix for supergfxd needing lspci
     systemd.services.supergfxd.path = [pkgs.pciutils];
 
-    # Power profiles daemon (integrates with asusd)
+    # Power profiles daemon (integrates with asusd, Fn key switching)
     services.power-profiles-daemon.enable = true;
 
     # ROG-specific packages for system control

@@ -29,6 +29,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Claude Code (native binary, auto-updated from npm)
+    claude-code = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Codex CLI (OpenAI Codex command-line tool)
     codex-cli = {
       url = "github:sadjow/codex-nix";
@@ -72,6 +78,7 @@
     home-manager,
     plasma-manager,
     chaotic,
+    claude-code,
     codex-cli,
     nix-ai-tools,
     sops-nix,

@@ -73,14 +73,8 @@
   programs.git.enable = true;
   programs.git.config.safe.directory = "/etc/nixos";
 
-  # SSH server
-  services.openssh = {
-    enable = true;
-    settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = true; # Can be disabled after setting up SSH keys
-    };
-  };
+  # SSH server (via shared module)
+  myConfig.services.ssh.enable = true;
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "25.05";

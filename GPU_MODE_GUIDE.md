@@ -49,10 +49,10 @@ sudo reboot
 
 ### Option 2: Edit Directly
 
-Edit `/etc/nixos/hosts/rog-strix/hardware/gpu-mode.nix`:
+Edit `/etc/nixos/hosts/rog-strix/gpu-mode.nix`:
 
 ```nix
-config.hardware.gpuMode = "dedicated";  # Change to: dedicated, hybrid, or integrated
+myConfig.hardware.nvidia.mode = "dedicated";  # Change to: dedicated, hybrid, or integrated
 ```
 
 Then rebuild and reboot:
@@ -263,10 +263,9 @@ When you change the mode in `gpu-mode.nix`, the system automatically configures:
 
 All these files automatically configure based on your mode:
 
-- `hosts/rog-strix/hardware/gpu-mode.nix` - Mode selector (YOU EDIT THIS)
-- `hosts/rog-strix/hardware/nvidia.nix` - NVIDIA config (automatic)
-- `hosts/rog-strix/system/boot.nix` - Kernel modules (automatic)
-- `hosts/rog-strix/desktop/plasma.nix` - Display config (automatic)
+- `hosts/rog-strix/gpu-mode.nix` - Mode selector (YOU EDIT THIS)
+- `modules/nixos/hardware/nvidia.nix` - NVIDIA driver, PRIME, env vars (automatic)
+- `modules/nixos/system/boot-laptop.nix` - Kernel modules, blacklists, boot params (automatic)
 
 You only need to edit `gpu-mode.nix` - everything else updates automatically!
 

@@ -19,6 +19,7 @@
     # Program modules
     ./programs/gaming.nix
     ./programs/localsend.nix
+    ./programs/comfyui.nix
     ./programs/development
 
     # Service modules
@@ -27,6 +28,7 @@
     ./services/sops.nix
     ./services/nas.nix
     ./services/flatpak.nix
+    ./services/ssh.nix
 
     # System modules
     ./system/locale.nix

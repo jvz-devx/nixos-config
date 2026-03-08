@@ -77,6 +77,9 @@ in {
         "nvidia"
         "nvidia_drm"
         "nvidia_modeset"
+        "nvidia_uvm"
+        "nouveau"
+        "xe" # Intel discrete GPU driver not needed on iGPU
       ];
 
     # Kernel parameters
@@ -90,6 +93,11 @@ in {
         "nvidia-drm.modeset=1"
         "nvidia-drm.fbdev=1"
         "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
+      ]
+      ++ lib.optionals isIntegrated [
+        # NOTE: i915.enable_fbc, i915.enable_psr=2, pcie_aspm, acpi.ec_no_wakeup
+        # were all tested and either had no effect or worsened package C-states.
+        # The BIOS FADT disables ASPM on this laptop. Keeping params minimal.
       ];
   };
 }

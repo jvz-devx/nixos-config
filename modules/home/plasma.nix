@@ -6,6 +6,9 @@
   lib,
   ...
 }: let
+  gpuMode = osConfig.myConfig.hardware.nvidia.mode or "desktop";
+  isIntegrated = gpuMode == "integrated";
+
   # This is the "virtual" font name all apps will use.
   # The toggle-font script will point this name to either Monocraft or Miracode.
   userFont = "GlobalUserFont";
@@ -116,7 +119,10 @@ in {
         size = 24;
       };
       iconTheme = "Tela-black-dark";
-      wallpaper = ../../assets/wallpaper/deyuin6-c7ad1dee-e0ae-423c-8e1a-bc4addf550e0.gif;
+      wallpaper =
+        if isIntegrated
+        then ../../assets/wallpaper/wallpaper-static.png
+        else ../../assets/wallpaper/deyuin6-c7ad1dee-e0ae-423c-8e1a-bc4addf550e0.gif;
     };
 
     # Fonts
@@ -219,8 +225,8 @@ in {
                 then [
                   "applications:org.kde.dolphin.desktop"
                   "applications:vesktop.desktop"
-                  "applications:ytmdesktop.desktop"
-                  "applications:cursor.desktop"
+                  "applications:youtube-music.desktop"
+                  "applications:dev.zed.Zed.desktop"
                   "applications:google-chrome.desktop"
                   "applications:steam.desktop"
                 ]
@@ -449,9 +455,4 @@ in {
 
   # Symlink the entire Nordic-Darker theme directory for Kvantum
   xdg.configFile."Kvantum/Nordic-Darker".source = "${pkgs.nordic}/share/Kvantum/Nordic-Darker";
-
-  # NOTE: Cursor settings are NOT managed by Nix to avoid conflicts with
-  # Cursor's internal file locking and sandbox caching.
-  # Set your fonts manually in Cursor: Ctrl+, then search for "font"
-  # Recommended: editor.fontFamily = "GlobalUserFont, JetBrainsMono Nerd Font, monospace"
 }

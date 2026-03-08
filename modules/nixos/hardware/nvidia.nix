@@ -56,10 +56,16 @@ in {
     hardware.graphics = {
       enable = true;
       enable32Bit = true;
-      extraPackages = with pkgs; [
-        nvidia-vaapi-driver
-        libva-utils
-      ];
+      extraPackages = with pkgs;
+        if isIntegrated
+        then [
+          intel-media-driver # Intel VA-API (iHD)
+          libva-utils
+        ]
+        else [
+          nvidia-vaapi-driver
+          libva-utils
+        ];
     };
 
     # NVIDIA driver (disabled in integrated mode for laptops)

@@ -16,6 +16,7 @@
   myConfig.profiles.workstation.enable = true;
   myConfig.services.tailscale.enable = true;
   myConfig.services.tailscale.operator = "lisa"; # Allow ktailctl GUI to work
+  myConfig.services.ssh.enable = true;
   # advertiseExitNode = false (default) allows using Mullvad or other exit nodes via ktailctl
   myConfig.secrets.sshKeyUser = "lisa"; # Deploy SSH key to this user
 
@@ -35,6 +36,7 @@
       inputs.self.overlays.additions
       inputs.self.overlays.modifications
       inputs.self.overlays.stable-packages
+      inputs.claude-code.overlays.default # Native Claude Code binary
     ];
     config = {
       allowUnfree = true;

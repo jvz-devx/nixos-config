@@ -35,6 +35,10 @@ nix build .#<hostname>-iso
 
 # Build a custom package
 nix build .#<package-name>
+
+# Switch GPU mode on rog-strix (dedicated/hybrid/integrated)
+# This updates gpu-mode.nix, rebuilds, and prompts to reboot
+./switch-gpu-mode.sh <mode>
 ```
 
 ## Validation Rule

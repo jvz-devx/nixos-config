@@ -52,8 +52,8 @@
             matches = [{"device.name" = "~bluez_card.*";}];
             actions = {
               update-props = {
-                "bluez5.a2dp.ldac.quality" = "hq";
-                "bluez5.a2dp.aac.bitratemode" = 0;
+                "bluez5.a2dp.ldac.quality" = "auto";
+                "bluez5.a2dp.aac.bitratemode" = 5;
                 "bluez5.auto-connect" = ["hfp_hf" "hsp_hs" "a2dp_sink"];
                 "bluez5.hw-volume" = ["hfp_hf" "hsp_hs" "a2dp_sink" "hfp_ag" "hsp_ag" "a2dp_source"];
               };

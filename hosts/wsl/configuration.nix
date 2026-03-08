@@ -23,6 +23,7 @@
   # Enable profiles and options
   myConfig.profiles.development.enable = true;
   myConfig.system.locale.enable = true;
+  myConfig.services.ssh.enable = true;
   myConfig.secrets.sshKeyUser = "jens";
 
   # Nixpkgs configuration

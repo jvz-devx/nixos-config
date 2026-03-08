@@ -197,7 +197,71 @@
     attribution = {
       commit = "";
     };
+    statusLine = {
+      type = "command";
+      command = "bash ~/.claude/statusline-command.sh";
+    };
   };
+
+  # Claude Code status line script
+  home.file.".claude/statusline-command.sh" = {
+    text = ''
+      #!/usr/bin/env bash
+
+      # Read JSON input from stdin
+      input=$(cat)
+
+      # Extract values
+      model_name=$(echo "$input" | jq -r '.model.display_name // .model.id')
+      used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
+      total_cost=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
+
+      # Format cost
+      cost_str=""
+      if [ "$(echo "$total_cost > 0" | ${pkgs.bc}/bin/bc -l 2>/dev/null)" = "1" ]; then
+        formatted=$(printf "%.2f" "$total_cost")
+        cost_str=" | \$$formatted"
+      else
+        cost_str=" | \$0.00"
+      fi
+
+      # Build output
+      output="$model_name"
+
+      # Add context bar if available
+      if [ -n "$used_pct" ]; then
+        # Round to integer
+        used_int=$(printf "%.0f" "$used_pct")
+        remaining_int=$((100 - used_int))
+
+        # Create progress bar (20 chars total)
+        bar_length=20
+        filled=$((used_int * bar_length / 100))
+        empty=$((bar_length - filled))
+
+        # Build bar with filled/empty segments
+        bar="["
+        for ((i=0; i<filled; i++)); do bar+="█"; done
+        for ((i=0; i<empty; i++)); do bar+="░"; done
+        bar+="]"
+
+        output+=" $bar $used_int%"
+      fi
+
+      # Add cost
+      output+="$cost_str"
+
+      echo "$output"
+    '';
+    executable = true;
+  };
+
+  # Claude Code global skills (declarative, survives rebuilds)
+  home.file.".claude/skills/rust-coder/SKILL.md".source = ./claude-skills/rust-coder.md;
+  home.file.".claude/skills/rust-borrow-fixer/SKILL.md".source = ./claude-skills/rust-borrow-fixer.md;
+  home.file.".claude/skills/rust-reviewer/SKILL.md".source = ./claude-skills/rust-reviewer.md;
+  home.file.".claude/skills/rust-tester/SKILL.md".source = ./claude-skills/rust-tester.md;
+  home.file.".claude/skills/rust-project-init/SKILL.md".source = ./claude-skills/rust-project-init.md;
 
   # Direnv integration
   programs.direnv = {

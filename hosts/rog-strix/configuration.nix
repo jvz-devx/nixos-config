@@ -21,8 +21,12 @@
   myConfig.services.tailscale.operator = "jens"; # Allow ktailctl GUI to work
   # advertiseExitNode = false (default) allows using Mullvad or other exit nodes via ktailctl
   myConfig.services.nas.enable = true;
+  myConfig.services.ssh.enable = true;
   myConfig.secrets.sshKeyUser = "jens"; # Deploy SSH key to this user
   myConfig.secrets.kubeconfigUser = "jens"; # Deploy kubeconfig to this user
+
+  # ComfyUI (Stable Diffusion node-based UI)
+  myConfig.programs.comfyui.enable = true;
 
   # Enable ISO support (flake copy, hardware detection)
   myConfig.system.iso.enable = true;
@@ -59,6 +63,7 @@
       inputs.self.overlays.modifications
       inputs.self.overlays.stable-packages
       inputs.chaotic.overlays.default # CachyOS packages overlay
+      inputs.claude-code.overlays.default # Native Claude Code binary
     ];
     config = {
       allowUnfree = true;
