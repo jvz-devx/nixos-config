@@ -24,6 +24,28 @@ A sophisticated, multi-host NixOS configuration using Flakes and Home Manager. F
 | `rog-strix` | Gaming Laptop | Intel CPU + NVIDIA GPU (ASUS) | Jens |
 | `server-01` | Headless Server | x86_64 Minimal | Admin |
 
+## 🌐 Local LAN DNS Aliases
+
+The homelab also uses DNS-only Cloudflare records in `jensvanzutphen.com` as convenient LAN aliases for local infrastructure. These point to private RFC1918 addresses and are intended for use on the local network.
+
+| Name | IP | Purpose |
+|------|----|---------|
+| `proxmox.jensvanzutphen.com` | `192.168.1.201` | Proxmox node1 |
+| `proxmox2.jensvanzutphen.com` | `192.168.1.202` | Proxmox node2 |
+| `node1.jensvanzutphen.com` | `192.168.1.201` | Proxmox node1 alias |
+| `node2.jensvanzutphen.com` | `192.168.1.202` | Proxmox node2 alias |
+| `homeassistant.jensvanzutphen.com` | `192.168.1.27` | Home Assistant VM |
+| `haos.jensvanzutphen.com` | `192.168.1.27` | Home Assistant OS alias |
+| `docker.jensvanzutphen.com` | `192.168.1.60` | Docker VM |
+| `n8n.jensvanzutphen.com` | `192.168.1.51` | n8n VM |
+| `ubuntu.jensvanzutphen.com` | `192.168.1.54` | Ubuntu desktop/VM |
+| `h3s-node.jensvanzutphen.com` | `192.168.1.100` | h3s-node alias for k3s-node LXC |
+| `k3s-node.jensvanzutphen.com` | `192.168.1.100` | k3s-node LXC |
+| `k3s.jensvanzutphen.com` | `192.168.1.100` | k3s-node alias |
+| `couchdb.jensvanzutphen.com` | `192.168.1.211` | apache-couchdb LXC |
+
+Keep this table in sync with Cloudflare whenever LAN addresses change.
+
 ## 🛠️ Project Structure
 
 ```text
