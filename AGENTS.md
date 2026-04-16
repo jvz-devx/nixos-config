@@ -1,45 +1,118 @@
-# 🤖 Agent Intelligence & Guidelines
+# AGENTS.md
 
-Welcome, fellow agent. This repository is a NixOS Flake-based configuration. Below is everything you need to know to navigate and contribute effectively.
+This file provides guidance to coding agents working in this repository.
 
-## 🗺️ Repository Map
+## Build & Test
 
-- **`flake.nix`**: The heart of the configuration. Defines all inputs and host outputs.
-- **`hosts/`**: Host-specific configurations.
-  - `configuration.nix`: The main entry point for a host.
-  - `hardware-configuration.nix`: Hardware-specific auto-generated settings.
-- **`modules/nixos/`**: System-level modules.
-  - `profiles/`: High-level bundles (e.g., `gaming.nix`, `development.nix`).
-  - `services/`, `hardware/`, `system/`: Atomic feature modules.
-- **`home/`**: Home Manager configurations for users (Jens, Lisa, Admin).
-- **`modules/home/`**: User-level modules and program configurations.
-- **`pkgs/`**: Custom Nix packages not found in upstream nixpkgs.
-- **`overlays/`**: Modifications to existing upstream packages.
-- **`secrets/`**: Encrypted secrets managed by `sops-nix`.
+```bash
+# Dry build (MUST run after any .nix change, before telling user you're done)
+nixos-rebuild dry-build --flake ".#<hostname>"
 
-## 📜 Coding Rules
+# Apply changes
+sudo nixos-rebuild switch --flake /etc/nixos#<hostname>
 
-1. **NO GIT PUSH/COMMIT**: You may `git add` files, but never `git commit` or `git push`.
-2. **Formatting**: Always use `nix fmt` (uses `alejandra`) before finishing your task to ensure clean Nix code.
-3. **Modularization**: Avoid putting everything in `configuration.nix`. If it's a reusable feature, create a module in `modules/nixos/` and import it.
-4. **Declarative First**: Prefer declarative configurations (especially for KDE via `plasma-manager`) over imperative scripts.
-5. **No Secrets in Plaintext**: Never put passwords or keys in `.nix` files. Use the `sops-nix` infrastructure.
+# Format all nix files (MUST run before finishing any task)
+nix fmt
 
-## 🛠️ Common Operations
+# Update flake inputs
+nix flake update
 
-- **Search for options**: Use `man configuration.nix` or search [search.nixos.org](https://search.nixos.org/options).
-- **Find defined modules**: Check `modules/nixos/default.nix` to see which modules are available.
-- **Check Home Manager options**: See `home-manager` documentation or search online.
-- **Dry Build**: Use `nixos-rebuild dry-build --flake .#<hostname>` to see what packages would be built or downloaded without doing it.
-- **Dry Activation**: Use `nixos-rebuild dry-activate --flake .#<hostname>` to see which system services would restart and what files would change in `/etc`.
-- **Test builds**: Use `nixos-rebuild build --flake .#<hostname>` to perform the actual build and create a `result` link (does not apply changes).
+# Build custom ISO
+nix build .#<hostname>-iso
 
-## 🧠 Contextual Awareness
+# Build a custom package
+nix build .#<package-name>
 
-- This system uses **CachyOS kernel** for gaming hosts.
-- **NVIDIA** is used on both `pc-02` and `rog-strix`.
-- **KDE Plasma 6** is the primary desktop environment for workstation hosts.
-- **server-01** is a headless server running **Nixpkgs Stable** and **Docker**.
-- **Tailscale** is used for networking between all hosts.
+# Switch GPU mode on rog-strix (dedicated/hybrid/integrated)
+# This updates gpu-mode.nix, rebuilds, and prompts to reboot
+./switch-gpu-mode.sh <mode>
+```
 
-Stay efficient. Stay declarative.
+## Validation Rule
+
+After modifying any `.nix` file, you **must** run a dry build for the affected host(s) and fix any errors before considering the task complete. Multiple hosts may be affected — check which hosts use the changed module.
+
+## Architecture Overview
+
+Multi-host NixOS flake configuration managing desktops, a laptop, a server, and WSL. Uses nixpkgs-unstable, Home Manager, plasma-manager (KDE Plasma 6), sops-nix (secrets), and chaotic-nyx (CachyOS kernel).
+
+## Hosts
+
+| Host | User | Hardware | Profile |
+|------|------|----------|---------|
+| `rog-strix` | jens | Intel + NVIDIA laptop (ASUS) | workstation |
+| `pc-02` | jens | AMD + NVIDIA desktop | workstation |
+| `server-01` | admin | x86_64 headless (nixpkgs-stable) | server |
+| `wsl` | jens | WSL2 | minimal |
+
+## Conventions & Patterns
+
+### Custom Option Namespace
+
+All custom modules use the `myConfig.*` option namespace. Modules declare options with `lib.mkEnableOption` and gate their config behind `lib.mkIf`:
+
+```
+myConfig.profiles.{workstation,desktop,gaming,development,server}.enable
+myConfig.hardware.{nvidia,cpu.amd,cpu.intel,audio,bluetooth,asus,logitech}.enable
+myConfig.desktop.{plasma,portals}.enable
+myConfig.programs.{gaming,localsend,development}.enable
+myConfig.services.{tailscale,maintenance,sops,nas,flatpak}.enable
+myConfig.system.{locale,boot,disk,power,iso}.enable
+```
+
+### Profile Hierarchy
+
+Profiles are composable bundles in `modules/nixos/profiles/`. The hierarchy is:
+
+- **workstation** = desktop + gaming + development (used by `rog-strix`, `pc-02`)
+- **desktop** = plasma + portals + flatpak + audio + bluetooth + logitech + locale + boot + disk + maintenance
+- **gaming** = Steam, Heroic, Lutris, MangoHud
+- **development** = Docker, CLI tools, language environments
+- **server** = locale + boot + disk + maintenance + tailscale + development (headless, no desktop)
+
+Hosts enable a profile in their `configuration.nix`, then add host-specific overrides.
+
+### Module Index
+
+`modules/nixos/default.nix` imports **all** NixOS modules for every host. Modules are opt-in via their `enable` option — importing does not activate anything.
+
+### Home Manager
+
+User configs live in `home/{jens,server,wsl}.nix`. Each imports modules from `modules/home/` (shell, programs, plasma, packages). Home modules are **not** option-gated — they activate by being imported.
+
+The `rebuild` shell alias is defined per-user and points to the correct `--flake .#<hostname>`.
+
+### Overlays
+
+`overlays/default.nix` exposes three overlays applied per-host:
+
+- **additions**: custom packages from `pkgs/`
+- **modifications**: patched upstream packages (Vesktop, Discord+Vencord, rust-overlay)
+- **stable-packages**: makes `pkgs.stable.*` available from nixpkgs-stable
+
+### Custom Packages
+
+`pkgs/` contains custom derivations (coderabbit, sqlit-tui, smart-video-wallpaper). Build with `nix build .#<name>`.
+
+## Security
+
+Managed by sops-nix with age encryption. Encrypted files live in `secrets/`. Edit with `sops secrets/<file>.yaml`. Never put secrets in plaintext `.nix` files.
+
+## Tools
+
+For file search or grep in the current git indexed directory, use fff tools.
+
+## Git Workflows
+
+- You may `git add` files, but never `git commit` or `git push`.
+
+## Repository Layout
+
+- **`flake.nix`** defines all inputs and host outputs.
+- **`hosts/`** contains host-specific configurations and hardware config.
+- **`modules/nixos/`** contains reusable system modules and profiles.
+- **`home/`** contains Home Manager entry points per user.
+- **`modules/home/`** contains reusable home modules.
+- **`pkgs/`** contains custom derivations.
+- **`overlays/`** contains nixpkgs overlays.
+- **`secrets/`** contains encrypted secret material.

@@ -30,7 +30,7 @@
       inherit version;
       src = fetchzip {
         url = "https://cli.coderabbit.ai/releases/${version}/coderabbit-linux-x64.zip";
-        sha256 = "sha256-k6FDa5tBEHIEtVm6JTSOMylN89IMoZYZ4MLF/NIaKNA=";
+        hash = "sha256-k6FDa5tBEHIEtVm6JTSOMylN89IMoZYZ4MLF/NIaKNA=";
         stripRoot = false;
       };
       dontPatchELF = true;
@@ -68,7 +68,7 @@
         sqlite
         git # Added to allow CodeRabbit to detect and interact with Git repositories
       ];
-    runScript = "${coderabbit-binary}/bin/coderabbit";
+    runScript = lib.getExe' coderabbit-binary "coderabbit";
 
     profile = ''
       export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
@@ -114,7 +114,7 @@
     export GIT_CONFIG_VALUE_0="$PWD"
     export GIT_CONFIG_KEY_1=safe.directory
     export GIT_CONFIG_VALUE_1='/etc/nixos'
-    exec ${coderabbit-fhs}/bin/coderabbit-fhs "$@"
+    exec ${lib.getExe coderabbit-fhs} "$@"
   '';
 
   # Create 'cr' wrapper
@@ -124,17 +124,17 @@
     export GIT_CONFIG_VALUE_0="$PWD"
     export GIT_CONFIG_KEY_1=safe.directory
     export GIT_CONFIG_VALUE_1='/etc/nixos'
-    exec ${coderabbit-fhs}/bin/coderabbit-fhs "$@"
+    exec ${lib.getExe coderabbit-fhs} "$@"
   '';
 in
   # Return a combined package with both wrappers
   pkgs.symlinkJoin {
     name = "coderabbit-${version}";
     paths = [coderabbit-wrapper cr-wrapper];
-    meta = with lib; {
+    meta = {
       description = "CodeRabbit CLI - AI-powered code review tool";
       homepage = "https://docs.coderabbit.ai/cli";
-      license = licenses.unfree;
+      license = lib.licenses.unfree;
       platforms = ["x86_64-linux"];
       maintainers = [];
     };

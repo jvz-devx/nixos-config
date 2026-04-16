@@ -158,13 +158,23 @@
         # Claude Code team mode (supports multiple sessions)
         claude-team-fn() {
           local name="''${1:-claude-$(date +%s)}"
-          local cmd="command claude --dangerously-skip-permissions --teammate-mode tmux"
+          local cmd='ANTHROPIC_MODEL="claude-opus-4-6[1m]" command claude --dangerously-skip-permissions --teammate-mode tmux'
           if [[ -n "$TMUX" ]]; then
             tmux new-session -d -s "$name" "$cmd"
             tmux switch-client -t "$name"
           else
             tmux new-session -s "$name" "$cmd"
           fi
+        }
+
+        # Claude Code via local CLIProxyAPI (uses ChatGPT/Codex subscription)
+        claude-proxy() {
+          ANTHROPIC_AUTH_TOKEN="sk-factory-droid-local" \
+          ANTHROPIC_BASE_URL="http://127.0.0.1:8317" \
+          ANTHROPIC_MODEL="claude-opus-4-6[1m]" \
+          ANTHROPIC_SMALL_FAST_MODEL="haiku" \
+          API_TIMEOUT_MS="3000000" \
+          command claude --dangerously-skip-permissions "$@"
         }
 
         # Claude Code with Z.ai API
@@ -183,24 +193,10 @@
     ];
   };
 
-  # Claude Code global settings (declarative, survives rebuilds)
-  home.file.".claude/settings.json".text = builtins.toJSON {
-    model = "opus";
-    enabledPlugins = {
-      "frontend-design@claude-plugins-official" = true;
-      "rust-analyzer-lsp@claude-plugins-official" = true;
-      "context7@claude-plugins-official" = true;
-    };
-    env = {
-      CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
-    };
-    attribution = {
-      commit = "";
-    };
-    statusLine = {
-      type = "command";
-      command = "bash ~/.claude/statusline-command.sh";
-    };
+  # Claude Code global settings (repo-backed and writable by Claude Code)
+  home.file.".claude/settings.json" = {
+    source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/modules/home/base/claude-settings.json";
+    force = true;
   };
 
   # Claude Code status line script
@@ -257,11 +253,13 @@
   };
 
   # Claude Code global skills (declarative, survives rebuilds)
-  home.file.".claude/skills/rust-coder/SKILL.md".source = ./claude-skills/rust-coder.md;
-  home.file.".claude/skills/rust-borrow-fixer/SKILL.md".source = ./claude-skills/rust-borrow-fixer.md;
-  home.file.".claude/skills/rust-reviewer/SKILL.md".source = ./claude-skills/rust-reviewer.md;
-  home.file.".claude/skills/rust-tester/SKILL.md".source = ./claude-skills/rust-tester.md;
-  home.file.".claude/skills/rust-project-init/SKILL.md".source = ./claude-skills/rust-project-init.md;
+  home.file.".claude/skills/rust-coder/SKILL.md".source = ../claude-skills/rust-coder.md;
+  home.file.".claude/skills/rust-borrow-fixer/SKILL.md".source = ../claude-skills/rust-borrow-fixer.md;
+  home.file.".claude/skills/rust-reviewer/SKILL.md".source = ../claude-skills/rust-reviewer.md;
+  home.file.".claude/skills/rust-tester/SKILL.md".source = ../claude-skills/rust-tester.md;
+  home.file.".claude/skills/rust-project-init/SKILL.md".source = ../claude-skills/rust-project-init.md;
+  home.file.".claude/skills/nix-writer/SKILL.md".source = ../claude-skills/nix-writer.md;
+  home.file.".claude/skills/skill-creator".source = ../claude-skills/skill-creator;
 
   # Direnv integration
   programs.direnv = {

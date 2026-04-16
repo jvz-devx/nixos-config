@@ -82,6 +82,10 @@ in {
         finegrained = isIntegrated && isLaptop;
       };
 
+      # Dynamic Boost - balances power between CPU and GPU on laptops
+      # Provides nvidia-powerd daemon required by supergfxd
+      dynamicBoost.enable = isLaptop;
+
       # Use open source kernel module (NVIDIA's open kernel module)
       # Only for Turing+ (RTX 20xx, 30xx, 40xx)
       open = false;
@@ -131,6 +135,11 @@ in {
         LIBVA_DRIVER_NAME = "nvidia";
         NVD_BACKEND = "direct";
         GBM_BACKEND = "nvidia-drm";
+
+        # Gaming latency reduction
+        __GL_SYNC_TO_VBLANK = "0"; # Disable driver-level vsync
+        __GL_MaxFramesAllowed = "1"; # Minimum pre-render queue (less input latency)
+        __GL_YIELD = "NOTHING"; # Don't yield CPU while waiting for GPU
         # Fix for Qt6/KDE6 Wayland EGL decoration context crash
         # Prevents "QWaylandGLContext: Failed to create decorations EGLContext" error
         QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";

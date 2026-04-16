@@ -11,7 +11,7 @@ Multi-host NixOS flake configuration managing desktops, a laptop, a server, and 
 | Host | User | Hardware | Profile |
 |------|------|----------|---------|
 | `rog-strix` | jens | Intel + NVIDIA laptop (ASUS) | workstation |
-| `pc-02` | lisa | AMD + NVIDIA desktop | workstation |
+| `pc-02` | jens | AMD + NVIDIA desktop | workstation |
 | `server-01` | admin | x86_64 headless (nixpkgs-stable) | server |
 | `wsl` | jens | WSL2 | minimal |
 
@@ -78,7 +78,7 @@ Hosts enable a profile in their `configuration.nix`, then add host-specific over
 
 ### Home Manager
 
-User configs live in `home/{jens,lisa,server,wsl}.nix`. Each imports modules from `modules/home/` (shell, programs, plasma, packages). Home modules are **not** option-gated — they activate by being imported.
+User configs live in `home/{jens,server,wsl}.nix`. Each imports modules from `modules/home/` (shell, programs, plasma, packages). Home modules are **not** option-gated — they activate by being imported.
 
 The `rebuild` shell alias is defined per-user and points to the correct `--flake .#<hostname>`.
 
@@ -96,6 +96,14 @@ The `rebuild` shell alias is defined per-user and points to the correct `--flake
 ### Secrets
 
 Managed by sops-nix with age encryption. Encrypted files in `secrets/`. Edit with `sops secrets/<file>.yaml`. Never put secrets in plaintext `.nix` files.
+
+## Tools
+
+For any file search or grep in the current git indexed directory use fff tools.
+
+## CLAUDE.md Terminology
+
+- When the user refers to the "global `CLAUDE.md`", they mean the Home Manager source in `home/jens.nix` that generates `~/.claude/CLAUDE.md`, not the repo-local `/etc/nixos/CLAUDE.md`.
 
 ## Coding Rules
 

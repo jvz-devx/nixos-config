@@ -21,6 +21,7 @@
     ./programs/localsend.nix
     ./programs/comfyui.nix
     ./programs/development
+    ./programs/rustdesk.nix
 
     # Service modules
     ./services/tailscale.nix
@@ -36,6 +37,7 @@
     ./system/boot-laptop.nix
     ./system/disk.nix
     ./system/power.nix
+    ./system/build-resources.nix
     ./system/iso-support.nix
 
     # Profiles

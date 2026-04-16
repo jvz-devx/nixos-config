@@ -52,7 +52,7 @@
       # For the Running case, we use `tailscale up` without --reset to avoid disrupting active connections.
       script = lib.mkForce ''
         getState() {
-          ${pkgs.tailscale}/bin/tailscale status --json --peers=false 2>/dev/null | ${pkgs.jq}/bin/jq -r '.BackendState' || echo "Unknown"
+          ${lib.getExe pkgs.tailscale} status --json --peers=false 2>/dev/null | ${lib.getExe' pkgs.jq "jq"} -r '.BackendState' || echo "Unknown"
         }
 
         echo "Checking Tailscale status..."
@@ -63,7 +63,7 @@
           NeedsLogin|NeedsMachineAuth|Stopped)
             echo "Tailscale needs authentication or is stopped, sending auth key..."
             if [[ -f ${config.sops.secrets.tailscale_auth_key.path} ]]; then
-              ${pkgs.tailscale}/bin/tailscale up --reset \
+              ${lib.getExe pkgs.tailscale} up --reset \
                 ${lib.escapeShellArgs config.services.tailscale.extraSetFlags} \
                 ${lib.optionalString config.myConfig.services.tailscale.advertiseExitNode "--advertise-exit-node"} \
                 --accept-routes --accept-dns \
@@ -77,7 +77,7 @@
             # Don't use --reset here to avoid disrupting active VPN connections.
             # `tailscale up` without --reset will update flags without disconnecting.
             echo "Tailscale is already running, ensuring flags are set..."
-            ${pkgs.tailscale}/bin/tailscale up \
+            ${lib.getExe pkgs.tailscale} up \
               ${lib.escapeShellArgs config.services.tailscale.extraSetFlags} \
               ${lib.optionalString config.myConfig.services.tailscale.advertiseExitNode "--advertise-exit-node"} \
               --accept-routes --accept-dns
@@ -91,7 +91,7 @@
       serviceConfig = {
         Type = lib.mkForce "oneshot";
         RemainAfterExit = true;
-        ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
+        ExecStartPre = "${lib.getExe' pkgs.coreutils "sleep"} 2";
         # Retry on failure (e.g. network not ready or secrets not yet decrypted)
         Restart = "on-failure";
         RestartSec = "10s";
@@ -105,10 +105,17 @@
 
     # Open firewall for Tailscale
     networking.firewall = {
-      # Trust the Tailscale interface
-      trustedInterfaces = ["tailscale0"];
+      # Trust the Tailscale interface and Docker bridge interfaces
+      trustedInterfaces = ["tailscale0" "docker0" "br-+"];
       # Allow Tailscale traffic
       checkReversePath = "loose";
     };
+
+    # Fix Docker bridge traffic being hijacked by Tailscale's routing table (table 52).
+    # These rules ensure Docker subnet traffic uses the main routing table instead.
+    networking.localCommands = ''
+      ${lib.getExe' pkgs.iproute2 "ip"} rule add to 172.16.0.0/12 lookup main priority 5200 2>/dev/null || true
+      ${lib.getExe' pkgs.iproute2 "ip"} rule add from 172.16.0.0/12 lookup main priority 5200 2>/dev/null || true
+    '';
   };
 }

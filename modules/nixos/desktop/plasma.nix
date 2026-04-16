@@ -30,7 +30,7 @@
 
     # SSH agent integration with KWallet
     programs.ssh.startAgent = true;
-    programs.ssh.askPassword = "${pkgs.kdePackages.ksshaskpass}/bin/ksshaskpass";
+    programs.ssh.askPassword = lib.getExe pkgs.kdePackages.ksshaskpass;
 
     # KDE packages
     environment.systemPackages = with pkgs.kdePackages; [

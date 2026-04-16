@@ -52,8 +52,8 @@
         # Cache for rclone
         CacheDirectory = "rclone";
 
-        ExecStart = "${pkgs.bash}/bin/bash -c 'export RCLONE_FTP_PASS=$(${pkgs.rclone}/bin/rclone obscure $(cat ${config.sops.secrets.nas_password.path})) && ${pkgs.rclone}/bin/rclone mount :ftp: ${config.myConfig.services.nas.mountPoint} --ftp-host ${config.myConfig.services.nas.host} --ftp-user ${config.myConfig.services.nas.user} --ftp-port 21 --allow-other --vfs-cache-mode full --vfs-cache-max-age 24h --vfs-read-ahead 128M --no-checksum --transfers 8 --daemon-timeout 10m --volname NAS --config /dev/null --cache-dir /var/cache/rclone'";
-        ExecStop = "${pkgs.util-linux}/bin/umount -l ${config.myConfig.services.nas.mountPoint}";
+        ExecStart = "${lib.getExe pkgs.bash} -c 'export RCLONE_FTP_PASS=$(${lib.getExe pkgs.rclone} obscure $(cat ${config.sops.secrets.nas_password.path})) && ${lib.getExe pkgs.rclone} mount :ftp: ${config.myConfig.services.nas.mountPoint} --ftp-host ${config.myConfig.services.nas.host} --ftp-user ${config.myConfig.services.nas.user} --ftp-port 21 --allow-other --vfs-cache-mode full --vfs-cache-max-age 24h --vfs-read-ahead 128M --no-checksum --transfers 8 --daemon-timeout 10m --volname NAS --config /dev/null --cache-dir /var/cache/rclone'";
+        ExecStop = "${lib.getExe' pkgs.util-linux "umount"} -l ${config.myConfig.services.nas.mountPoint}";
         Restart = "on-failure";
         RestartSec = "10s";
       };

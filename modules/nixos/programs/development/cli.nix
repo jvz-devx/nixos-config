@@ -6,6 +6,11 @@
   ...
 }: {
   config = lib.mkIf config.myConfig.programs.development.enable {
+    environment.sessionVariables = {
+      PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
+    };
+
     environment.systemPackages = with pkgs; let
       hasNvidia = config.myConfig.hardware.nvidia.enable or false;
       hasIntel = config.myConfig.hardware.cpu.intel.enable or false;
@@ -83,6 +88,12 @@
         # AI Tools
         opencode # AI coding agent for CLI
 
+        # Libraries needed by tools like Prisma
+        openssl
+
+        # Playwright browser testing
+        playwright-driver.browsers
+
         # Languages (prefer per-project with devShells/direnv)
         go
         bun # Fast JS runtime, bundler, and package manager
@@ -97,6 +108,7 @@
         llvm # LLVM toolchain
 
         # DevOps
+        # depot-cli # Fast Docker image builder
         lazydocker # TUI for Docker management
         kubectl # Kubernetes CLI
         k9s # Kubernetes TUI

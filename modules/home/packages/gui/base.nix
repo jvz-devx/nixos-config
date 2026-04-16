@@ -17,6 +17,7 @@
 
     # AI Coding
     claude-code
+    paseo
     # chell-desktop - AppImage installed at ~/.local/bin/chell-desktop
   ];
 }

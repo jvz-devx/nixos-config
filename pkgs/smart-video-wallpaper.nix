@@ -47,10 +47,10 @@ mkKdeDerivation {
 
   dontWrapQtApps = true;
 
-  meta = with lib; {
+  meta = {
     description = "Smart Video Wallpaper Reborn for KDE Plasma";
     homepage = "https://github.com/luisbocanegra/plasma-smart-video-wallpaper-reborn";
-    license = licenses.gpl2Plus;
-    platforms = platforms.linux;
+    license = lib.licenses.gpl2Plus;
+    platforms = lib.platforms.linux;
   };
 }

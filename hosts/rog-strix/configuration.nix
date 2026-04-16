@@ -35,12 +35,13 @@
   # Hardware configuration
   myConfig.hardware.nvidia.enable = true;
   myConfig.hardware.nvidia.isLaptop = true;
-  myConfig.hardware.nvidia.driverBranch = "latest"; # Use 590 driver
+  myConfig.hardware.nvidia.driverBranch = "production";
   myConfig.hardware.cpu.intel.enable = true;
-  myConfig.hardware.asus.enable = true;
+  # myConfig.hardware.asus.enable = true;
 
   # System configuration
   myConfig.system.power.enable = true;
+  myConfig.system.buildResources.enable = true;
   myConfig.system.boot.laptop.enable = true;
   myConfig.system.boot.laptop.resumeDevice = "/dev/disk/by-uuid/4d48cb91-7bfa-448e-bc21-93e228ddd729";
 
@@ -120,6 +121,10 @@
   programs.zsh.enable = true;
   programs.git.enable = true;
   programs.git.config.safe.directory = "/etc/nixos";
+
+  environment.systemPackages = with pkgs; [
+    cmux-linux-bin
+  ];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "26.05";

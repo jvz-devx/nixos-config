@@ -8,6 +8,10 @@
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: let
     rustOverlay = inputs.rust-overlay.overlays.default final prev;
+    pkgs-unstable = import inputs.nixpkgs {
+      system = final.system;
+      config.allowUnfree = true;
+    };
   in {
     # Rust toolchain pinned to 1.93
     inherit (rustOverlay) rust-bin;
@@ -16,28 +20,26 @@
       withVencord = true;
     };
 
-    # Use Vesktop from nixpkgs-master to get the latest version (1.6.3+)
-    # We override it to fix a permission error (EACCES) during the build phase
-    # where electron-builder tries to modify a read-only electron binary.
+    # Pin opencode to nixpkgs-master because the main nixpkgs input lagged on
+    # 1.0.210, which did not expose the newer auth flow we needed for Codex.
+    # Using the packaged nixpkgs-master derivation also preserves its Bun
+    # compatibility patch, unlike the raw upstream flake package.
+    opencode =
+      (import inputs.nixpkgs-master {
+        system = final.system;
+        config.allowUnfree = true;
+      }).opencode;
+
+    # Keep Vesktop on the packaged nixpkgs-master build.
+    # Our older local override started failing once Electron's layout changed,
+    # so we intentionally prefer the upstream nixpkgs package as-is.
     vesktop = let
       pkgs-master = import inputs.nixpkgs-master {
         inherit (final) system;
         config.allowUnfree = true;
       };
     in
-      pkgs-master.vesktop.overrideAttrs (old: {
-        preBuild =
-          (old.preBuild or "")
-          + ''
-            cp -r ${pkgs-master.electron.dist} ./electron-dist
-            chmod -R u+w ./electron-dist
-          '';
-        buildPhase =
-          builtins.replaceStrings
-          ["-c.electronDist=${pkgs-master.electron.dist}"]
-          ["-c.electronDist=./electron-dist"]
-          old.buildPhase;
-      });
+      pkgs-master.vesktop;
   };
 
   # When applied, the stable nixpkgs set (declared in the flake inputs) will

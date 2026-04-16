@@ -52,7 +52,7 @@
             matches = [{"device.name" = "~bluez_card.*";}];
             actions = {
               update-props = {
-                "bluez5.a2dp.ldac.quality" = "auto";
+                "bluez5.a2dp.ldac.quality" = "sq";
                 "bluez5.a2dp.aac.bitratemode" = 5;
                 "bluez5.auto-connect" = ["hfp_hf" "hsp_hs" "a2dp_sink"];
                 "bluez5.hw-volume" = ["hfp_hf" "hsp_hs" "a2dp_sink" "hfp_ag" "hsp_ag" "a2dp_source"];
@@ -66,8 +66,8 @@
       extraConfig.pipewire."92-low-latency" = {
         context.properties = {
           default.clock.rate = 48000;
-          default.clock.quantum = 128;
-          default.clock.min-quantum = 64;
+          default.clock.quantum = 512;
+          default.clock.min-quantum = 128;
           default.clock.max-quantum = 2048;
         };
       };

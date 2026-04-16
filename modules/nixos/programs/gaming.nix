@@ -62,13 +62,53 @@
       settings = {
         general = {
           renice = 10;
+          softrealtime = "auto"; # SCHED_ISO on CachyOS — near-realtime priority
+          ioprio = 0; # Highest IO priority
+          inhibit_screensaver = 1;
         };
         gpu = {
           apply_gpu_optimisations = "accept-responsibility";
           gpu_device = 0;
+          nv_powermizer_mode = 1; # Maximum GPU performance during gaming
+        };
+        custom = {
+          start = "qdbus6 org.kde.KWin /Compositor suspend";
+          end = "qdbus6 org.kde.KWin /Compositor resume";
         };
       };
     };
+
+    # Gaming-related kernel tweaks
+    boot.extraModprobeConfig = lib.mkAfter ''
+      options usbhid mousepoll=1
+    '';
+
+    boot.kernelParams = [
+      "tsc=reliable"
+      "clocksource=tsc"
+    ];
+
+    boot.kernel.sysctl = {
+      "vm.compaction_proactiveness" = 0; # Reduce memory compaction stalls
+      "vm.min_free_kbytes" = 1048576; # 1GB reserve to avoid allocation stalls
+      "kernel.split_lock_mitigate" = 0; # Prevent micro-stutters
+    };
+
+    # Allow game processes to use high priority scheduling
+    security.pam.loginLimits = [
+      {
+        domain = "*";
+        type = "-";
+        item = "nice";
+        value = "-20";
+      }
+      {
+        domain = "*";
+        type = "soft";
+        item = "rtprio";
+        value = "95";
+      }
+    ];
 
     # System packages - gaming tools
     environment.systemPackages = with pkgs; [

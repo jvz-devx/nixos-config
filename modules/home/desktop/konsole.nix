@@ -13,6 +13,9 @@ in {
     "UiSettings"."ColorScheme" = "NordicDarker";
   };
 
+  # Konsole keyboard shortcuts - restore Ctrl+Shift+T for new tab
+  programs.plasma.configFile."konsolerc"."Shortcut Scheme Settings"."new-tab" = "Ctrl+Shift+T";
+
   # SSH Manager Configuration (Encrypted via SOPS)
   sops.secrets.proxmox_host = {};
 

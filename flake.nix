@@ -68,8 +68,14 @@
     # Pin nixpkgs for Stremio to avoid qtwebengine build issues
     nixpkgs-stremio.url = "github:nixos/nixpkgs/5135c59491985879812717f4c9fea69604e7f26f";
 
-    # Latest nixpkgs for specific packages like Vesktop
+    # Latest nixpkgs for packages that need a newer snapshot than nixos-unstable.
+    # We currently rely on this for opencode/Codex auth support and Vesktop.
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
+
+    # Temporary direct upstream pin kept only in the lock file history.
+    # The active opencode fix now comes from nixpkgs-master's packaged derivation.
+    opencode-upstream.url = "github:sst/opencode/v1.4.3";
+    opencode-upstream.inputs.nixpkgs.follows = "nixpkgs-master";
   };
 
   outputs = {
@@ -178,7 +184,7 @@
               useUserPackages = true;
               backupFileExtension = "backup";
               extraSpecialArgs = {inherit inputs;};
-              users.lisa = import ./home/lisa.nix;
+              users.jens = import ./home/jens.nix;
               sharedModules = [
                 plasma-manager.homeModules.plasma-manager
                 sops-nix.homeManagerModules.sops
@@ -306,7 +312,7 @@
                 useUserPackages = true;
                 backupFileExtension = "backup";
                 extraSpecialArgs = {inherit inputs;};
-                users.lisa = import ./home/lisa.nix;
+                users.jens = import ./home/jens.nix;
                 sharedModules = [
                   plasma-manager.homeModules.plasma-manager
                   sops-nix.homeManagerModules.sops

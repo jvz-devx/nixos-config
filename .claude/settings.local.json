@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(nix flake show:*)",
+      "Bash(nix search:*)",
+      "Bash(nix-env:*)",
+      "Bash(nix eval:*)",
+      "WebFetch(domain:docs.z.ai)",
+      "Bash(sops:*)",
+      "Bash(git checkout:*)",
+      "Bash(rebuild)",
+      "Bash(npm install:*)",
+      "Bash(nix-shell:*)",
+      "Bash(~/.npm-global/bin/chell --version:*)",
+      "Bash(ln:*)",
+      "Bash(sudo ln:*)",
+      "Bash(sudo mkdir:*)",
+      "Bash(/usr/local/bin/chell:*)",
+      "mcp__svelte__list-sections",
+      "mcp__svelte__get-documentation",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nReplace ingress-nginx with Traefik + MetalLB, add CLAUDE.md\n\n- Replace ingress-nginx with declarative Traefik HelmRelease\n- Add MetalLB HelmRelease + L2 address pool \\(192.168.1.110-120\\)\n- All k3s built-ins \\(traefik, servicelb, flannel\\) disabled and replaced\n  with Flux-managed HelmReleases \\(Traefik, MetalLB, Cilium\\)\n- Add CLAUDE.md with full project context for Claude Code\n- Update README to reflect declarative architecture\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(ssh:*)",
+      "Bash(nix develop --command bash -c '\nexport SOPS_AGE_KEY_FILE=\"\"$HOME/.config/sops/age/keys.txt\"\"\ncd ansible && ansible-playbook site.yml -v\n')",
+      "WebSearch",
+      "mcp__fff__multi_grep",
+      "Bash(nix fmt *)",
+      "Bash(nixos-rebuild dry-build *)",
+      "Bash(plasmashell --version)",
+      "Bash(kded6 --version)",
+      "Bash(nvidia-smi --query-gpu=driver_version --format=csv,noheader)",
+      "mcp__claude_ai_firecrawl__firecrawl_search",
+      "mcp__claude_ai_firecrawl__firecrawl_scrape",
+      "Bash(nix flake *)",
+      "Bash(command -v fff-mcp)",
+      "mcp__fff__find_files",
+      "mcp__fff__grep",
+      "Bash(gh auth *)",
+      "Bash(gh repo *)",
+      "Bash(git diff *)",
+      "Bash(git check-att)",
+      "Bash(command -v git-lfs)",
+      "Bash(git lfs *)",
+      "Bash(nix store *)"
+    ]
+  },
+  "enabledPlugins": {
+    "skill-creator@claude-plugins-official": true
+  }
+}
