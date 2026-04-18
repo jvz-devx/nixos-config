@@ -16,11 +16,15 @@ in {
     droid
     # GitHub Copilot CLI
     github-copilot-cli
+    # OpenAI Codex CLI
+    codex
     # CodeRabbit CLI
     coderabbit
     # fff-mcp - fast file search MCP server for Claude Code
     fff-mcp
     # CLIProxyAPI local model proxy
     cliproxyapi
+    # Cloudflare CLI (technical preview)
+    cf
   ];
 }

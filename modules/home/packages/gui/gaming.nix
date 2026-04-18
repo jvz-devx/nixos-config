@@ -8,7 +8,9 @@
     heroic # GOG/Epic Games launcher
     ludusavi # Game save backup tool
     bottles # Wine/Proton prefix manager
-    proton-ge-bin # Custom Proton builds
+    # proton-ge-bin isn't installable as a package anymore (upstream placeholder
+    # says to use programs.steam.extraCompatPackages instead); protonup-rs below
+    # fetches the latest GE-Proton into Steam's compatibilitytools.d at activation.
     protonup-rs # CLI to manage Proton-GE/Wine-GE
     rpcs3 # PlayStation 3 emulator
     cemu # Wii U emulator

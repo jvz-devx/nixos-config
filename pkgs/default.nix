@@ -11,4 +11,5 @@ pkgs: {
   cmux-linux-bin = pkgs.callPackage ./cmux-linux-bin.nix {};
   cliproxyapi = pkgs.callPackage ./cliproxyapi.nix {};
   paseo = pkgs.callPackage ./paseo.nix {};
+  cf = pkgs.callPackage ./cf {};
 }

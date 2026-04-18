@@ -1,0 +1,570 @@
+===== sample 1 2026-04-18T13:27:16+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              226   6 RLl
+   2774 .kwin_wayland-w 11.7   8 Sl
+   2829 Xwayland         1.2   5 S
+-- proc 21886 --
+609788297129 11714838475 2105291
+voluntary_ctxt_switches:	1927775
+nonvoluntary_ctxt_switches:	177559
+-- proc 2774 --
+471281324708 374969141 3150034
+voluntary_ctxt_switches:	3133246
+nonvoluntary_ctxt_switches:	16842
+-- proc 2829 --
+58223723616 10068989941 1456828
+voluntary_ctxt_switches:	1411851
+nonvoluntary_ctxt_switches:	45037
+34 %, 12 %, 57.98 W, 855 MHz
+
+===== sample 2 2026-04-18T13:27:17+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              226   6 SLl
+   2774 .kwin_wayland-w 11.7   2 Sl
+   2829 Xwayland         1.2   8 S
+-- proc 21886 --
+610128414265 11717277226 2106554
+voluntary_ctxt_switches:	1928998
+nonvoluntary_ctxt_switches:	177599
+-- proc 2774 --
+471391931436 375037011 3150696
+voluntary_ctxt_switches:	3133909
+nonvoluntary_ctxt_switches:	16842
+-- proc 2829 --
+58235641435 10069012631 1457194
+voluntary_ctxt_switches:	1412215
+nonvoluntary_ctxt_switches:	45039
+40 %, 14 %, 58.11 W, 855 MHz
+
+===== sample 3 2026-04-18T13:27:18+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              226   0 RLl
+   2774 .kwin_wayland-w 11.7   2 Sl
+   2829 Xwayland         1.2   1 S
+-- proc 21886 --
+610640196791 11719709119 2108396
+voluntary_ctxt_switches:	1930807
+nonvoluntary_ctxt_switches:	177639
+-- proc 2774 --
+471490161824 375067861 3151425
+voluntary_ctxt_switches:	3134641
+nonvoluntary_ctxt_switches:	16843
+-- proc 2829 --
+58252628477 10069320741 1457731
+voluntary_ctxt_switches:	1412748
+nonvoluntary_ctxt_switches:	45044
+94 %, 28 %, 59.71 W, 825 MHz
+
+===== sample 4 2026-04-18T13:27:19+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              226   8 RLl
+   2774 .kwin_wayland-w 11.8   2 Rl
+   2829 Xwayland         1.2  10 S
+-- proc 21886 --
+611399624669 11724273771 2111101
+voluntary_ctxt_switches:	1933405
+nonvoluntary_ctxt_switches:	177743
+-- proc 2774 --
+471619752781 375294311 3152770
+voluntary_ctxt_switches:	3135980
+nonvoluntary_ctxt_switches:	16848
+-- proc 2829 --
+58282268626 10074350886 1458633
+voluntary_ctxt_switches:	1413625
+nonvoluntary_ctxt_switches:	45071
+64 %, 36 %, 159.08 W, 1935 MHz
+
+===== sample 5 2026-04-18T13:27:20+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              226   7 SLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   0 S
+-- proc 21886 --
+612216199215 11736639981 2114113
+voluntary_ctxt_switches:	1936181
+nonvoluntary_ctxt_switches:	177978
+-- proc 2774 --
+471774064414 375372331 3154489
+voluntary_ctxt_switches:	3137701
+nonvoluntary_ctxt_switches:	16852
+-- proc 2829 --
+58322588202 10076551347 1459722
+voluntary_ctxt_switches:	1414703
+nonvoluntary_ctxt_switches:	45084
+80 %, 47 %, 201.66 W, 1905 MHz
+
+===== sample 6 2026-04-18T13:27:22+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              226   2 RLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   6 S
+-- proc 21886 --
+613088218350 11749484419 2117508
+voluntary_ctxt_switches:	1939182
+nonvoluntary_ctxt_switches:	178368
+-- proc 2774 --
+471909259394 375670842 3155941
+voluntary_ctxt_switches:	3139126
+nonvoluntary_ctxt_switches:	16871
+-- proc 2829 --
+58359911011 10087422313 1460648
+voluntary_ctxt_switches:	1415558
+nonvoluntary_ctxt_switches:	45152
+61 %, 34 %, 189.89 W, 1935 MHz
+
+===== sample 7 2026-04-18T13:27:23+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              226   2 RLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   7 S
+-- proc 21886 --
+613955848920 11757590013 2120677
+voluntary_ctxt_switches:	1942123
+nonvoluntary_ctxt_switches:	178599
+-- proc 2774 --
+472035037348 375852662 3156970
+voluntary_ctxt_switches:	3140143
+nonvoluntary_ctxt_switches:	16881
+-- proc 2829 --
+58390278864 10090595034 1461374
+voluntary_ctxt_switches:	1416250
+nonvoluntary_ctxt_switches:	45185
+59 %, 33 %, 186.14 W, 1920 MHz
+
+===== sample 8 2026-04-18T13:27:24+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              226   0 RLl
+   2774 .kwin_wayland-w 11.8   2 Sl
+   2829 Xwayland         1.2   7 S
+-- proc 21886 --
+614835332005 11772239262 2123428
+voluntary_ctxt_switches:	1944580
+nonvoluntary_ctxt_switches:	178924
+-- proc 2774 --
+472178761518 376118812 3158521
+voluntary_ctxt_switches:	3141679
+nonvoluntary_ctxt_switches:	16896
+-- proc 2829 --
+58430979557 10104803363 1462366
+voluntary_ctxt_switches:	1417210
+nonvoluntary_ctxt_switches:	45216
+65 %, 36 %, 187.59 W, 1935 MHz
+
+===== sample 9 2026-04-18T13:27:25+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              227   6 RLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   0 S
+-- proc 21886 --
+615693382840 11782885921 2126255
+voluntary_ctxt_switches:	1947133
+nonvoluntary_ctxt_switches:	179173
+-- proc 2774 --
+472315321611 376242442 3159757
+voluntary_ctxt_switches:	3142911
+nonvoluntary_ctxt_switches:	16901
+-- proc 2829 --
+58463683550 10113970891 1463209
+voluntary_ctxt_switches:	1418003
+nonvoluntary_ctxt_switches:	45266
+67 %, 39 %, 187.97 W, 1935 MHz
+
+===== sample 10 2026-04-18T13:27:26+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              227   0 RLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   6 S
+-- proc 21886 --
+616563451347 11799276743 2128809
+voluntary_ctxt_switches:	1949440
+nonvoluntary_ctxt_switches:	179417
+-- proc 2774 --
+472455635559 376470543 3161169
+voluntary_ctxt_switches:	3144316
+nonvoluntary_ctxt_switches:	16913
+-- proc 2829 --
+58499758049 10126805467 1464131
+voluntary_ctxt_switches:	1418908
+nonvoluntary_ctxt_switches:	45285
+64 %, 34 %, 184.94 W, 1935 MHz
+
+===== sample 11 2026-04-18T13:27:27+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              227   6 SLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   7 S
+-- proc 21886 --
+617435709326 11813396208 2131812
+voluntary_ctxt_switches:	1951999
+nonvoluntary_ctxt_switches:	179857
+-- proc 2774 --
+472592016610 376770113 3162758
+voluntary_ctxt_switches:	3145885
+nonvoluntary_ctxt_switches:	16929
+-- proc 2829 --
+58538743802 10132394841 1465161
+voluntary_ctxt_switches:	1419896
+nonvoluntary_ctxt_switches:	45325
+66 %, 34 %, 180.42 W, 1935 MHz
+
+===== sample 12 2026-04-18T13:27:28+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              227   6 RLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   7 S
+-- proc 21886 --
+618311017581 11825142627 2134872
+voluntary_ctxt_switches:	1954818
+nonvoluntary_ctxt_switches:	180103
+-- proc 2774 --
+472728017592 376986513 3164198
+voluntary_ctxt_switches:	3147318
+nonvoluntary_ctxt_switches:	16934
+-- proc 2829 --
+58578489268 10137985605 1466097
+voluntary_ctxt_switches:	1420789
+nonvoluntary_ctxt_switches:	45368
+66 %, 34 %, 187.77 W, 1935 MHz
+
+===== sample 13 2026-04-18T13:27:29+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              227   7 RLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   1 S
+-- proc 21886 --
+619192109751 11830525839 2137623
+voluntary_ctxt_switches:	1957388
+nonvoluntary_ctxt_switches:	180288
+-- proc 2774 --
+472853364309 377011083 3165210
+voluntary_ctxt_switches:	3148336
+nonvoluntary_ctxt_switches:	16934
+-- proc 2829 --
+58607900353 10142339557 1466826
+voluntary_ctxt_switches:	1421488
+nonvoluntary_ctxt_switches:	45400
+69 %, 36 %, 186.49 W, 1935 MHz
+
+===== sample 14 2026-04-18T13:27:30+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              227   7 RLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   8 S
+-- proc 21886 --
+620067987004 11840354417 2140527
+voluntary_ctxt_switches:	1960092
+nonvoluntary_ctxt_switches:	180480
+-- proc 2774 --
+472982533253 377168293 3166250
+voluntary_ctxt_switches:	3149358
+nonvoluntary_ctxt_switches:	16946
+-- proc 2829 --
+58638470057 10148068489 1467570
+voluntary_ctxt_switches:	1422179
+nonvoluntary_ctxt_switches:	45451
+66 %, 35 %, 192.40 W, 1935 MHz
+
+===== sample 15 2026-04-18T13:27:31+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              227   0 SLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   0 S
+-- proc 21886 --
+620943738070 11850638382 2143411
+voluntary_ctxt_switches:	1962784
+nonvoluntary_ctxt_switches:	180671
+-- proc 2774 --
+473114133778 377331803 3167288
+voluntary_ctxt_switches:	3150388
+nonvoluntary_ctxt_switches:	16957
+-- proc 2829 --
+58668890641 10153476521 1468305
+voluntary_ctxt_switches:	1422876
+nonvoluntary_ctxt_switches:	45490
+70 %, 37 %, 193.65 W, 1935 MHz
+
+===== sample 16 2026-04-18T13:27:32+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              227   6 DLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   7 S
+-- proc 21886 --
+621810388091 11863151930 2146451
+voluntary_ctxt_switches:	1965585
+nonvoluntary_ctxt_switches:	180937
+-- proc 2774 --
+473252778617 377391733 3168403
+voluntary_ctxt_switches:	3151499
+nonvoluntary_ctxt_switches:	16959
+-- proc 2829 --
+58706018758 10163676758 1469095
+voluntary_ctxt_switches:	1423623
+nonvoluntary_ctxt_switches:	45535
+75 %, 40 %, 195.77 W, 1920 MHz
+
+===== sample 17 2026-04-18T13:27:33+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              227   2 RLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   1 S
+-- proc 21886 --
+622675525282 11877096340 2150150
+voluntary_ctxt_switches:	1969030
+nonvoluntary_ctxt_switches:	181170
+-- proc 2774 --
+473395109083 377532283 3169821
+voluntary_ctxt_switches:	3152913
+nonvoluntary_ctxt_switches:	16964
+-- proc 2829 --
+58747318247 10170666733 1470030
+voluntary_ctxt_switches:	1424511
+nonvoluntary_ctxt_switches:	45583
+70 %, 37 %, 193.33 W, 1935 MHz
+
+===== sample 18 2026-04-18T13:27:34+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              227   6 RLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   1 S
+-- proc 21886 --
+623549783173 11890127388 2153515
+voluntary_ctxt_switches:	1972130
+nonvoluntary_ctxt_switches:	181430
+-- proc 2774 --
+473535954712 377906313 3171257
+voluntary_ctxt_switches:	3154346
+nonvoluntary_ctxt_switches:	16969
+-- proc 2829 --
+58788743908 10184239798 1470996
+voluntary_ctxt_switches:	1425407
+nonvoluntary_ctxt_switches:	45657
+72 %, 38 %, 193.10 W, 1920 MHz
+
+===== sample 19 2026-04-18T13:27:35+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              228   5 RLl
+   2774 .kwin_wayland-w 11.8   2 Sl
+   2829 Xwayland         1.2   6 S
+-- proc 21886 --
+624416585038 11911015579 2156562
+voluntary_ctxt_switches:	1974874
+nonvoluntary_ctxt_switches:	181745
+-- proc 2774 --
+473675301592 378123033 3172225
+voluntary_ctxt_switches:	3155300
+nonvoluntary_ctxt_switches:	16981
+-- proc 2829 --
+58820498472 10196721484 1471737
+voluntary_ctxt_switches:	1426051
+nonvoluntary_ctxt_switches:	45749
+66 %, 35 %, 194.91 W, 1920 MHz
+
+===== sample 20 2026-04-18T13:27:36+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              228  10 RLl
+   2774 .kwin_wayland-w 11.8   2 Sl
+   2829 Xwayland         1.2   8 S
+-- proc 21886 --
+625268835949 11921855004 2159810
+voluntary_ctxt_switches:	1977900
+nonvoluntary_ctxt_switches:	181963
+-- proc 2774 --
+473795651433 378209433 3172937
+voluntary_ctxt_switches:	3156008
+nonvoluntary_ctxt_switches:	16987
+-- proc 2829 --
+58842190980 10198604024 1472316
+voluntary_ctxt_switches:	1426609
+nonvoluntary_ctxt_switches:	45768
+75 %, 40 %, 198.40 W, 1920 MHz
+
+===== sample 21 2026-04-18T13:27:37+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              228   0 SLl
+   2774 .kwin_wayland-w 11.8   2 Sl
+   2829 Xwayland         1.2   0 S
+-- proc 21886 --
+626139336134 11928266077 2163106
+voluntary_ctxt_switches:	1981057
+nonvoluntary_ctxt_switches:	182102
+-- proc 2774 --
+473925744618 378423013 3173743
+voluntary_ctxt_switches:	3156808
+nonvoluntary_ctxt_switches:	16995
+-- proc 2829 --
+58868979485 10201530685 1472935
+voluntary_ctxt_switches:	1427213
+nonvoluntary_ctxt_switches:	45786
+75 %, 40 %, 199.64 W, 1920 MHz
+
+===== sample 22 2026-04-18T13:27:38+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              228   7 RLl
+   2774 .kwin_wayland-w 11.8   2 Sl
+   2829 Xwayland         1.2   6 S
+-- proc 21886 --
+626998622475 11937342084 2166234
+voluntary_ctxt_switches:	1984018
+nonvoluntary_ctxt_switches:	182261
+-- proc 2774 --
+474071666537 378592163 3175109
+voluntary_ctxt_switches:	3158165
+nonvoluntary_ctxt_switches:	17005
+-- proc 2829 --
+58905772290 10205365588 1473877
+voluntary_ctxt_switches:	1428115
+nonvoluntary_ctxt_switches:	45828
+74 %, 40 %, 200.49 W, 1920 MHz
+
+===== sample 23 2026-04-18T13:27:39+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              228   2 SLl
+   2774 .kwin_wayland-w 11.8   2 Sl
+   2829 Xwayland         1.2   7 S
+-- proc 21886 --
+627825727765 11947569960 2169224
+voluntary_ctxt_switches:	1986851
+nonvoluntary_ctxt_switches:	182422
+-- proc 2774 --
+474213329393 378768733 3176325
+voluntary_ctxt_switches:	3159375
+nonvoluntary_ctxt_switches:	17008
+-- proc 2829 --
+58937259170 10210527501 1474720
+voluntary_ctxt_switches:	1428921
+nonvoluntary_ctxt_switches:	45860
+72 %, 39 %, 199.17 W, 1920 MHz
+
+===== sample 24 2026-04-18T13:27:41+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              228   6 RLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   0 S
+-- proc 21886 --
+628680355837 11961611545 2172425
+voluntary_ctxt_switches:	1989820
+nonvoluntary_ctxt_switches:	182655
+-- proc 2774 --
+474353308570 379001973 3177836
+voluntary_ctxt_switches:	3160875
+nonvoluntary_ctxt_switches:	17021
+-- proc 2829 --
+58976028740 10214601103 1475715
+voluntary_ctxt_switches:	1429866
+nonvoluntary_ctxt_switches:	45912
+72 %, 39 %, 199.51 W, 1920 MHz
+
+===== sample 25 2026-04-18T13:27:42+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              228   6 RLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   1 S
+-- proc 21886 --
+629530232675 11972323163 2175621
+voluntary_ctxt_switches:	1992736
+nonvoluntary_ctxt_switches:	182951
+-- proc 2774 --
+474489995739 379067713 3178933
+voluntary_ctxt_switches:	3161964
+nonvoluntary_ctxt_switches:	17025
+-- proc 2829 --
+59007100461 10216740933 1476490
+voluntary_ctxt_switches:	1430604
+nonvoluntary_ctxt_switches:	45949
+76 %, 39 %, 201.01 W, 1920 MHz
+
+===== sample 26 2026-04-18T13:27:43+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              228   6 RLl
+   2774 .kwin_wayland-w 11.8   2 Sl
+   2829 Xwayland         1.2   1 S
+-- proc 21886 --
+630385177479 11984682346 2178821
+voluntary_ctxt_switches:	1995667
+nonvoluntary_ctxt_switches:	183205
+-- proc 2774 --
+474620269408 379151323 3179992
+voluntary_ctxt_switches:	3163024
+nonvoluntary_ctxt_switches:	17028
+-- proc 2829 --
+59036053553 10219736664 1477252
+voluntary_ctxt_switches:	1431335
+nonvoluntary_ctxt_switches:	45983
+73 %, 38 %, 200.03 W, 1920 MHz
+
+===== sample 27 2026-04-18T13:27:44+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              228   6 SLl
+   2774 .kwin_wayland-w 11.8   2 Sl
+   2829 Xwayland         1.2   0 S
+-- proc 21886 --
+631234206723 11996245922 2182144
+voluntary_ctxt_switches:	1998755
+nonvoluntary_ctxt_switches:	183443
+-- proc 2774 --
+474766890477 379366124 3181096
+voluntary_ctxt_switches:	3164113
+nonvoluntary_ctxt_switches:	17037
+-- proc 2829 --
+59071536620 10227115960 1478035
+voluntary_ctxt_switches:	1432052
+nonvoluntary_ctxt_switches:	46043
+69 %, 35 %, 197.85 W, 1920 MHz
+
+===== sample 28 2026-04-18T13:27:45+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              228   0 RLl
+   2774 .kwin_wayland-w 11.8   2 Sl
+   2829 Xwayland         1.2   2 S
+-- proc 21886 --
+632119503957 12008668762 2185349
+voluntary_ctxt_switches:	2001680
+nonvoluntary_ctxt_switches:	183719
+-- proc 2774 --
+474894339689 379533684 3182421
+voluntary_ctxt_switches:	3165433
+nonvoluntary_ctxt_switches:	17043
+-- proc 2829 --
+59106950910 10230212861 1478878
+voluntary_ctxt_switches:	1432879
+nonvoluntary_ctxt_switches:	46059
+58 %, 28 %, 186.75 W, 1920 MHz
+
+===== sample 29 2026-04-18T13:27:46+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              229   0 SLl
+   2774 .kwin_wayland-w 11.8   8 Sl
+   2829 Xwayland         1.2   6 S
+-- proc 21886 --
+633007480493 12018402255 2188171
+voluntary_ctxt_switches:	2004278
+nonvoluntary_ctxt_switches:	183951
+-- proc 2774 --
+475020631391 379594254 3183665
+voluntary_ctxt_switches:	3166676
+nonvoluntary_ctxt_switches:	17045
+-- proc 2829 --
+59139092556 10233689203 1479701
+voluntary_ctxt_switches:	1433664
+nonvoluntary_ctxt_switches:	46099
+67 %, 34 %, 187.97 W, 1920 MHz
+
+===== sample 30 2026-04-18T13:27:47+02:00 =====
+    PID COMMAND         %CPU PSR STAT
+  21886 cs2              229   6 RLl
+   2774 .kwin_wayland-w 11.8   2 Sl
+   2829 Xwayland         1.2   8 S
+-- proc 21886 --
+633879296080 12033488470 2191137
+voluntary_ctxt_switches:	2006939
+nonvoluntary_ctxt_switches:	184252
+-- proc 2774 --
+475169353813 379788504 3185461
+voluntary_ctxt_switches:	3168461
+nonvoluntary_ctxt_switches:	17055
+-- proc 2829 --
+59178258102 10239138428 1480825
+voluntary_ctxt_switches:	1434763
+nonvoluntary_ctxt_switches:	46124
+68 %, 34 %, 193.03 W, 1920 MHz
+

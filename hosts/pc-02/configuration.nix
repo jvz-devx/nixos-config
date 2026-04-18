@@ -34,13 +34,23 @@
   myConfig.hardware.nvidia.stabilityTweaks.enable = true;
   myConfig.hardware.cpu.amd.enable = true;
 
-  # RustDesk remote desktop (LAN + Tailscale only)
-  myConfig.programs.rustdesk = {
+  # KDE Remote Desktop (RDP via krdpserver). Shares jens' Plasma session.
+  # Password lives in sops (key: krdp_password). Access is restricted to the
+  # LAN and Tailscale ranges.
+  myConfig.services.krdp = {
     enable = true;
-    serverHost = "100.72.252.108"; # pc-02 tailscale IP
-    serverKey = "CBg8pWC23DtYSZUnPYvZ6F1jEdGIqSqZHLsmJMzjRuU=";
+    username = "jens";
+    allowedCIDRs = ["192.168.0.0/16" "100.64.0.0/10"];
+  };
+
+  # RustDesk remote desktop (LAN + Tailscale only)
+  myConfig.programs.rustdesk.client = {
+    enable = true;
+    serverHost = "192.168.1.112"; # homelab cluster MetalLB IP
+    serverKey = "HpSEDKZzog4eXpnWR2Sn2c7pdSIUe+CgbrLFJD1uMsQ=";
     whitelist = ["192.168.0.0/22" "100.64.0.0/10"];
   };
+  # server role is intentionally NOT enabled — hbbs/hbbr run in the homelab cluster now.
 
   # Nixpkgs configuration
   nixpkgs = {

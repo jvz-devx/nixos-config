@@ -30,6 +30,7 @@
     ./services/nas.nix
     ./services/flatpak.nix
     ./services/ssh.nix
+    ./services/krdp.nix
 
     # System modules
     ./system/locale.nix

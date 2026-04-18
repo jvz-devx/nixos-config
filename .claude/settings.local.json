@@ -43,7 +43,13 @@
       "Bash(git check-att)",
       "Bash(command -v git-lfs)",
       "Bash(git lfs *)",
-      "Bash(nix store *)"
+      "Bash(nix store *)",
+      "Bash(mkdir -p /home/jens/.claude/skills/context-handoff-workspace/iteration-1/eval-0-fresh-handoff-krdp/with_skill/outputs /home/jens/.claude/skills/context-handoff-workspace/iteration-1/eval-0-fresh-handoff-krdp/without_skill/outputs /home/jens/.claude/skills/context-handoff-workspace/iteration-1/eval-1-update-existing-todo/with_skill/outputs /home/jens/.claude/skills/context-handoff-workspace/iteration-1/eval-1-update-existing-todo/without_skill/outputs /home/jens/.claude/skills/context-handoff-workspace/iteration-1/eval-2-custom-path-docs/with_skill/outputs /home/jens/.claude/skills/context-handoff-workspace/iteration-1/eval-2-custom-path-docs/without_skill/outputs)",
+      "Bash(cp /home/jens/.claude/skills/context-handoff/evals/fixtures/existing-todo.md /home/jens/.claude/skills/context-handoff-workspace/iteration-1/eval-1-update-existing-todo/with_skill/outputs/TODO.md)",
+      "Bash(cp /home/jens/.claude/skills/context-handoff/evals/fixtures/existing-todo.md /home/jens/.claude/skills/context-handoff-workspace/iteration-1/eval-1-update-existing-todo/without_skill/outputs/TODO.md)",
+      "Read(//home/jens/.claude/skills/context-handoff-workspace/**)",
+      "Bash(mkdir -p /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-0-fanout-services/with_skill/outputs /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-0-fanout-services/without_skill/outputs /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-1-rename-sops-option/with_skill/outputs /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-1-rename-sops-option/without_skill/outputs /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-2-greenfield-host/with_skill/outputs /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-2-greenfield-host/without_skill/outputs)",
+      "Read(//home/jens/.claude/skills/delegate-plan-workspace/**)"
     ]
   },
   "enabledPlugins": {

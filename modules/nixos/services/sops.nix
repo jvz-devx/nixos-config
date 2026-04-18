@@ -51,6 +51,13 @@
           group = "wheel";
         };
 
+        # Cloudflare API token (used by the `cf` CLI)
+        cloudflare_api_token = {
+          key = "cloudflare_api_token";
+          mode = "0440";
+          group = "wheel";
+        };
+
         # Bitwarden API credentials (for CLI auto-login)
         bitwarden_client_id = {
           key = "bitwarden_client_id";
@@ -111,6 +118,13 @@
         # TrainWaker keystore password
         trainwaker_keystore_password = lib.mkIf (config.myConfig.secrets.sshKeyUser != null) {
           key = "trainwaker_keystore_password";
+          mode = "0400";
+          owner = config.myConfig.secrets.sshKeyUser;
+        };
+
+        # KRDP (Plasma Remote Desktop) login password
+        krdp_password = lib.mkIf (config.myConfig.secrets.sshKeyUser != null) {
+          key = "krdp_password";
           mode = "0400";
           owner = config.myConfig.secrets.sshKeyUser;
         };

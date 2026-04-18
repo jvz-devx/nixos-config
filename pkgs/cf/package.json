@@ -1,0 +1,7 @@
+{
+  "name": "cf-wrapper",
+  "version": "0.0.5",
+  "dependencies": {
+    "cf": "0.0.5"
+  }
+}

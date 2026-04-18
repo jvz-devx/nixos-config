@@ -140,6 +140,12 @@ in {
         __GL_SYNC_TO_VBLANK = "0"; # Disable driver-level vsync
         __GL_MaxFramesAllowed = "1"; # Minimum pre-render queue (less input latency)
         __GL_YIELD = "NOTHING"; # Don't yield CPU while waiting for GPU
+
+        # Shader cache: raise the default 128 MiB cap to 10 GiB and disable
+        # automatic cleanup so Proton/DXVK games don't keep reprocessing
+        # Vulkan shaders after cache evictions.
+        __GL_SHADER_DISK_CACHE_SIZE = "10737418240";
+        __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
         # Fix for Qt6/KDE6 Wayland EGL decoration context crash
         # Prevents "QWaylandGLContext: Failed to create decorations EGLContext" error
         QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";

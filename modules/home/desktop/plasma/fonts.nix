@@ -5,10 +5,10 @@
         CONF_FILE="$CONF_DIR/99-user-font.conf"
         mkdir -p "$CONF_DIR"
 
-        if grep -q "Monocraft Nerd Font" "$CONF_FILE" 2>/dev/null; then
+        if grep -q "Monocraft" "$CONF_FILE" 2>/dev/null; then
           TARGET_FONT="Miracode"
         else
-          TARGET_FONT="Monocraft Nerd Font"
+          TARGET_FONT="Monocraft"
         fi
 
         rm -f "$CONF_FILE"
@@ -46,7 +46,7 @@ in {
         <alias>
           <family>${userFont}</family>
           <prefer>
-            <family>Monocraft Nerd Font</family>
+            <family>Monocraft</family>
           </prefer>
         </alias>
       </fontconfig>

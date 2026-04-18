@@ -6,10 +6,27 @@
 }: let
   cliproxy = config.myConfig.cliproxyapi;
   cliproxyBase = "http://127.0.0.1:${toString cliproxy.port}";
+  firecrawlCliVersion = "1.15.2";
 in {
   # Ensure the .factory directory exists
   home.activation.createFactoryDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
     $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.factory
+  '';
+
+  # Declaratively keep the Firecrawl CLI installed in the user's npm global prefix.
+  home.activation.installFirecrawlCli = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    export HOME=${config.home.homeDirectory}
+    export npm_config_prefix="$HOME/.npm-global"
+    mkdir -p "$npm_config_prefix"
+
+    current_version=""
+    if command -v firecrawl >/dev/null 2>&1; then
+      current_version="$(firecrawl --version 2>/dev/null | head -n 1 | tr -d '\r' || true)"
+    fi
+
+    if [ "$current_version" != "${firecrawlCliVersion}" ]; then
+      $DRY_RUN_CMD ${pkgs.nodejs_24}/bin/npm install -g firecrawl-cli@${firecrawlCliVersion}
+    fi
   '';
 
   sops = {

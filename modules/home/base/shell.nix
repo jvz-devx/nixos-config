@@ -189,6 +189,7 @@
             return 1
           fi
         }
+
       ''
     ];
   };
@@ -259,6 +260,9 @@
   home.file.".claude/skills/rust-tester/SKILL.md".source = ../claude-skills/rust-tester.md;
   home.file.".claude/skills/rust-project-init/SKILL.md".source = ../claude-skills/rust-project-init.md;
   home.file.".claude/skills/nix-writer/SKILL.md".source = ../claude-skills/nix-writer.md;
+  home.file.".claude/skills/cloudflare-cf/SKILL.md".source = ../claude-skills/cloudflare-cf.md;
+  home.file.".claude/skills/context-handoff/SKILL.md".source = ../claude-skills/context-handoff.md;
+  home.file.".claude/skills/delegate-plan/SKILL.md".source = ../claude-skills/delegate-plan.md;
   home.file.".claude/skills/skill-creator".source = ../claude-skills/skill-creator;
 
   # Direnv integration

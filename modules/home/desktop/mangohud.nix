@@ -13,7 +13,6 @@
       text_color = "FFFFFF";
       position = "top-left";
       table_columns = 3;
-      pci_dev = "0000:01:00.0";
 
       # GPU Stats
       gpu_stats = true;
@@ -36,9 +35,6 @@
       gpu_voltage = true;
       throttling_status = true;
       gpu_name = true;
-
-      # NVIDIA specific - MUST BE ENABLED for GPU stats on NVIDIA
-      nvml = true;
 
       # CPU Stats
       cpu_stats = true;
@@ -67,7 +63,7 @@
       fps_value = "30,60";
       frame_timing = true;
       frametime_color = "00FF00";
-      fps_limit = 0;
+      fps_limit = 117;
       fps_limit_method = "late";
       toggle_fps_limit = "Shift_L+F1";
 
