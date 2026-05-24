@@ -47,6 +47,7 @@
     programs.git.enable = true;
 
     # nix-index for command-not-found
+    programs.command-not-found.enable = false;
     programs.nix-index = {
       enable = true;
       enableZshIntegration = true;

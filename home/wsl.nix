@@ -8,9 +8,9 @@
 }: {
   imports = [
     # Shared home modules
-    ../modules/home/shell.nix
-    ../modules/home/programs.nix
-    ../modules/home/factory.nix
+    ../modules/home/base/shell.nix
+    ../modules/home/base/programs.nix
+    ../modules/home/features/factory.nix
 
     # Specialized package modules (CLI only for WSL)
     ../modules/home/packages/cli/development.nix
@@ -22,9 +22,6 @@
     wsl-open # Open links in Windows browser
     tealdeer # Fast tldr
     dust # Visual disk usage
-
-    # AI Tools
-    inputs.codex-cli.packages.${pkgs.system}.default
   ];
 
   # Modern CLI tools

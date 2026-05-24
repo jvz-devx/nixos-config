@@ -1,12 +1,17 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "gpt-5.4-mini",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "gpt-5.4-mini"
   },
   "attribution": {
     "commit": ""
   },
-  "model": "opus[1m]",
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "model": "gpt-5.5",
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/statusline-command.sh"
@@ -14,12 +19,15 @@
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "context7@claude-plugins-official": true
+    "context7@claude-plugins-official": true,
+    "context-mode@context-mode": true
   },
+  "effortLevel": "high",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
+  "teammateMode": "tmux",
+  "remoteControlAtStartup": false,
+  "agentPushNotifEnabled": false,
   "skipAutoPermissionPrompt": true,
-  "permissions": {
-    "defaultMode": "auto"
-  }
+  "teammateDefaultModel": "gpt-5.5"
 }

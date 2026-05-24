@@ -42,7 +42,7 @@
     ## Tools & Available Software
 
     - Nix: `nix`, `nixos-rebuild`, `nix fmt`, `nix-index`, `comma`, `nix-tree`, `nix-diff`, `deadnix`, `statix`, `sops`, `age`
-    - AI/dev: `claude`, `opencode`, `droid`, `coderabbit`, `github-copilot-cli`, `gh`, `cliproxyapi`, `fff-mcp`
+    - AI/dev: `claude`, `opencode`, `droid`, `coderabbit`, `github-copilot-cli`, `gh`, `fff-mcp`
     - Languages/runtime: `node`, `bun`, `python3`, `uv`, `go`, `rust`, `dotnet`
     - Containers/devops: `docker`, `kubectl`, `k9s`, `lazydocker`
     - System/network: `fastfetch`, `btop`, `ncdu`, `rsync`, `curl`, `wget`, `nmap`, `tcpdump`, `dig`, `lsof`
@@ -69,6 +69,13 @@
     - Prefer normal fetch/browser access first.
     - If a page is hard to parse and `firecrawl` exists, it can be used as a fallback.
 
+    ## Memory Guidance
+
+    - Use Supermemory for durable user preferences, workflow conventions, repo and host topology, tool choices, and do/don't rules.
+    - Recall Supermemory for non-trivial tasks where prior preferences, project context, or machine topology may matter.
+    - Save only durable facts; do not save secrets, tokens, plaintext credentials, temporary status, build/cache output, or volatile version numbers.
+    - When asked to populate memory, report candidate memories first unless the user explicitly says to save them directly.
+
     ## Custom Skills
 
     Declarative Claude Code skills live under `/etc/nixos/modules/home/claude-skills/` and are symlinked into `~/.claude/skills/<name>/SKILL.md` via `modules/home/base/shell.nix`. Two in-house skills worth knowing about:
@@ -76,10 +83,8 @@
     - **`context-handoff`** — write or update a `TODO.md` capturing session state (goal, done, in progress, next steps, discoveries, relevant files) before the context window fills up. **Trigger only on explicit ask** ("write a TODO.md", "do a handoff", "dump context to a file"). Merges into an existing `TODO.md` in place rather than overwriting.
     - **`delegate-plan`** — break a multi-task request into **waves** of file-disjoint tasks that run in parallel via `Agent` calls with `isolation: "worktree"`, separated by verify gates (`nix fmt` + `nixos-rebuild dry-build --flake .#<host>`). Default concurrency: 4 agents per wave. **Auto-triggers** on multi-file work, fan-outs, renames, rollouts — don't wait for the user to say "parallel".
 
-    ## Agent Model
-
-    - When spawning teammates or subagents, explicitly set `model: "claude-opus-4-6[1m]"` rather than relying on session defaults or inheritance.
   '';
+  herdrConfig = pkgs.formats.toml {};
 in {
   imports = [
     # Base modules
@@ -113,7 +118,6 @@ in {
     # AI features
     ../modules/home/features/opencode.nix
     ../modules/home/features/remote-opencode.nix
-    ../modules/home/features/cliproxyapi.nix
   ];
 
   myConfig.opencode = {
@@ -132,7 +136,6 @@ in {
   };
 
   myConfig.remoteOpencode.enable = true;
-  myConfig.cliproxyapi.enable = true;
 
   # Home Manager settings
   home = {
@@ -150,12 +153,31 @@ in {
     force = true;
   };
 
+  home.file.".codex/AGENTS.md" = {
+    text = machineAiSummary;
+    force = true;
+  };
+
+  xdg.configFile."herdr/config.toml" = {
+    force = true;
+    source = herdrConfig.generate "herdr-config.toml" {
+      onboarding = false;
+      theme.name = "nord";
+      ui = {
+        show_agent_labels_on_pane_borders = true;
+        sound.enabled = false;
+        toast.delivery = "system";
+      };
+    };
+  };
+
   # User-specific shell aliases
   programs.zsh.shellAliases = {
     # NixOS rebuild command for this host
     rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#$(hostname)";
     update = "nix flake update /etc/nixos";
     # Custom aliases
+    codex = "codex --dangerously-bypass-approvals-and-sandbox";
     crr = "coderabbit review --plain --type uncommitted";
   };
 

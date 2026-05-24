@@ -13,6 +13,13 @@
   appimage = appimageTools.wrapType2 {
     pname = "t3-code";
     inherit version src;
+    extraBwrapArgs = [
+      "--dir"
+      "/etc/nixos"
+      "--bind"
+      "/etc/nixos"
+      "/etc/nixos"
+    ];
   };
   appimageContents = appimageTools.extractType2 {
     pname = "t3-code";

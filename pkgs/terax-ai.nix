@@ -2,14 +2,14 @@
   lib,
   stdenvNoCC,
   appimageTools,
-  makeWrapper,
   fetchurl,
+  makeWrapper,
 }: let
-  pname = "paseo";
-  version = "0.1.58";
+  pname = "terax";
+  version = "0.6.0";
   src = fetchurl {
-    url = "https://github.com/getpaseo/paseo/releases/download/v${version}/Paseo-${version}-x86_64.AppImage";
-    hash = "sha256-We+FiCNk4TP8++COJ4rxaZuJozIomiqB8Ia4mcy7Zp0=";
+    url = "https://github.com/crynta/terax-ai/releases/download/v${version}/Terax_${version}_amd64.AppImage";
+    hash = "sha256-PTJt8ebAGJEJxth08ctkX2qG6cZ4GEIKUTIWKLuuSL0=";
   };
   appimage = appimageTools.wrapType2 {
     inherit pname version src;
@@ -38,17 +38,21 @@ in
         desktop_name=$(basename "$desktop_file")
         install -m 444 -D "$desktop_file" "$out/share/applications/$desktop_name"
         substituteInPlace "$out/share/applications/$desktop_name" \
-          --replace-warn 'Exec=AppRun' 'Exec=paseo' \
-          --replace-warn 'Exec=AppRun --no-sandbox' 'Exec=paseo'
+          --replace-warn 'Exec=AppRun' 'Exec=terax-ai' \
+          --replace-warn 'Exec=AppRun --no-sandbox' 'Exec=terax-ai'
       fi
+
+      wrapProgram "$out/bin/terax" \
+        --add-flags "--no-sandbox"
 
       runHook postInstall
     '';
 
     meta = {
-      description = "Paseo AI coding gateway desktop app";
+      description = "Agentic development environment";
+      homepage = "https://github.com/crynta/terax-ai";
       license = lib.licenses.unfree;
-      mainProgram = "paseo";
+      mainProgram = "terax";
       platforms = ["x86_64-linux"];
     };
   }

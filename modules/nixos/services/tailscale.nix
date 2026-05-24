@@ -111,11 +111,15 @@
       checkReversePath = "loose";
     };
 
-    # Fix Docker bridge traffic being hijacked by Tailscale's routing table (table 52).
-    # These rules ensure Docker subnet traffic uses the main routing table instead.
+    # Keep local/private subnets on the main routing table instead of letting
+    # accepted Tailscale subnet routes in table 52 hijack return traffic.
     networking.localCommands = ''
+      ${lib.getExe' pkgs.iproute2 "ip"} rule add to 10.0.0.0/8 lookup main priority 5200 2>/dev/null || true
+      ${lib.getExe' pkgs.iproute2 "ip"} rule add from 10.0.0.0/8 lookup main priority 5200 2>/dev/null || true
       ${lib.getExe' pkgs.iproute2 "ip"} rule add to 172.16.0.0/12 lookup main priority 5200 2>/dev/null || true
       ${lib.getExe' pkgs.iproute2 "ip"} rule add from 172.16.0.0/12 lookup main priority 5200 2>/dev/null || true
+      ${lib.getExe' pkgs.iproute2 "ip"} rule add to 192.168.0.0/16 lookup main priority 5200 2>/dev/null || true
+      ${lib.getExe' pkgs.iproute2 "ip"} rule add from 192.168.0.0/16 lookup main priority 5200 2>/dev/null || true
     '';
   };
 }

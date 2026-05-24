@@ -5,7 +5,12 @@
   config,
   lib,
   ...
-}: {
+}: let
+  cliproxyapiRemoteBaseUrl = "http://chat-api.jensvanzutphen.com:8317";
+  cliproxyapiRemoteModel = "gpt-5.5";
+  cliproxyapiRemoteSmallModel = "gpt-5.4-mini";
+  cliproxyapiRemoteSecretPath = "/run/secrets/cliproxyapi_remote_api_key";
+in {
   # Add ~/.local/bin for AppImages and ~/.npm-global/bin for npm globals
   home.sessionPath = ["$HOME/.local/bin" "$HOME/.npm-global/bin"];
 
@@ -80,8 +85,12 @@
       treesize = "sudo ncdu -x --exclude /mnt --exclude /media --exclude /tmp /";
 
       # Claude Code
-      claude = "command claude --dangerously-skip-permissions";
+      claude = "claude-proxy";
       claude-team = "claude-team-fn";
+
+      # Pi agent teams
+      pi-team-tmux = "pi-team-tmux-fn";
+
       tmux-list = "tmux list-sessions";
       tmux-resume = "tmux attach-session -t";
       tmux-kill = "tmux kill-session -t";
@@ -97,7 +106,9 @@
         if [[ $- == *i* ]] && [[ -z "$POKEFETCH_SHOWN" ]]; then
           export POKEFETCH_SHOWN=1
           mkdir -p ~/.cache
-          pokemon-colorscripts --no-title -r > ~/.cache/pokemon.txt 2>/dev/null
+          if command -v pokemon-colorscripts >/dev/null 2>&1; then
+            pokemon-colorscripts --no-title -r > ~/.cache/pokemon.txt 2>/dev/null
+          fi
           if [[ -s ~/.cache/pokemon.txt ]]; then
             python3 /etc/nixos/assets/wallpaper/shell/pokefetch.py
             fastfetch --config pokefetch.json --logo ~/.cache/pokemon.txt --logo-type file-raw --logo-padding-top 1
@@ -158,7 +169,7 @@
         # Claude Code team mode (supports multiple sessions)
         claude-team-fn() {
           local name="''${1:-claude-$(date +%s)}"
-          local cmd='ANTHROPIC_MODEL="claude-opus-4-6[1m]" command claude --dangerously-skip-permissions --teammate-mode tmux'
+          local cmd='zsh -lic "claude-proxy --teammate-mode tmux"'
           if [[ -n "$TMUX" ]]; then
             tmux new-session -d -s "$name" "$cmd"
             tmux switch-client -t "$name"
@@ -167,14 +178,78 @@
           fi
         }
 
-        # Claude Code via local CLIProxyAPI (uses ChatGPT/Codex subscription)
+        # Pi agent teams in tmux: dynamic teammate panes.
+        # Usage:
+        #   pi-team-tmux           # unique pi-teams-* session, leader only
+        #   pi-team-tmux myteam    # unique myteam-* session, leader only
+        # Then spawn teammates inside Pi; each spawn creates an interactive pane.
+        pi-team-tmux-fn() {
+          local prefix="''${1:-pi-teams}"
+          local unique="$(date +%Y%m%d-%H%M%S)-$$"
+          local session="$prefix-$unique"
+          local run_dir="$PWD"
+          local teams_root="''${PI_TEAMS_ROOT_DIR:-/tmp/$session}"
+          local fork_ext="$run_dir/../pi-agent-teams/extensions/teams/index.ts"
+          local source_ext="/home/jens/Documents/source/pi-agent-teams/extensions/teams/index.ts"
+          local installed_ext="/home/jens/.npm-global/lib/node_modules/@tmustier/pi-agent-teams/extensions/teams/index.ts"
+          local ext=""
+
+          if [[ -f "$fork_ext" ]]; then
+            ext="$(realpath "$fork_ext")"
+          elif [[ -f "$source_ext" ]]; then
+            ext="$source_ext"
+          elif [[ -f "$installed_ext" ]]; then
+            ext="$installed_ext"
+          else
+            echo "Pi agent teams extension entry not found." >&2
+            return 1
+          fi
+
+          while tmux has-session -t "$session" 2>/dev/null; do
+            unique="$(date +%Y%m%d-%H%M%S)-$$-$RANDOM"
+            session="$prefix-$unique"
+            teams_root="''${PI_TEAMS_ROOT_DIR:-/tmp/$session}"
+          done
+
+          mkdir -p "$teams_root"
+          echo "Starting Pi Teams leader in $run_dir..."
+          echo "extension: $ext"
+          tmux new-session -d -s "$session" -n team -c "$run_dir" \
+            "env PI_TEAMS_ROOT_DIR=''${(q)teams_root} PI_TEAMS_SPAWN_MODE=tmux PI_TEAMS_TMUX_LEADER_WIDTH_PCT=40 pi --no-extensions -e ''${(q)ext}"
+
+          echo ""
+          echo "OK"
+          echo "tmux session: $session"
+          echo "teams root:   $teams_root"
+          echo ""
+          echo "Spawn teammates inside Pi with /team spawn or delegation; panes split dynamically."
+          echo ""
+
+          if [[ -n "$TMUX" ]]; then
+            tmux switch-client -t "$session"
+          else
+            tmux attach -t "$session"
+          fi
+        }
+
+        # Claude Code via homelab CLIProxyAPI
         claude-proxy() {
-          ANTHROPIC_AUTH_TOKEN="sk-factory-droid-local" \
-          ANTHROPIC_BASE_URL="http://127.0.0.1:8317" \
-          ANTHROPIC_MODEL="claude-opus-4-6[1m]" \
-          ANTHROPIC_SMALL_FAST_MODEL="haiku" \
-          API_TIMEOUT_MS="3000000" \
-          command claude --dangerously-skip-permissions "$@"
+          if [[ -f ${cliproxyapiRemoteSecretPath} ]]; then
+            env \
+              -u ANTHROPIC_API_KEY \
+              -u CLAUDE_CODE_API_BASE_URL \
+              ANTHROPIC_AUTH_TOKEN="$(cat ${cliproxyapiRemoteSecretPath})" \
+              ANTHROPIC_BASE_URL="${cliproxyapiRemoteBaseUrl}" \
+              ANTHROPIC_MODEL="${cliproxyapiRemoteModel}" \
+              ANTHROPIC_DEFAULT_HAIKU_MODEL="${cliproxyapiRemoteSmallModel}" \
+              ANTHROPIC_SMALL_FAST_MODEL="${cliproxyapiRemoteSmallModel}" \
+              CLAUDE_CODE_SUBAGENT_MODEL="${cliproxyapiRemoteSmallModel}" \
+              API_TIMEOUT_MS="3000000" \
+              claude --dangerously-skip-permissions "$@"
+          else
+            echo "CLIProxyAPI remote API key not found. Run 'sudo nixos-rebuild switch' first."
+            return 1
+          fi
         }
 
         # Claude Code with Z.ai API

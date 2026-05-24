@@ -8,9 +8,9 @@
 }: {
   imports = [
     # Shared CLI modules
-    ../modules/home/shell.nix
-    ../modules/home/programs.nix
-    ../modules/home/factory.nix
+    ../modules/home/base/shell.nix
+    ../modules/home/base/programs.nix
+    ../modules/home/features/factory.nix
 
     # Specialized CLI package modules (No GUI modules)
     ../modules/home/packages/cli/development.nix

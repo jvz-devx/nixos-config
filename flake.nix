@@ -202,9 +202,14 @@
         pkgs = import inputs.nixpkgs-stable {
           system = "x86_64-linux";
           config.allowUnfree = true;
+          overlays = [
+            self.overlays.additions
+            self.overlays.modifications
+            self.overlays.stable-packages
+          ];
         };
       in
-        nixpkgs.lib.nixosSystem {
+        inputs.nixpkgs-stable.lib.nixosSystem {
           inherit pkgs;
           system = "x86_64-linux";
           specialArgs = {inherit inputs;};
@@ -241,9 +246,14 @@
         pkgs = import inputs.nixpkgs-stable {
           system = "x86_64-linux";
           config.allowUnfree = true;
+          overlays = [
+            self.overlays.additions
+            self.overlays.modifications
+            self.overlays.stable-packages
+          ];
         };
       in
-        nixpkgs.lib.nixosSystem {
+        inputs.nixpkgs-stable.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = {inherit inputs pkgs;};
           modules = [

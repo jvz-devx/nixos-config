@@ -3,15 +3,15 @@
   fetchurl,
   stdenvNoCC,
 }: let
-  version = "6.9.24";
+  version = "6.9.36";
   releases = {
     x86_64-linux = {
       url = "https://github.com/router-for-me/CLIProxyAPI/releases/download/v${version}/CLIProxyAPI_${version}_linux_amd64.tar.gz";
-      hash = "sha256-n6UtlJS/wtYePQcLF19TDsxIaebnhXncmoKDe5bMeqE=";
+      hash = "sha256-4C0ylDjj0qWhGWiF8FtnfkatPb1xbQu1sXhEHw03flc=";
     };
     aarch64-linux = {
       url = "https://github.com/router-for-me/CLIProxyAPI/releases/download/v${version}/CLIProxyAPI_${version}_linux_arm64.tar.gz";
-      hash = "sha256-8vzc6Ks2YO+cU3JfOx8KW2zI2kLPdptkpkJLc5BpDOE=";
+      hash = "sha256-+fRuwr56646uZmtLCX2n42eHVirV7jsuLRWSF71c8F4=";
     };
   };
   release =

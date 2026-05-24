@@ -19,14 +19,19 @@
     # Display manager
     services.displayManager.sddm = {
       enable = true;
-      wayland.enable = true;
+      # Keep the greeter on X11. The SDDM Wayland greeter path is still
+      # experimental and currently crashes on this host's NVIDIA stack
+      # before the login screen becomes usable.
+      wayland.enable = false;
     };
 
     # KDE Plasma 6
     services.desktopManager.plasma6.enable = true;
+    programs.kdeconnect.enable = true;
 
-    # Default session - Wayland
-    services.displayManager.defaultSession = "plasma";
+    # Leave the default session unset so SDDM can offer the normal session
+    # chooser; the important part is that the greeter itself stays off the
+    # broken Wayland path.
 
     # SSH agent integration with KWallet
     programs.ssh.startAgent = true;

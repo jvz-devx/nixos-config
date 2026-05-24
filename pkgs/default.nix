@@ -9,7 +9,9 @@ pkgs: {
   t3-code = pkgs.callPackage ./t3-code.nix {};
   depot-cli = pkgs.callPackage ./depot-cli.nix {};
   cmux-linux-bin = pkgs.callPackage ./cmux-linux-bin.nix {};
+  herdr = pkgs.callPackage ./herdr.nix {};
   cliproxyapi = pkgs.callPackage ./cliproxyapi.nix {};
   paseo = pkgs.callPackage ./paseo.nix {};
+  terax-ai = pkgs.callPackage ./terax-ai.nix {};
   cf = pkgs.callPackage ./cf {};
 }

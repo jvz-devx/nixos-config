@@ -1,13 +1,14 @@
 # Power configuration for laptop - suspend, hibernate, lid actions, powertop
 {
   config,
-  pkgs,
   lib,
+  options,
+  pkgs,
   ...
 }: {
   options.myConfig.system.power.enable = lib.mkEnableOption "Laptop power management (suspend, hibernate, lid actions)";
 
-  config = lib.mkIf config.myConfig.system.power.enable {
+  config = lib.optionalAttrs (lib.hasAttrByPath ["services" "logind" "settings"] options) (lib.mkIf config.myConfig.system.power.enable {
     # Powertop disabled — its USB autosuspend causes dropped keyboard/mouse inputs
     # powerManagement.powertop.enable = true;
 
@@ -29,5 +30,5 @@
         HandlePowerKeyLongPress = "poweroff";
       };
     };
-  };
+  });
 }

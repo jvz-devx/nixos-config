@@ -8,6 +8,7 @@
 
     # Utilities
     rofi
+    warp-terminal
 
     # Password management
     bitwarden-desktop
@@ -17,7 +18,8 @@
 
     # AI Coding
     claude-code
-    paseo
+    terax-ai
+    # paseo
     # chell-desktop - AppImage installed at ~/.local/bin/chell-desktop
   ];
 }

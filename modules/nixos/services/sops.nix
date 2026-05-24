@@ -51,6 +51,13 @@
           group = "wheel";
         };
 
+        # Homelab CLIProxyAPI bearer token
+        cliproxyapi_remote_api_key = {
+          key = "cliproxyapi_remote_api_key";
+          mode = "0440";
+          group = "wheel";
+        };
+
         # Cloudflare API token (used by the `cf` CLI)
         cloudflare_api_token = {
           key = "cloudflare_api_token";

@@ -62,17 +62,8 @@ in {
 
           oauth-model-alias:
             codex:
-              - name: "gpt-5.4"
-                alias: "gpt-5.4-fast"
-                fork: true
-              - name: "gpt-5.4"
-                alias: "claude-opus-4-6"
-                fork: true
-              - name: "gpt-5.4-mini"
-                alias: "claude-sonnet-4-6"
-                fork: true
-              - name: "gpt-5.4-mini"
-                alias: "claude-haiku-4-5"
+              - name: "gpt-5.5"
+                alias: "gpt-5.5-fast"
                 fork: true
 
           claude-api-key:
@@ -103,9 +94,7 @@ in {
           payload:
             override:
               - models:
-                  - name: "gpt-5.4-fast"
-                    protocol: "codex"
-                  - name: "claude-opus-4-6"
+                  - name: "gpt-5.5-fast"
                     protocol: "codex"
                 params:
                   service_tier: "priority"

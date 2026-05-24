@@ -20,21 +20,9 @@
   myConfig.system.iso.enable = true;
   myConfig.system.iso.hostName = "server-01";
 
-  # Nixpkgs configuration
-  nixpkgs = {
-    overlays = [
-      inputs.self.overlays.additions
-      inputs.self.overlays.modifications
-      inputs.self.overlays.stable-packages
-    ];
-    config = {
-      allowUnfree = true;
-    };
-  };
-
   # Nix settings
   nix = let
-    flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
+    flakeInputs = lib.filterAttrs (name: input: name != "nixpkgs" && lib.isType "flake" input) inputs;
   in {
     settings = {
       experimental-features = "nix-command flakes";

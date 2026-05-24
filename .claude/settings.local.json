@@ -49,7 +49,9 @@
       "Bash(cp /home/jens/.claude/skills/context-handoff/evals/fixtures/existing-todo.md /home/jens/.claude/skills/context-handoff-workspace/iteration-1/eval-1-update-existing-todo/without_skill/outputs/TODO.md)",
       "Read(//home/jens/.claude/skills/context-handoff-workspace/**)",
       "Bash(mkdir -p /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-0-fanout-services/with_skill/outputs /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-0-fanout-services/without_skill/outputs /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-1-rename-sops-option/with_skill/outputs /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-1-rename-sops-option/without_skill/outputs /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-2-greenfield-host/with_skill/outputs /home/jens/.claude/skills/delegate-plan-workspace/iteration-1/eval-2-greenfield-host/without_skill/outputs)",
-      "Read(//home/jens/.claude/skills/delegate-plan-workspace/**)"
+      "Read(//home/jens/.claude/skills/delegate-plan-workspace/**)",
+      "Bash(rm '/home/jens/.claude/skills/paseo' '/home/jens/.claude/skills/paseo-handoff' '/home/jens/.claude/skills/paseo-loop')",
+      "Read(//home/jens/.claude/skills/**)"
     ]
   },
   "enabledPlugins": {
