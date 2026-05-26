@@ -14,6 +14,7 @@
 
     # Desktop modules
     ./desktop/plasma.nix
+    ./desktop/hyprland.nix
     ./desktop/portals.nix
 
     # Program modules

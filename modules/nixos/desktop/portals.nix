@@ -16,7 +16,16 @@
         # Add GTK portal for compatibility with non-Qt apps (like some Flatpaks)
         # xdg-desktop-portal-kde is automatically added by the Plasma module
         extraPortals = [pkgs.xdg-desktop-portal-gtk];
-        config.common.default = ["kde"];
+        config =
+          {
+            common.default = ["kde"];
+          }
+          // lib.optionalAttrs config.myConfig.desktop.hyprland.enable {
+            hyprland = {
+              default = ["hyprland" "gtk"];
+              "org.freedesktop.impl.portal.FileChooser" = ["gtk"];
+            };
+          };
         xdgOpenUsePortal = true;
       };
 

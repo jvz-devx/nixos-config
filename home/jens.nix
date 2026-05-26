@@ -37,6 +37,8 @@
     - Keep changes declarative and reproducible.
     - Prefer `fff` MCP for project file/content search when available.
     - Check `fff` availability with `opencode mcp list` or `command -v fff-mcp`.
+    - For Svelte/SvelteKit component checks, use the installed `svelte-autofix <file.svelte>` helper instead of calling the Svelte MCP autofixer manually; it saves tokens and keeps the workflow consistent.
+    - Avoid Svelte `$effect` unless it is genuinely necessary. Prefer derived state, event handlers, or explicit data flow first; unnecessary effects often create feedback loops that are harder to reason about.
     - Strong local CLI fallbacks already installed: `rg`, `fd`, `fzf`, `bat`, `eza`, `jq`, `tree`.
 
     ## Tools & Available Software
@@ -93,11 +95,13 @@ in {
 
     # Desktop modules
     ../modules/home/desktop/plasma/default.nix
+    ../modules/home/desktop/hyprland/default.nix
     ../modules/home/desktop/konsole.nix
     ../modules/home/desktop/mangohud.nix
 
     # Feature modules
     ../modules/home/features/factory.nix
+    ../modules/home/features/codex-supermemory.nix
 
     # Specialized package modules
     ../modules/home/packages/gui/stremio.nix

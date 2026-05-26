@@ -14,4 +14,5 @@ pkgs: {
   paseo = pkgs.callPackage ./paseo.nix {};
   terax-ai = pkgs.callPackage ./terax-ai.nix {};
   cf = pkgs.callPackage ./cf {};
+  svelte-autofix = pkgs.callPackage ./svelte-autofix {};
 }

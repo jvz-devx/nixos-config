@@ -28,6 +28,8 @@ in {
     herdr
     # Cloudflare CLI (technical preview)
     cf
+    # Helper for checking Svelte components with the official MCP autofixer
+    svelte-autofix
   ];
 
   xdg.desktopEntries.herdr = {
