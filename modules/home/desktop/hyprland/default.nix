@@ -272,6 +272,20 @@
     '';
   };
 
+  hypr-kwallet-start = pkgs.writeShellApplication {
+    name = "hypr-kwallet-start";
+    runtimeInputs = [
+      pkgs.qt6.qttools
+    ];
+    text = ''
+      set -euo pipefail
+
+      # Plasma starts KWallet for us; a bare Hyprland session needs to
+      # DBus-activate it so PAM-unlocked wallets are available to git/gh.
+      qdbus org.kde.kwalletd6 /modules/kwalletd6 org.kde.KWallet.isEnabled >/dev/null 2>&1 || true
+    '';
+  };
+
   hypr-window-switch = pkgs.writeShellApplication {
     name = "hypr-window-switch";
     runtimeInputs = [
@@ -471,6 +485,7 @@ in {
       waybar
       wl-clipboard
       brightnessctl
+      hypr-kwallet-start
       hypr-snap
       hypr-shell-fallback
       hypr-shortcuts
@@ -492,6 +507,7 @@ in {
 
         exec-once = hyprpaper
         exec-once = hypridle
+        exec-once = hypr-kwallet-start
         exec-once = hyprpolkitagent
         exec-once = swaync
         exec-once = quickshell --no-duplicate --config hypr-shell
