@@ -1,15 +1,41 @@
 # Hyprland Wayland compositor
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
-}: {
-  options.myConfig.desktop.hyprland.enable = lib.mkEnableOption "Hyprland desktop session";
+}: let
+  hyprlandPackages = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system};
+in {
+  options.myConfig.desktop.hyprland = {
+    enable = lib.mkEnableOption "Hyprland desktop session";
+
+    monitors = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [",preferred,auto,1"];
+      example = ["HDMI-A-1,3840x2160@119.88,0x0,1"];
+      description = "Hyprland monitor declarations, without the leading `monitor =`.";
+    };
+
+    terminal = lib.mkOption {
+      type = lib.types.str;
+      default = "kitty";
+      description = "Terminal command used by the Hyprland session.";
+    };
+
+    browserCommand = lib.mkOption {
+      type = lib.types.str;
+      default = "google-chrome-stable || google-chrome";
+      description = "Browser command used by Hyprland keybindings and shell widgets.";
+    };
+  };
 
   config = lib.mkIf config.myConfig.desktop.hyprland.enable {
     programs.hyprland = {
       enable = true;
+      package = hyprlandPackages.hyprland;
+      portalPackage = hyprlandPackages.xdg-desktop-portal-hyprland;
       xwayland.enable = true;
     };
 

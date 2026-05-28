@@ -58,5 +58,35 @@
       key = "Meta+Space";
       command = "rofi -show drun";
     };
+    "show-hyprland-shortcuts" = {
+      name = "Show Hyprland Shortcuts";
+      key = "Meta+F1";
+      command = "hypr-shortcuts";
+    };
+    "show-hyprland-shortcuts-slash" = {
+      name = "Show Hyprland Shortcuts (Meta+/)";
+      key = "Meta+/";
+      command = "hypr-shortcuts";
+    };
+    "hyprland-pick-wallpaper" = {
+      name = "Hyprland Pick Wallpaper";
+      key = "Meta+Alt+W";
+      command = "hypr-wallpaper-picker";
+    };
+    "hyprland-random-wallpaper" = {
+      name = "Hyprland Random Wallpaper";
+      key = "Meta+Shift+W";
+      command = "hypr-wallpaper-picker --random";
+    };
+    "hyprland-restart-top-bar" = {
+      name = "Hyprland Restart Top Bar";
+      key = "Meta+Ctrl+B";
+      command = "hypr-shell-start";
+    };
+    "toggle-power-profile" = {
+      name = "Toggle Power Profile";
+      key = "Meta+Shift+P";
+      command = "power-profile-toggle";
+    };
   };
 }

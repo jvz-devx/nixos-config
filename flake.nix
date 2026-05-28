@@ -21,6 +21,12 @@
       inputs.home-manager.follows = "home-manager";
     };
 
+    # Hyprland stable release with Lua configuration support
+    hyprland = {
+      url = "github:hyprwm/Hyprland/v0.55.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Chaotic-nyx for CachyOS kernel (gaming-optimized)
     # DEPRECATED: Project was archived on 2025-12-08.
     # Future migration path: https://github.com/xddxdd/nix-cachyos-kernel

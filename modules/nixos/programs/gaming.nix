@@ -23,12 +23,6 @@
     # Steam configuration
     programs.steam = {
       enable = true;
-      # Use a wrapped Steam package that automatically enables MangoHud
-      package = pkgs.steam.override {
-        extraEnv = {
-          MANGOHUD = "1";
-        };
-      };
       # Open ports for Steam Remote Play
       remotePlay.openFirewall = true;
       # Open ports for Steam Local Network Game Transfers
@@ -70,10 +64,6 @@
           apply_gpu_optimisations = "accept-responsibility";
           gpu_device = 0;
           nv_powermizer_mode = 1; # Maximum GPU performance during gaming
-        };
-        custom = {
-          start = "qdbus6 org.kde.KWin /Compositor suspend";
-          end = "qdbus6 org.kde.KWin /Compositor resume";
         };
       };
     };

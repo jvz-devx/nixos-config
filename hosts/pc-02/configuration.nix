@@ -14,7 +14,11 @@
 
   # Enable profiles and options
   myConfig.profiles.workstation.enable = true;
-  myConfig.desktop.hyprland.enable = true;
+  myConfig.desktop.hyprland = {
+    enable = true;
+    monitors = ["HDMI-A-1,3840x2160@119.88,0x0,1"];
+    terminal = "kitty";
+  };
   myConfig.services.tailscale.enable = true;
   myConfig.services.tailscale.operator = "jens"; # Allow ktailctl GUI to work
   myConfig.services.ssh.enable = true;

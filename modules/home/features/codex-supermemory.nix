@@ -77,15 +77,16 @@ in {
       prompt_lower="$(${pkgs.coreutils}/bin/printf '%s' "$prompt" | ${pkgs.coreutils}/bin/tr '[:upper:]' '[:lower:]')"
 
       useful=0
-      case "$cwd" in
-        /etc/nixos|/etc/nixos/*|/home/jens/Documents/source/*) useful=1 ;;
-      esac
-
       case "$prompt_lower" in
-        *supermemory*|*memory*|*remember*|*preference*|*prior*|*previous*|*usually*|*workflow*|*deploy*|*push*|*rebuild*|*switch*|*nixos*|*home\ manager*|*mcp*|*plugin*|*hook*|*config*|*repo*|*runtime*|*logs*|*gitops*) useful=1 ;;
+        *supermemory*|*memory*|*remember*|*preference*|*prior*|*previous*|*usually*|*workflow*|*deploy*|*push*|*rebuild*|*switch*|*nixos*|*home\ manager*|*mcp*|*plugin*|*hook*|*config*|*repo*|*runtime*|*logs*|*gitops*|*context*|*last\ time*|*have\ we*|*what\ do\ you\ know*) useful=1 ;;
       esac
 
-      if [ "$useful" -eq 0 ] && [ "''${prompt_words:-0}" -lt 9 ]; then
+      if [ "''${prompt_words:-0}" -ge 12 ] &&
+        ${pkgs.gnugrep}/bin/grep -Eiq 'add|audit|debug|deploy|fix|implement|investigate|plan|rebuild|review|switch|update|why|how|what|where' <<<"$prompt_lower"; then
+        useful=1
+      fi
+
+      if [ "$useful" -eq 0 ]; then
         exit 0
       fi
 
@@ -181,6 +182,10 @@ in {
             function lower(value) {
               return tolower(value)
             }
+            function is_global_workflow(value) {
+              value = lower(value)
+              return value ~ /(machine-wide|global|agent|codex|claude|supermemory|memory|nixos|\/etc\/nixos|home manager|tool|workflow|preference|default|always|never|do not|prefer|source of truth|declarative|rebuild)/
+            }
             function mentions_active(value) {
               value = lower(value)
               return (cwd != "" && index(value, lower(cwd)) > 0) ||
@@ -219,6 +224,7 @@ in {
               sub(/^[-*][[:space:]]*/, "", line)
               if (line == "No memories found.") next
               lower_line = lower(line)
+              if (!mentions_active(line) && !is_global_workflow(line)) next
               if (lower_line ~ /^(working directory is|working in )[[:space:]]/ && !mentions_active(line)) next
               if (mentions_foreign_repo(line)) next
               if (lower_line ~ /(flux layer|gitops|homelab-iac)/ &&
@@ -286,12 +292,12 @@ in {
       explicit_memory=0
       workflow_guidance=0
 
-      if ${pkgs.gnugrep}/bin/grep -Eiq 'remember|save (this|that|it)|permanent memory|supermemory|preference|preferences|from now on|next time|always|never|default to|source of truth|workflow|convention|rule|rules' <<<"$user_messages_lower"; then
+      if ${pkgs.gnugrep}/bin/grep -Eiq 'remember (this|that)|save (this|that|to memory)|save .*to (supermemory|memory)|permanent memory|add .*memory|store .*memory' <<<"$user_messages_lower"; then
         explicit_memory=1
       fi
 
-      if ${pkgs.gnugrep}/bin/grep -Eiq 'codex|hook|mcp|nixos|home manager|gitops|rebuild|switch|deploy|commit|push' <<<"$user_messages_lower" \
-        && ${pkgs.gnugrep}/bin/grep -Eiq "should|must|prefer|default|do not|don't|instead|always|never|from now on|next time|source of truth|workflow|convention|rule|rules" <<<"$user_messages_lower"; then
+      if ${pkgs.gnugrep}/bin/grep -Eiq 'preference|preferences|source of truth|workflow|convention|rule|rules|tool choice|agent behavior|memory policy|hook policy' <<<"$user_messages_lower" \
+        && ${pkgs.gnugrep}/bin/grep -Eiq "should|must|prefer|default|do not|don't|instead|always|never|from now on|next time" <<<"$user_messages_lower"; then
         workflow_guidance=1
       fi
 
@@ -299,15 +305,18 @@ in {
         exit 0
       fi
 
-      reason="$(${pkgs.coreutils}/bin/printf '%s\n\n%s\n\n%s\n\n%s\n\n%s\n\n%s\n\n%s\n\n%s\n' \
-        "Before stopping, run a final permanent Supermemory audit for this session." \
+      reason="$(${pkgs.coreutils}/bin/printf '%s\n\n' \
+        "Before stopping, run a final permanent Supermemory audit for this session because the user explicitly signaled memory intent or durable directive guidance." \
+        "Decide whether each candidate should be saved as new, replace an exact obsolete existing memory, or be skipped. It is valid and often correct to save nothing." \
+        "Before saving, run one or two targeted Supermemory recall queries against containerTag = \"sm_project_default\" to check for existing duplicate or conflicting memories." \
         "Save only high-confidence durable facts newly introduced, corrected, or explicitly confirmed in this session." \
         "Good candidates are user preferences, workflow conventions, repo or host topology, stable tool choices, and do/don't rules that will help future sessions." \
         "Do not save ordinary task requests or outcomes, UI feature requests, tests/smoke prompts, build results, logs, transient state, volatile versions, secrets, tokens, plaintext credentials, or repetitive summaries." \
         "Do not save AGENTS.md/project instructions, recalled Supermemory context, or generated hook prompts merely because they were present in context." \
-        "If a rediscovered config or repo rule seems useful, save it only when this session is explicitly about memory, hooks, tooling, workflow, or the user confirmed the rule is durable. If uncertain, save nothing." \
+        "If a rediscovered config or repo rule seems useful, save it only when this session is explicitly about memory, hooks, tooling, workflow, or the user confirmed the rule is durable." \
+        "If an existing memory is clearly obsolete or conflicts with the corrected fact, call the Supermemory MCP tool \`memory\` with \`action = \"save\"\` for the refined replacement and \`action = \"forget\"\` only for the exact obsolete content. If the match is not exact, do not forget it." \
         "Example to save: User prefers Svelte remote functions over +page.server.ts in TermixKit. Example not to save: User asked to add a button to a website. Example not to save: AGENTS.md says never commit or push." \
-        "If there is anything worth saving, call the Supermemory MCP tool \`memory\` with \`action = \"save\"\` and \`containerTag = \"sm_project_default\"\`. If there is nothing durable, do not save anything. After this audit, continue to the final response and stop normally." \
+        "If there is anything worth saving, call the Supermemory MCP tool \`memory\` with \`action = \"save\"\` and \`containerTag = \"sm_project_default\"\`. If there is nothing durable or the update is uncertain, do not save or forget anything. After this audit, continue to the final response and stop normally." \
       )"
 
       ${pkgs.jq}/bin/jq -cn --arg reason "$reason" '{

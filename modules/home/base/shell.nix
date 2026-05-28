@@ -340,6 +340,10 @@ in {
   home.file.".claude/skills/delegate-plan/SKILL.md".source = ../claude-skills/delegate-plan.md;
   home.file.".claude/skills/skill-creator".source = ../claude-skills/skill-creator;
 
+  # Codex global skills (declarative, survives rebuilds)
+  home.file.".codex/skills/grill-me/SKILL.md".source = ../codex-skills/grill-me/SKILL.md;
+  home.file.".codex/skills/hyprland-gaming/SKILL.md".source = ../codex-skills/hyprland-gaming/SKILL.md;
+
   # Direnv integration
   programs.direnv = {
     enable = true;
