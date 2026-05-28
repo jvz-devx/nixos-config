@@ -27,6 +27,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Caelestia shell for the Hyprland session
+    caelestia-shell = {
+      url = "github:caelestia-dots/shell/v1.6.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Full Caelestia dots source, pinned because the repo has no release tags.
+    caelestia-dots = {
+      url = "github:caelestia-dots/caelestia/2d55cc3a845788682404f81c5cc1faeec97a553b";
+      flake = false;
+    };
+
     # Chaotic-nyx for CachyOS kernel (gaming-optimized)
     # DEPRECATED: Project was archived on 2025-12-08.
     # Future migration path: https://github.com/xddxdd/nix-cachyos-kernel
@@ -160,6 +172,7 @@
               extraSpecialArgs = {inherit inputs;};
               users.jens = import ./home/jens.nix;
               sharedModules = [
+                inputs.caelestia-shell.homeManagerModules.default
                 plasma-manager.homeModules.plasma-manager
                 sops-nix.homeManagerModules.sops
               ];
@@ -192,6 +205,7 @@
               extraSpecialArgs = {inherit inputs;};
               users.jens = import ./home/jens.nix;
               sharedModules = [
+                inputs.caelestia-shell.homeManagerModules.default
                 plasma-manager.homeModules.plasma-manager
                 sops-nix.homeManagerModules.sops
               ];

@@ -10,35 +10,42 @@
   terminalCommand = hyprlandCfg.terminal or "warp-terminal";
 in {
   imports = [
-    ./config-lua.nix
-    ./lock-idle.nix
+    ./caelestia.nix
+    ./config.nix
     ./scripts.nix
-    ./theme.nix
-    ./waybar.nix
+    ./terminal.nix
   ];
 
   config = lib.mkIf cfgEnabled {
     home.packages = with pkgs; [
+      app2unit
+      bluez
       brightnessctl
       cliphist
       dbus
+      ddcutil
+      fish
+      foot
+      fuzzel
       grim
-      hypridle
-      hyprlock
       hyprpicker
       hyprpolkitagent
-      hyprsunset
       jq
       kdePackages.bluedevil
       kdePackages.systemsettings
       kitty
+      libnotify
+      material-symbols
       networkmanagerapplet
       pavucontrol
       satty
       slurp
-      swaynotificationcenter
-      waybar
+      starship
+      swappy
+      thunar
+      thunar-volman
       wl-clipboard
+      nerd-fonts.caskaydia-cove
     ];
 
     home.sessionVariables.TERMINAL = terminalCommand;

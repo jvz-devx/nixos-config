@@ -17,7 +17,7 @@
   myConfig.desktop.hyprland = {
     enable = true;
     monitors = ["HDMI-A-1,3840x2160@119.88,0x0,1"];
-    terminal = "kitty";
+    terminal = "foot";
   };
   myConfig.services.tailscale.enable = true;
   myConfig.services.tailscale.operator = "jens"; # Allow ktailctl GUI to work
@@ -100,6 +100,7 @@
       "wheel"
       "networkmanager"
       "video"
+      "i2c"
       "audio"
       "docker"
       "input" # Required for whisper-ptt daemon (evtest key monitoring)

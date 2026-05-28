@@ -40,15 +40,24 @@ in {
     };
 
     security.pam.services.sddm.kwallet.enable = true;
+    hardware.i2c.enable = lib.mkDefault true;
 
     programs.ssh = {
       startAgent = lib.mkDefault true;
       askPassword = lib.mkDefault (lib.getExe pkgs.kdePackages.ksshaskpass);
     };
 
-    environment.systemPackages = with pkgs.kdePackages; [
-      ksshaskpass
-      kwallet
+    services.udev.packages = [
+      pkgs.ddcutil
     ];
+
+    environment.systemPackages =
+      (with pkgs.kdePackages; [
+        ksshaskpass
+        kwallet
+      ])
+      ++ [
+        pkgs.ddcutil
+      ];
   };
 }
