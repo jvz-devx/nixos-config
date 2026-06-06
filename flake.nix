@@ -14,6 +14,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # nix-darwin - macOS system configuration
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # nix-homebrew - Homebrew installation/ownership on macOS
+    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+
     # Plasma Manager - for declarative KDE configuration
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
@@ -100,6 +109,8 @@
     self,
     nixpkgs,
     home-manager,
+    nix-darwin,
+    nix-homebrew,
     plasma-manager,
     chaotic,
     claude-code,
@@ -112,7 +123,8 @@
     ...
   } @ inputs: let
     # Systems you want to support
-    supportedSystems = ["x86_64-linux" "aarch64-linux"];
+    supportedSystems = ["x86_64-linux" "aarch64-linux" "aarch64-darwin"];
+    packageSystems = ["x86_64-linux" "aarch64-linux"];
 
     # Helper function to generate attributes for all systems
     forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
@@ -126,10 +138,10 @@
   in rec {
     # Custom packages - available for all supported systems
     packages =
-      forAllSystems (system: import ./pkgs (pkgsFor system))
+      nixpkgs.lib.genAttrs packageSystems (system: import ./pkgs (pkgsFor system))
       // {
         x86_64-linux =
-          (forAllSystems (system: import ./pkgs (pkgsFor system))).x86_64-linux
+          (nixpkgs.lib.genAttrs packageSystems (system: import ./pkgs (pkgsFor system))).x86_64-linux
           // {
             # ISO images for all hosts
             server-01-iso = nixosConfigurations.server-01-iso.config.system.build.isoImage;
@@ -417,6 +429,32 @@
               sharedModules = [
                 sops-nix.homeManagerModules.sops
               ];
+            };
+          }
+        ];
+      };
+    };
+
+    # macOS configurations
+    darwinConfigurations = {
+      # ═══════════════════════════════════════════════════════════════
+      # MacBook Pro - Jens
+      # Apple Silicon macOS host managed with nix-darwin + Homebrew
+      # ═══════════════════════════════════════════════════════════════
+      macbook-pro = nix-darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        specialArgs = {inherit inputs self;};
+        modules = [
+          ./hosts/macbook-pro
+          nix-homebrew.darwinModules.nix-homebrew
+          home-manager.darwinModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              backupFileExtension = "backup";
+              extraSpecialArgs = {inherit inputs;};
+              users.jens = import ./home/jens-darwin.nix;
             };
           }
         ];
