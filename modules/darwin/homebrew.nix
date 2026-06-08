@@ -5,7 +5,7 @@
     onActivation = {
       autoUpdate = true;
       upgrade = true;
-      cleanup = "none";
+      cleanup = "check";
     };
 
     taps = [
@@ -16,10 +16,13 @@
     # GUI apps and Mac-specific utilities live in Homebrew casks.
     casks = [
       "raycast"
+      "rectangle"
+      "hammerspoon"
+      "alt-tab"
+      "moonlight"
       "dockdoor"
       "betterdisplay"
       "shottr"
-      "jordanbaird-ice"
       "stats"
       "macs-fan-control"
       "pearcleaner"
@@ -27,6 +30,7 @@
       "latest"
       "keka"
       "hyperkey"
+      "bitwarden"
       "TheBoredTeam/boring-notch/boring-notch"
       "pear-devs/pear/pear-desktop"
       "ghostty"
@@ -40,6 +44,11 @@
       "docker"
       "docker-compose"
       "azure-cli"
+      "cliclick"
+      "cmake"
+      "fastfetch"
+      "ffmpeg"
+      "kubeconform"
       "uv"
       "pipx"
       "rustup"

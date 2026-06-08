@@ -24,6 +24,11 @@
     reattach = true;
   };
 
+  system.activationScripts.enableRemoteLogin.text = ''
+    echo "Enabling macOS Remote Login (SSH)..."
+    /usr/sbin/systemsetup -setremotelogin on >/dev/null
+  '';
+
   system = {
     primaryUser = "jens";
     stateVersion = 6;

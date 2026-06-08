@@ -21,5 +21,28 @@
       show-recents = false;
       tilesize = 48;
     };
+
+    CustomUserPreferences = {
+      "com.apple.WindowManager" = {
+        EnableTilingByEdgeDrag = true;
+        EnableTopTilingByEdgeDrag = true;
+        EnableTilingOptionAccelerator = true;
+        EnableTiledWindowMargins = false;
+      };
+
+      "com.knollsoft.Rectangle" = {
+        resizeOnDirectionalMove = true;
+        subsequentExecutionMode = 0;
+      };
+
+      "com.jordanbaird.Ice" = {
+        HideApplicationMenus = false;
+        SUAutomaticallyUpdate = false;
+        SUEnableAutomaticChecks = false;
+        SUHasLaunchedBefore = true;
+        ShowOnScroll = false;
+        UseIceBar = false;
+      };
+    };
   };
 }

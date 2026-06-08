@@ -2,6 +2,13 @@
   programs.git = {
     enable = true;
     settings = {
+      credential = {
+        helper = [
+          ""
+          "/usr/local/bin/git-credential-manager"
+        ];
+        useHttpPath = true;
+      };
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;
