@@ -50,7 +50,7 @@ Between waves you (the coordinator) merge each wave's branches back into the int
 - **Rust workspace** → `cargo check --workspace && cargo test --workspace`.
 - **Python** → `uv run pytest` or the project's configured test command.
 
-Don't pick the command from memory alone — glance at the repo's `CLAUDE.md` / `AGENTS.md` / `README` or `justfile` / `Makefile` first; most projects document the canonical verify command, and using the project's own command is how you catch regressions the way the project expects them to be caught.
+Don't pick the command from memory alone — glance at the repo's `AGENTS.md` / `README` or `justfile` / `Makefile` first; most projects document the canonical verify command, and using the project's own command is how you catch regressions the way the project expects them to be caught.
 
 If verify fails: **stop**. Investigate, fix, re-verify. Never start the next wave on a broken tree — a failing verify means one of the wave's branches is bad and the next wave would build on a broken foundation.
 

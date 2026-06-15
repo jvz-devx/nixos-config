@@ -68,6 +68,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Herdr terminal agent multiplexer
+    herdr = {
+      url = "github:ogulcancelik/herdr";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # nix-ai-tools (includes Factory AI's droid CLI)
     nix-ai-tools = {
       url = "github:numtide/nix-ai-tools";
@@ -455,6 +461,9 @@
               backupFileExtension = "backup";
               extraSpecialArgs = {inherit inputs;};
               users.jens = import ./home/jens-darwin.nix;
+              sharedModules = [
+                sops-nix.homeManagerModules.sops
+              ];
             };
           }
         ];

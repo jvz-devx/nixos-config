@@ -5,114 +5,108 @@ This file provides guidance to coding agents working in this repository.
 ## Build & Test
 
 ```bash
-# Dry build (MUST run after any .nix change, before telling user you're done)
-nixos-rebuild dry-build --flake ".#<hostname>"
+# Format all Nix files before finishing changes
+nix fmt .
 
-# Apply changes
-sudo nixos-rebuild switch --flake /etc/nixos#<hostname>
+# Build the macOS system configuration without switching
+nix build .#darwinConfigurations.macbook-pro.system
 
-# Format all nix files (MUST run before finishing any task)
-nix fmt
+# Apply macOS configuration changes
+sudo darwin-rebuild switch --flake .#macbook-pro
 
 # Update flake inputs
 nix flake update
 
-# Build custom ISO
-nix build .#<hostname>-iso
-
 # Build a custom package
 nix build .#<package-name>
-
-# Switch GPU mode on rog-strix (dedicated/hybrid/integrated)
-# This updates gpu-mode.nix, rebuilds, and prompts to reboot
-./switch-gpu-mode.sh <mode>
 ```
 
 ## Validation Rule
 
-After modifying any `.nix` file, you **must** run a dry build for the affected host(s) and fix any errors before considering the task complete. Multiple hosts may be affected — check which hosts use the changed module.
+After modifying any `.nix` file, run `nix fmt .` and `nix build .#darwinConfigurations.macbook-pro.system`. Fix build errors before considering the task complete.
+
+Run `sudo darwin-rebuild switch --flake .#macbook-pro` only when the user asks to apply changes or when applying them is clearly part of the requested task.
 
 ## Architecture Overview
 
-Multi-host NixOS flake configuration managing desktops, a laptop, a server, and WSL. Uses nixpkgs-unstable, Home Manager, plasma-manager (KDE Plasma 6), sops-nix (secrets), and chaotic-nyx (CachyOS kernel).
+This repository is Jens's macOS nix-darwin flake for `macbook-pro`. It uses nixpkgs-unstable, nix-darwin, Home Manager, nix-homebrew, and sops-nix.
 
-## Hosts
+The active host is:
 
-| Host | User | Hardware | Profile |
+| Host | User | Platform | Profile |
 |------|------|----------|---------|
-| `rog-strix` | jens | Intel + NVIDIA laptop (ASUS) | workstation |
-| `pc-02` | jens | AMD + NVIDIA desktop | workstation |
-| `server-01` | admin | x86_64 headless (nixpkgs-stable) | server |
-| `wsl` | jens | WSL2 | minimal |
+| `macbook-pro` | jens | Apple Silicon macOS | workstation |
+
+Legacy non-macOS configuration may still exist in the repository, but do not touch or validate it unless the user explicitly asks.
 
 ## Conventions & Patterns
 
-### Custom Option Namespace
+### Darwin Modules
 
-All custom modules use the `myConfig.*` option namespace. Modules declare options with `lib.mkEnableOption` and gate their config behind `lib.mkIf`:
+macOS system configuration lives under `hosts/macbook-pro/` and `modules/darwin/`.
 
-```
-myConfig.profiles.{workstation,desktop,gaming,development,server}.enable
-myConfig.hardware.{nvidia,cpu.amd,cpu.intel,audio,bluetooth,asus,logitech}.enable
-myConfig.desktop.{plasma,portals}.enable
-myConfig.programs.{gaming,localsend,development}.enable
-myConfig.services.{tailscale,maintenance,sops,nas,flatpak}.enable
-myConfig.system.{locale,boot,disk,power,iso}.enable
-```
-
-### Profile Hierarchy
-
-Profiles are composable bundles in `modules/nixos/profiles/`. The hierarchy is:
-
-- **workstation** = desktop + gaming + development (used by `rog-strix`, `pc-02`)
-- **desktop** = plasma + portals + flatpak + audio + bluetooth + logitech + locale + boot + disk + maintenance
-- **gaming** = Steam, Heroic, Lutris, MangoHud
-- **development** = Docker, CLI tools, language environments
-- **server** = locale + boot + disk + maintenance + tailscale + development (headless, no desktop)
-
-Hosts enable a profile in their `configuration.nix`, then add host-specific overrides.
-
-### Module Index
-
-`modules/nixos/default.nix` imports **all** NixOS modules for every host. Modules are opt-in via their `enable` option — importing does not activate anything.
+Use nix-darwin options for system defaults, launchd services, Homebrew integration, networking, fonts, and macOS-specific behavior.
 
 ### Home Manager
 
-User configs live in `home/{jens,server,wsl}.nix`. Each imports modules from `modules/home/` (shell, programs, plasma, packages). Home modules are **not** option-gated — they activate by being imported.
+The active user configuration is `home/jens-darwin.nix`. Shared Home Manager fragments live in `modules/home/`.
 
-The `rebuild` shell alias is defined per-user and points to the correct `--flake .#<hostname>`.
+Keep `home/jens-darwin.nix` mostly as a composition file:
+
+- imports
+- user identity and session defaults
+- host/user-specific overrides
+
+Put substantial behavior in focused modules under `modules/home/base/`, `modules/home/features/`, or `modules/home/packages/`.
+
+### Homebrew
+
+Manage persistent Homebrew packages declaratively in `modules/darwin/homebrew.nix`.
+
+- Use `casks` for GUI apps and Mac-specific app bundles.
+- Use `brews` for Mac-specific or ecosystem-sensitive CLI tools.
+- If a Homebrew formula should start at login, declare it as an attribute set with `start_service = true`.
+
+Do not leave manual `brew install`, `brew uninstall`, or `brew services` changes unmanaged when they should be persistent.
 
 ### Overlays
 
-`overlays/default.nix` exposes three overlays applied per-host:
+`overlays/default.nix` exposes overlays used by the flake:
 
 - **additions**: custom packages from `pkgs/`
-- **modifications**: patched upstream packages (Vesktop, Discord+Vencord, rust-overlay)
+- **modifications**: patched upstream packages
 - **stable-packages**: makes `pkgs.stable.*` available from nixpkgs-stable
 
 ### Custom Packages
 
-`pkgs/` contains custom derivations (coderabbit, sqlit-tui, smart-video-wallpaper). Build with `nix build .#<name>`.
+`pkgs/` contains custom derivations. Build with `nix build .#<name>`.
 
 ## Security
 
-Managed by sops-nix with age encryption. Encrypted files live in `secrets/`. Edit with `sops secrets/<file>.yaml`. Never put secrets in plaintext `.nix` files.
+Secrets are managed by sops-nix with age encryption. Encrypted files live in `secrets/`.
+
+Never put secrets, private URLs, tokens, passwords, or credentials in plaintext `.nix` files. Use `sops secrets/<file>.yaml` or `sops set` with `--value-file`/`--value-stdin` to avoid leaking secret values into shell history or process arguments.
 
 ## Tools
 
-For file search or grep in the current git indexed directory, use fff tools.
+Use fast search tools such as `rg` and `rg --files` for repository inspection.
 
 ## Git Workflows
 
-- You may `git add` files, but never `git commit` or `git push`.
+- Inspect `git status --short --branch` and the relevant diff before staging, committing, or pushing.
+- Do not commit or push unless the user explicitly asks for that git action.
+- Stage only files that belong to the requested change. Do not silently include unrelated dirty work.
+- Before pushing, state the branch, remote, commit message, and scope when the worktree contains mixed changes.
+- Prefer pushing the current branch with tracking via `git push -u origin $(git branch --show-current)`.
+- Never force-push, rewrite history, delete branches, or run destructive git commands unless the user explicitly asks for that exact operation.
 
 ## Repository Layout
 
-- **`flake.nix`** defines all inputs and host outputs.
-- **`hosts/`** contains host-specific configurations and hardware config.
-- **`modules/nixos/`** contains reusable system modules and profiles.
-- **`home/`** contains Home Manager entry points per user.
-- **`modules/home/`** contains reusable home modules.
+- **`flake.nix`** defines inputs and the `macbook-pro` Darwin output.
+- **`hosts/macbook-pro/`** contains host-specific macOS configuration.
+- **`modules/darwin/`** contains reusable nix-darwin modules.
+- **`home/jens-darwin.nix`** is Jens's active Home Manager entry point on macOS.
+- **`modules/home/`** contains reusable Home Manager modules.
 - **`pkgs/`** contains custom derivations.
 - **`overlays/`** contains nixpkgs overlays.
 - **`secrets/`** contains encrypted secret material.

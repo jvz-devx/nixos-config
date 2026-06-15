@@ -36,11 +36,19 @@
       "ghostty"
       "visual-studio-code"
       "tableplus"
+      "codexbar"
+      "libreoffice"
+      "gstreamer-runtime"
+      "wine-stable"
+      "porting-kit"
     ];
 
     # Mac-specific or ecosystem-sensitive CLI tools stay in Brew.
     brews = [
-      "colima"
+      {
+        name = "colima";
+        start_service = true;
+      }
       "docker"
       "docker-compose"
       "azure-cli"

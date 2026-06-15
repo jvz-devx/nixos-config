@@ -365,6 +365,26 @@
         "type": "github"
       }
     },
+    "herdr": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1781488563,
+        "narHash": "sha256-ESEm4bhW+9bF0CrVaartEjvMXMi/IvIgzpCYNzWXzII=",
+        "owner": "ogulcancelik",
+        "repo": "herdr",
+        "rev": "4ffd99c2ec62fd3cbc9f9e0673d92c6a2a4f12b1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ogulcancelik",
+        "repo": "herdr",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -1032,6 +1052,7 @@
         "chaotic": "chaotic",
         "claude-code": "claude-code",
         "codex-cli": "codex-cli",
+        "herdr": "herdr",
         "home-manager": "home-manager_2",
         "hyprland": "hyprland",
         "nix-ai-tools": "nix-ai-tools",

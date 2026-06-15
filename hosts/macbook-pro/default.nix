@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   imports = [
     ../../modules/darwin/system.nix
     ../../modules/darwin/macos-defaults.nix
@@ -8,6 +12,12 @@
   networking.hostName = "macbook-pro";
   networking.localHostName = "macbook-pro";
   networking.computerName = "MacBook Pro";
+
+  nixpkgs.overlays = [
+    inputs.self.overlays.additions
+    inputs.self.overlays.modifications
+    inputs.self.overlays.stable-packages
+  ];
 
   users.users.jens = {
     name = "jens";

@@ -10,7 +10,7 @@ Write Nix that evaluates, builds, and reflects the current ecosystem — not the
 
 ## Before writing anything
 
-1. **Read the surrounding project.** Look at `flake.nix`, existing modules, and any `CLAUDE.md` / `README` for local conventions (option namespaces, formatter choice, profile layout). Match them rather than imposing generic style.
+1. **Read the surrounding project.** Look at `flake.nix`, existing modules, and any `AGENTS.md` / `README` for local conventions (option namespaces, formatter choice, profile layout). Match them rather than imposing generic style.
 2. **Check the formatter.** Run `nix fmt` after edits. Projects may use `nixfmt-rfc-style` (nixpkgs default) *or* `alejandra`; respect whichever is wired into `formatter.${system}` / `treefmt`.
 3. **Validate every change.** For NixOS/Home-Manager edits: `nixos-rebuild dry-build --flake .#<host>` for each affected host. For flake packages: `nix build .#<pkg>` or `nix flake check`. A change is not done until it evaluates cleanly.
 

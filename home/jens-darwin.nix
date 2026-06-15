@@ -1,6 +1,7 @@
 # Home Manager configuration for jens on macOS.
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -33,6 +34,7 @@ in {
     ../modules/home/base/tmux.nix
     ../modules/home/base/gpg.nix
     ../modules/home/packages/cli/base.nix
+    ../modules/home/features/gooskens-network-drives-darwin.nix
   ];
 
   home = {
@@ -69,8 +71,12 @@ in {
         pnpm
         terraformDarwinArm64
         kubectl
+        k9s
         fluxcd
         ansible
+        cf
+        wrangler
+        inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
       ])
       ++ lib.optionals hasDotnet10 [
         pkgs.dotnet-sdk_10
@@ -78,6 +84,21 @@ in {
   };
 
   programs.home-manager.enable = true;
+
+  home.activation.setCodexFullAccessDefaults = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    set -eu
+
+    codex_config="${config.home.homeDirectory}/.codex/config.toml"
+    ${pkgs.coreutils}/bin/mkdir -p "$(${pkgs.coreutils}/bin/dirname "$codex_config")"
+
+    if [ ! -e "$codex_config" ]; then
+      ${pkgs.coreutils}/bin/install -m 600 /dev/null "$codex_config"
+    fi
+
+    ${pkgs.perl}/bin/perl -0pi -e 's/^approval_policy\s*=.*$/approval_policy = "never"/m or s/\A/approval_policy = "never"\n/' "$codex_config"
+    ${pkgs.perl}/bin/perl -0pi -e 's/^sandbox_mode\s*=.*$/sandbox_mode = "danger-full-access"/m or s/\A/sandbox_mode = "danger-full-access"\n/' "$codex_config"
+    ${pkgs.coreutils}/bin/chmod 600 "$codex_config"
+  '';
 
   home.file.".docker/cli-plugins/docker-compose" = {
     source = config.lib.file.mkOutOfStoreSymlink "/opt/homebrew/bin/docker-compose";
@@ -290,8 +311,10 @@ in {
       ll = "eza -la";
       cat = "bat";
       grep = "rg";
-      rebuild-mac = "darwin-rebuild switch --flake ~/nix#macbook-pro";
-      update-mac = "cd ~/nix && nix flake update && darwin-rebuild switch --flake .#macbook-pro";
+      rebuild = "sudo darwin-rebuild switch --flake ~/nix#macbook-pro";
+      rebuild-mac = "sudo darwin-rebuild switch --flake ~/nix#macbook-pro";
+      update = "cd ~/nix && nix flake update && sudo darwin-rebuild switch --flake .#macbook-pro";
+      update-mac = "cd ~/nix && nix flake update && sudo darwin-rebuild switch --flake .#macbook-pro";
     };
 
     initContent = ''
