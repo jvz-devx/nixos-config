@@ -18,6 +18,6 @@ This directory contains repo-local package definitions used by the flake.
 
 ## Validation
 
-- Run `nix fmt`
-- Run `nix build /etc/nixos#<package-name>` for each changed package
-- If the package is used by Jens' Home Manager or workstation flow, also run `nixos-rebuild dry-build --flake /etc/nixos#rog-strix`
+- Run `nix fmt .` from the repository root.
+- Run `nix build .#<package-name>` for each changed package.
+- If the package is used by Jens's macOS Home Manager or workstation flow, also run `nix build .#darwinConfigurations.macbook-pro.system`.

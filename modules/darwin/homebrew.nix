@@ -10,6 +10,8 @@
 
     taps = [
       "TheBoredTeam/boring-notch"
+      "can1357/tap"
+      "dmtrKovalenko/fff"
       "pear-devs/pear"
     ];
 
@@ -52,11 +54,16 @@
       "docker"
       "docker-compose"
       "azure-cli"
+      "cloudflare-wrangler"
       "cliclick"
       "cmake"
       "fastfetch"
       "ffmpeg"
+      "can1357/tap/omp"
+      "dmtrKovalenko/fff/fff-mcp"
+      "fontconfig"
       "kubeconform"
+      "little-cms2"
       "uv"
       "pipx"
       "rustup"

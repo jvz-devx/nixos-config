@@ -37,7 +37,7 @@ The active host is:
 |------|------|----------|---------|
 | `macbook-pro` | jens | Apple Silicon macOS | workstation |
 
-Legacy non-macOS configuration may still exist in the repository, but do not touch or validate it unless the user explicitly asks.
+Archived Linux/NixOS reference material lives under `archive/nixos-reference/`. It is not part of the active flake; do not edit, validate, or reintroduce it unless the user explicitly asks.
 
 ## Conventions & Patterns
 
@@ -110,3 +110,4 @@ Use fast search tools such as `rg` and `rg --files` for repository inspection.
 - **`pkgs/`** contains custom derivations.
 - **`overlays/`** contains nixpkgs overlays.
 - **`secrets/`** contains encrypted secret material.
+- **`archive/nixos-reference/`** contains old Linux/NixOS material for reference only.

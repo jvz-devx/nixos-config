@@ -341,6 +341,7 @@ in {
   home.file.".claude/skills/skill-creator".source = ../claude-skills/skill-creator;
 
   # Codex global skills (declarative, survives rebuilds)
+  home.file.".codex/skills/fff/SKILL.md".source = ../codex-skills/fff/SKILL.md;
   home.file.".codex/skills/grill-me/SKILL.md".source = ../codex-skills/grill-me/SKILL.md;
   home.file.".codex/skills/hyprland-gaming/SKILL.md".source = ../codex-skills/hyprland-gaming/SKILL.md;
 

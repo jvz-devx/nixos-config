@@ -27,6 +27,131 @@
       platforms = ["aarch64-darwin"];
     };
   };
+  gooskensAdPowerShellConfigPath = "${config.xdg.configHome}/sops-nix/secrets/rendered/gooskens-ad-ps";
+  gooskensAdPowerShell = pkgs.writeShellApplication {
+    name = "gooskens-ad-ps";
+    runtimeInputs = [
+      (pkgs.python3.withPackages (pythonPackages: [
+        pythonPackages.pywinrm
+      ]))
+    ];
+    text = ''
+      set -euo pipefail
+
+      if [ "$#" -eq 0 ]; then
+        cat >&2 <<'USAGE'
+      Usage:
+        gooskens-ad-ps '<powershell script>'
+        gooskens-ad-ps --file ./script.ps1
+
+      Uses the macOS Keychain item:
+        configured through sops-nix
+
+      Note:
+        Scripts are sent through WinRM as remote PowerShell commands.
+        Large scripts can hit the Windows command-line limit; split those
+        investigations into smaller focused queries.
+      USAGE
+        exit 2
+      fi
+
+      python - "$@" <<'PY'
+      import subprocess
+      import sys
+
+      import winrm
+
+      CONFIG_PATH = "${gooskensAdPowerShellConfigPath}"
+
+      config = {}
+      try:
+          with open(CONFIG_PATH, encoding="utf-8") as config_file:
+              for line in config_file:
+                  line = line.strip()
+                  if not line or line.startswith("#"):
+                      continue
+                  key, separator, value = line.partition("=")
+                  if not separator:
+                      continue
+                  config[key.strip()] = value.strip()
+      except FileNotFoundError:
+          print(
+              f"Missing decrypted gooskens-ad-ps config: {CONFIG_PATH}. "
+              "Run darwin-rebuild switch so sops-nix can render it.",
+              file=sys.stderr,
+          )
+          sys.exit(2)
+
+      missing_keys = [key for key in ("server", "service", "account") if not config.get(key)]
+      if missing_keys:
+          print(
+              f"Missing key(s) in {CONFIG_PATH}: {', '.join(missing_keys)}",
+              file=sys.stderr,
+          )
+          sys.exit(2)
+
+      SERVER = config["server"]
+      SERVICE = config["service"]
+      ACCOUNT = config["account"]
+
+      args = sys.argv[1:]
+      if args[0] in ("-f", "--file"):
+          if len(args) != 2:
+              print("Usage: gooskens-ad-ps --file ./script.ps1", file=sys.stderr)
+              sys.exit(2)
+          with open(args[1], encoding="utf-8") as script_file:
+              script = script_file.read()
+      else:
+          script = " ".join(args)
+
+      if not script.strip():
+          print("No PowerShell script was provided.", file=sys.stderr)
+          sys.exit(2)
+
+      max_script_chars = 7000
+      if len(script) > max_script_chars:
+          print(
+              f"PowerShell script is {len(script)} characters, which is likely too long for this WinRM transport. "
+              "Split it into smaller focused queries instead of using one large --file script.",
+              file=sys.stderr,
+          )
+          sys.exit(2)
+
+      password = subprocess.check_output(
+          [
+              "/usr/bin/security",
+              "find-generic-password",
+              "-w",
+              "-s",
+              SERVICE,
+              "-a",
+              ACCOUNT,
+          ],
+          text=True,
+      ).rstrip("\n")
+
+      try:
+          session = winrm.Session(
+              f"http://{SERVER}:5985/wsman",
+              auth=(ACCOUNT, password),
+              transport="ntlm",
+          )
+          result = session.run_ps("$ProgressPreference = 'SilentlyContinue'\n" + script)
+      finally:
+          password = None
+
+      stdout = result.std_out.decode("utf-8", errors="replace")
+      stderr = result.std_err.decode("utf-8", errors="replace")
+
+      if stdout:
+          print(stdout, end="")
+      if stderr:
+          print(stderr, end="", file=sys.stderr)
+
+      sys.exit(result.status_code)
+      PY
+    '';
+  };
 in {
   imports = [
     ../modules/home/base/git.nix
@@ -60,6 +185,8 @@ in {
     packages =
       (with pkgs; [
         gh
+        powershell
+        gooskensAdPowerShell
         jq
         yq-go
         ripgrep
@@ -68,6 +195,7 @@ in {
         bat
         go
         bun
+        deno
         pnpm
         terraformDarwinArm64
         kubectl
@@ -75,7 +203,6 @@ in {
         fluxcd
         ansible
         cf
-        wrangler
         inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
       ])
       ++ lib.optionals hasDotnet10 [
@@ -84,6 +211,24 @@ in {
   };
 
   programs.home-manager.enable = true;
+
+  sops = {
+    secrets = {
+      gooskens_ad_ps_server = {};
+      gooskens_ad_ps_service = {};
+      gooskens_ad_ps_account = {};
+    };
+
+    templates."gooskens-ad-ps" = {
+      path = gooskensAdPowerShellConfigPath;
+      mode = "0600";
+      content = ''
+        server=${config.sops.placeholder.gooskens_ad_ps_server}
+        service=${config.sops.placeholder.gooskens_ad_ps_service}
+        account=${config.sops.placeholder.gooskens_ad_ps_account}
+      '';
+    };
+  };
 
   home.activation.setCodexFullAccessDefaults = lib.hm.dag.entryAfter ["writeBoundary"] ''
     set -eu
@@ -99,6 +244,50 @@ in {
     ${pkgs.perl}/bin/perl -0pi -e 's/^sandbox_mode\s*=.*$/sandbox_mode = "danger-full-access"/m or s/\A/sandbox_mode = "danger-full-access"\n/' "$codex_config"
     ${pkgs.coreutils}/bin/chmod 600 "$codex_config"
   '';
+
+  home.activation.configureCodexFffMcp = lib.hm.dag.entryAfter ["setCodexFullAccessDefaults"] ''
+    set -eu
+
+    codex_config="${config.home.homeDirectory}/.codex/config.toml"
+    tmp="$(${pkgs.coreutils}/bin/mktemp)"
+
+    ${pkgs.gawk}/bin/awk '
+      BEGIN {
+        in_fff = 0
+        wrote = 0
+      }
+      /^\[mcp_servers\.fff\]$/ {
+        if (!wrote) {
+          print "[mcp_servers.fff]"
+          print "command = \"/opt/homebrew/bin/fff-mcp\""
+          print "args = []"
+          wrote = 1
+        }
+        in_fff = 1
+        next
+      }
+      /^\[/ {
+        in_fff = 0
+      }
+      !in_fff {
+        print
+      }
+      END {
+        if (!wrote) {
+          print ""
+          print "[mcp_servers.fff]"
+          print "command = \"/opt/homebrew/bin/fff-mcp\""
+          print "args = []"
+        }
+      }
+    ' "$codex_config" > "$tmp"
+
+    ${pkgs.coreutils}/bin/cat "$tmp" > "$codex_config"
+    ${pkgs.coreutils}/bin/rm -f "$tmp"
+    ${pkgs.coreutils}/bin/chmod 600 "$codex_config"
+  '';
+
+  home.file.".codex/skills/fff/SKILL.md".source = ../modules/home/codex-skills/fff/SKILL.md;
 
   home.file.".docker/cli-plugins/docker-compose" = {
     source = config.lib.file.mkOutOfStoreSymlink "/opt/homebrew/bin/docker-compose";
@@ -280,6 +469,10 @@ in {
 
     hs.hotkey.bind(hyper, "up", snapUp)
     hs.hotkey.bind(hyper, "down", snapDown)
+
+    hs.hotkey.bind(hyper, "s", function()
+      hs.task.new("/usr/sbin/screencapture", nil, { "-i", "-c" }):start()
+    end)
 
     hs.hotkey.bind({ "ctrl", "shift" }, "escape", function()
       hs.application.launchOrFocus("Activity Monitor")
