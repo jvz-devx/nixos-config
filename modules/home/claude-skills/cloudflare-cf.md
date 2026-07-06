@@ -12,8 +12,8 @@ This skill's job is **not** to teach you all 100+ products; it's to teach you th
 
 ## Environment (this machine)
 
-- `cf` is installed declaratively via `/etc/nixos/pkgs/cf/` (wrapped with nodejs).
-- `CLOUDFLARE_API_TOKEN` is sourced automatically from `/run/secrets/cloudflare_api_token` — you do not need to pass it. Every `cf` invocation picks it up, including non-interactive child shells.
+- `cf` is installed declaratively via `/Users/jens/nix/pkgs/cf/` (wrapped with nodejs).
+- `CLOUDFLARE_API_TOKEN` is sourced automatically from the sops-nix-rendered user secret path configured by this macOS flake. You do not need to pass it. Every `cf` invocation picks it up, including non-interactive child shells.
 - The user's homelab domain on Cloudflare is **jensvanzutphen.com**, reached over a Cloudflare Tunnel. When a request is ambiguous ("update DNS", "what's in the tunnel"), that zone is the sensible default — confirm with the user if you're about to mutate something.
 
 ## Core loop — three commands that bootstrap everything
@@ -52,7 +52,7 @@ For work inside `/home/jens/Documents/source/homelab-iac/`, setting a project-sc
 ## Safety rules
 
 - **Reads are free; writes are not.** Never run a `create`/`update`/`delete` without the user's go-ahead once you understand what it'll change. Show them the `--dry-run` output and the final command you intend to run; wait for confirmation.
-- **On 401/403, don't trust whoami alone.** `cf auth whoami` hits `/user/tokens/verify`, which requires the `User Details:Read` permission. A narrowly-scoped account/zone token (the common `cfat_…` kind) legitimately returns `tokenValid: false` there while still working for every account/zone API call. To actually check if a token is dead, retry the failing call, or do a cheap scoped read like `cf zones list --fields id,name`. Only conclude the token is bad if a scoped read also 401s. When it's genuinely stale, rotate with `sops set /etc/nixos/secrets/common.yaml '["cloudflare_api_token"]' '"<NEW>"'` and `sudo nixos-rebuild switch --flake /etc/nixos#<host>`.
+- **On 401/403, don't trust whoami alone.** `cf auth whoami` hits `/user/tokens/verify`, which requires the `User Details:Read` permission. A narrowly-scoped account/zone token (the common `cfat_...` kind) legitimately returns `tokenValid: false` there while still working for every account/zone API call. To actually check if a token is dead, retry the failing call, or do a cheap scoped read like `cf zones list --fields id,name`. Only conclude the token is bad if a scoped read also 401s. When it's genuinely stale, rotate `secrets/common.yaml` with sops and apply with `sudo darwin-rebuild switch --flake /Users/jens/nix#macbook-pro`.
 - **Respect declarative infra.** The user's homelab lives in `/home/jens/Documents/source/homelab-iac/` — Flux-reconciled k8s. Don't use `cf` to mutate things that have a declarative source of truth somewhere else (e.g. Cloudflared Tunnel config managed in k8s secrets). When in doubt, ask: "do you want this as a one-off via cf, or should I put it in the IaC repo?"
 
 ## Output discipline

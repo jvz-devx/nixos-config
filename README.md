@@ -22,7 +22,7 @@ sudo darwin-rebuild switch --flake '.#macbook-pro'
 - **Dev layer:** Nix owns Deno, Bun, pnpm, Go, Terraform, Kubernetes tools, Flux, Ansible, GitHub CLI, and PowerShell; Brew owns Docker, Colima, Wrangler, rustup, and nvm.
 - **macOS layer:** Finder/Dock defaults, Touch ID sudo, Remote Login, Rosetta Homebrew, and Hammerspoon window snapping.
 - **Work layer:** encrypted Gooskens SMB mounts, the Gooskens AD PowerShell helper, Codex defaults, and FFF MCP wiring.
-- **Archive layer:** Linux/NixOS is kept under `archive/nixos-reference/`; the active flake is Darwin-only.
+- **Archive layer:** old system material is kept under `archive/nixos-reference/`; the active flake is Darwin-only.
 
 ## Shape
 
@@ -34,4 +34,4 @@ sudo darwin-rebuild switch --flake '.#macbook-pro'
 
 ## Archive
 
-Old Linux/NixOS material lives in `archive/nixos-reference/` as reference. It is not part of the active flake.
+Old system material lives in `archive/nixos-reference/` as reference. It is not part of the active flake.

@@ -34,7 +34,7 @@ Before you emit the plan, for every task list the files it will **create**, **ed
 Rules for grouping into waves:
 
 - Two tasks may share a wave if and only if **their file sets are disjoint**.
-- "Disjoint" includes index-ish files that several tasks all want to append lines to: `modules/nixos/default.nix`, `flake.nix`, a shared `mod.rs`, a shared `routes.ts`, etc. If multiple tasks need to edit the same index file, the index edit goes in its own follow-up wave.
+- "Disjoint" includes index-ish files that several tasks all want to append lines to: `flake.nix`, a Home Manager composition file, a shared `mod.rs`, a shared `routes.ts`, etc. If multiple tasks need to edit the same index file, the index edit goes in its own follow-up wave.
 - Tasks with a **logical dependency** (task B needs task A's output to exist) always go in a later wave even if their file sets are disjoint.
 - Pure additions (new file creation) are almost always safe to parallelize with each other.
 - Pure deletions that affect imports are almost always *not* safe to parallelize with anything else.
@@ -45,7 +45,7 @@ If you can't figure out a task's file list, the task isn't well-specified yet �
 
 Between waves you (the coordinator) merge each wave's branches back into the integration branch and run **one** verify step. Pick it for the stack:
 
-- **NixOS / Home Manager** → `nix fmt` followed by `nixos-rebuild dry-build --flake .#<host>`. For this machine the host is usually **pc-02** unless the user says otherwise.
+- **nix-darwin / Home Manager** -> `nix fmt .` followed by `nix build .#darwinConfigurations.macbook-pro.system`.
 - **TypeScript monorepo** → `pnpm -r typecheck && pnpm -r test` (or the repo's `package.json` "check" script).
 - **Rust workspace** → `cargo check --workspace && cargo test --workspace`.
 - **Python** → `uv run pytest` or the project's configured test command.

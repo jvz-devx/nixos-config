@@ -30,6 +30,6 @@ in
       homepage = "https://github.com/jvz-devx/codex-svelte-autofix-agent";
       license = lib.licenses.mit;
       mainProgram = "svelte-autofix";
-      platforms = ["x86_64-linux"];
+      platforms = lib.platforms.darwin;
     };
   }
