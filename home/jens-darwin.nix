@@ -160,6 +160,7 @@ in {
     ../modules/home/base/gpg.nix
     ../modules/home/packages/cli/base.nix
     ../modules/home/features/gooskens-network-drives-darwin.nix
+    ../modules/home/features/nzbget.nix
   ];
 
   home = {
@@ -185,7 +186,9 @@ in {
     packages =
       (with pkgs; [
         gh
+        glab
         powershell
+        novnc
         gooskensAdPowerShell
         jq
         yq-go
@@ -197,6 +200,7 @@ in {
         bun
         deno
         pnpm
+        yarn
         terraformDarwinArm64
         kubectl
         k9s
@@ -470,8 +474,26 @@ in {
     hs.hotkey.bind(hyper, "up", snapUp)
     hs.hotkey.bind(hyper, "down", snapDown)
 
+    local screenshotTimer
     hs.hotkey.bind(hyper, "s", function()
-      hs.task.new("/usr/sbin/screencapture", nil, { "-i", "-c" }):start()
+      screenshotTimer = hs.timer.waitUntil(function()
+        local modifiers = hs.eventtap.checkKeyboardModifiers()
+        return not (modifiers.ctrl or modifiers.alt or modifiers.cmd or modifiers.shift)
+      end, function()
+        screenshotTimer = nil
+        hs.task.new("/usr/bin/open", nil, { "shottr://grab/area?then=edit" }):start()
+      end, 0.05)
+    end)
+
+    local recordingTimer
+    hs.hotkey.bind(hyper, "g", function()
+      recordingTimer = hs.timer.waitUntil(function()
+        local modifiers = hs.eventtap.checkKeyboardModifiers()
+        return not (modifiers.ctrl or modifiers.alt or modifiers.cmd or modifiers.shift)
+      end, function()
+        recordingTimer = nil
+        hs.task.new("/usr/sbin/screencapture", nil, { "-i", "-J", "video" }):start()
+      end, 0.05)
     end)
 
     hs.hotkey.bind({ "ctrl", "shift" }, "escape", function()
@@ -504,10 +526,13 @@ in {
       ll = "eza -la";
       cat = "bat";
       grep = "rg";
+      ssh-copy-id = "ssh-copy-id -i ~/.ssh/id_ed25519.pub";
+      hcodex = "codex --profile herdr-root";
       rebuild = "sudo darwin-rebuild switch --flake ~/nix#macbook-pro";
       rebuild-mac = "sudo darwin-rebuild switch --flake ~/nix#macbook-pro";
       update = "cd ~/nix && nix flake update && sudo darwin-rebuild switch --flake .#macbook-pro";
       update-mac = "cd ~/nix && nix flake update && sudo darwin-rebuild switch --flake .#macbook-pro";
+      # claudex = "CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000 CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=70 ANTHROPIC_BASE_URL=http://127.0.0.1:8317 ANTHROPIC_AUTH_TOKEN=vibeproxy ANTHROPIC_MODEL=gpt-5.6-sol ANTHROPIC_DEFAULT_OPUS_MODEL=gpt-5.6-sol ANTHROPIC_DEFAULT_SONNET_MODEL=gpt-5.6-terra ANTHROPIC_DEFAULT_HAIKU_MODEL=gpt-5.6-luna claude --dangerously-skip-permissions";
     };
 
     initContent = ''
@@ -543,20 +568,29 @@ in {
     enableZshIntegration = true;
   };
 
+  programs.git.includes = [
+    {
+      condition = "gitdir:/Users/jens/Developer/work/wolfpack/**";
+      contents.user = {
+        name = "Jens van Zutphen";
+        email = "jensvanzutphen4@gmail.com";
+      };
+      contentSuffix = "wolfpack-gitconfig";
+    }
+    {
+      condition = "gitdir:/Users/jens/Developer/work/gooskens/**";
+      contents.user = {
+        name = "Jens van Zutphen";
+        email = "j.v.zutphen@gooskens.nl";
+      };
+      contentSuffix = "gooskens-gitconfig";
+    }
+  ];
+
   programs.git.settings = {
     user.name = "jvz-devx";
     user.email = "jvz-devx@users.noreply.github.com";
     init.defaultBranch = "main";
     pull.rebase = lib.mkForce false;
-  };
-
-  programs.ssh.matchBlocks = {
-    "github.com" = {
-      hostname = "github.com";
-      user = "git";
-      identityFile = "~/.ssh/id_ed25519";
-      identitiesOnly = true;
-      addKeysToAgent = "yes";
-    };
   };
 }

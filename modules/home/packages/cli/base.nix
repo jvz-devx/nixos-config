@@ -9,7 +9,14 @@
       nano
       tmux
       pandoc # Document converter (includes CLI)
+      poppler-utils # PDF inspection and conversion tools
       bitwarden-cli
+      # Development tools used by Gooskens Cloud
+      protobuf
+      grpcurl
+      fswatch
+      imagemagick
+      libavif
 
       # Spell checking
       hunspell

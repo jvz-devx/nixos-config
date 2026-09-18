@@ -12,6 +12,7 @@
       git
       vim
       curl
+      sqlc
     ];
     variables = {
       EDITOR = "nano";

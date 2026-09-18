@@ -10,6 +10,7 @@
 
     taps = [
       "TheBoredTeam/boring-notch"
+      "aannoo/hcom"
       "can1357/tap"
       "dmtrKovalenko/fff"
       "pear-devs/pear"
@@ -29,6 +30,8 @@
       "macs-fan-control"
       "pearcleaner"
       "linearmouse"
+      "localsend"
+      "displaylink"
       "latest"
       "keka"
       "hyperkey"
@@ -37,23 +40,28 @@
       "pear-devs/pear/pear-desktop"
       "ghostty"
       "visual-studio-code"
-      "tableplus"
+      "blender"
       "codexbar"
+      # "vibeproxy"
+      # "claude-code"
       "libreoffice"
       "gstreamer-runtime"
       "wine-stable"
       "porting-kit"
+      {
+        name = "rar";
+        postinstall = "/usr/bin/xattr -dr com.apple.quarantine /opt/homebrew/Caskroom/rar";
+      }
     ];
 
     # Mac-specific or ecosystem-sensitive CLI tools stay in Brew.
     brews = [
-      {
-        name = "colima";
-        start_service = true;
-      }
+      "aannoo/hcom/hcom"
+      "colima"
       "docker"
       "docker-compose"
       "azure-cli"
+      "btop"
       "cloudflare-wrangler"
       "cliclick"
       "cmake"
@@ -63,11 +71,16 @@
       "dmtrKovalenko/fff/fff-mcp"
       "fontconfig"
       "kubeconform"
+      "libtiff"
       "little-cms2"
+      "macmon"
+      "webp"
       "uv"
       "pipx"
       "rustup"
       "nvm"
+      "openjdk@25"
+      "nzbget"
     ];
   };
 }

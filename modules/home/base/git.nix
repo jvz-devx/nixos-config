@@ -9,6 +9,13 @@
         ];
         useHttpPath = true;
       };
+      "credential \"https://github.com\"" = {
+        helper = [
+          ""
+          "!gh auth git-credential"
+        ];
+        useHttpPath = false;
+      };
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;

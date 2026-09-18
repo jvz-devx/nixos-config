@@ -1,9 +1,5 @@
 # Cloudflare `cf` CLI (technical preview)
 #
-# Upstream ships on npm with its six runtime deps declared but NOT bundled —
-# `cf-dist/index.js` still does `import yargs from "yargs"` etc. So we can't
-# just unpack the tarball; we need a resolved node_modules tree.
-#
 # Strategy: a tiny wrapper package.json pulls in `cf@<version>` as its sole
 # dep. `buildNpmPackage` installs that tree from the committed lockfile
 # (offline, reproducible), and we expose cf's bin via makeWrapper pointing
@@ -23,11 +19,11 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "cloudflare-cf";
-  version = "0.0.5";
+  version = "0.10.0";
 
   src = ./.;
 
-  npmDepsHash = "sha256-dCcxfUEPZhdE4/mzT1D+vz0z1fSBcZl2lXT1Iid/NiQ=";
+  npmDepsHash = "sha256-RCsnL10wniHbF7VzZ9e6jNrcV34LEAYCk3D+FB3zLOg=";
 
   dontNpmBuild = true;
 
@@ -36,22 +32,17 @@ buildNpmPackage (finalAttrs: {
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/lib/node_modules
-    cp -R node_modules/cf $out/lib/node_modules/cf
-    cp -R node_modules/cf/node_modules $out/lib/node_modules/cf/node_modules 2>/dev/null || true
-
     # Hoisted deps live at the top of node_modules — ship the whole tree so
     # resolution works regardless of how npm arranged it.
     mkdir -p $out/lib/cf-runtime
     cp -R node_modules $out/lib/cf-runtime/node_modules
 
-    # Wrap cf so that CLOUDFLARE_API_TOKEN is sourced from sops-nix at
-    # invocation time. Works in both interactive and non-interactive shells
-    # (e.g. scripts, agent subprocesses) — unlike a zsh function.
+    # Encrypt profile credentials with a key stored in the macOS Keychain.
+    # Do not inject a shared API token, which would override profile selection.
     mkdir -p $out/bin
     makeWrapper ${lib.getExe nodejs} $out/bin/cf \
       --add-flags "$out/lib/cf-runtime/node_modules/cf/bin/cf" \
-      --run '[ -z "''${CLOUDFLARE_API_TOKEN:-}" ] && [ -r /run/secrets/cloudflare_api_token ] && export CLOUDFLARE_API_TOKEN="$(cat /run/secrets/cloudflare_api_token)" || true'
+      --set CLOUDFLARE_AUTH_USE_KEYRING true
 
     runHook postInstall
   '';
