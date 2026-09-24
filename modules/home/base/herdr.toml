@@ -25,10 +25,11 @@ tab_bar_right_separator = "  "
 #   F10FE 󱃾 kubernetes       springBlue   #7FB4CA
 #   F0868 󰡨 docker/app host  springGreen  #98BB6C
 #   F01BC 󰆼 database         waveAqua2    #7AA89F
-#   F062F 󰘯 workflows (n8n)  sakuraPink   #D27E99
+#   F30A    workstation     sakuraPink   #D27E99
 #   F07D0 󰟐 home automation  carpYellow   #E6C384
 #   F06A9 󰚩 AI agent         oniViolet    #957FB8
 #   F0379 󰍹 kiosk/display    surimiOrange #FFA066
+#   F05B3 󰖳 Windows server   lightBlue    #A3D4D5
 # First matching rule wins, so "Work · <icon>" rules come before bare icons.
 [ui.sidebar.agents]
 row_gap = 0
@@ -44,10 +45,11 @@ rows = [
       { contains = "Work · \U000F0868", fg = "#98BB6C", bold = true },
       { contains = "\U000F0868", fg = "#98BB6C" },
       { contains = "\U000F01BC", fg = "#7AA89F" },
-      { contains = "\U000F062F", fg = "#D27E99" },
+      { contains = "\uF30A", fg = "#D27E99" },
       { contains = "\U000F07D0", fg = "#E6C384" },
       { contains = "\U000F06A9", fg = "#957FB8" },
       { contains = "\U000F0379", fg = "#FFA066", bold = true },
+      { contains = "\U000F05B3", fg = "#A3D4D5", bold = true },
       { starts_with = "Work", bold = true },
     ] },
     "workspace",
@@ -63,3 +65,10 @@ rows = [
     ] },
   ],
 ]
+
+# gooskens.windows plugin (modules/home/features/gooskens-windows): pick a
+# Windows server and open a WinRM PowerShell tab for it.
+[[keys.command]]
+key = "prefix+alt+w"
+type = "plugin_action"
+command = "gooskens.windows.open"

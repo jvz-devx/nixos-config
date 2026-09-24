@@ -7,6 +7,12 @@
     includes = ["config.d/*"];
 
     settings = {
+      # Fedora workstation
+      "fedora" = {
+        HostName = "192.168.1.57";
+        User = "jens";
+      };
+
       "github.com" = {
         User = "git";
         IdentityFile = "~/.ssh/id_ed25519";

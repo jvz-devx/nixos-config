@@ -23,6 +23,12 @@
     name = "jens";
     home = "/Users/jens";
     shell = pkgs.zsh;
+
+    # Lets herdr open "machines" on this Mac itself (ssh localhost), used for
+    # the Gooskens Windows DC sessions. Restricted to local connections only.
+    openssh.authorizedKeys.keys = [
+      ''from="127.0.0.1,::1" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKvQsKbzbW9a3tncPJojcCXLjHg8aBCQCmPQVzzsRXeZ nixos''
+    ];
   };
 
   nix-homebrew = {

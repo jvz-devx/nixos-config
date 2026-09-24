@@ -1,0 +1,24 @@
+id = "gooskens.windows"
+name = "Gooskens Windows"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Open an interactive PowerShell tab on a Gooskens Windows server over WinRM"
+platforms = ["macos"]
+
+# Opens the shell in the per-server localhost sessions behind the sidebar machines.
+[[startup]]
+command = ["bash", "startup.sh"]
+
+[[actions]]
+id = "open"
+title = "Open Windows PowerShell"
+contexts = ["workspace"]
+command = ["bash", "open.sh"]
+
+[[panes]]
+id = "picker"
+title = "Pick a Windows server"
+placement = "popup"
+width = "60%"
+height = 14
+command = ["bash", "picker.sh"]

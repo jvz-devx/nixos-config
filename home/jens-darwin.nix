@@ -161,6 +161,7 @@ in {
     ../modules/home/base/gpg.nix
     ../modules/home/packages/cli/base.nix
     ../modules/home/features/gooskens-network-drives-darwin.nix
+    ../modules/home/features/gooskens-windows
     ../modules/home/features/nzbget.nix
   ];
 
