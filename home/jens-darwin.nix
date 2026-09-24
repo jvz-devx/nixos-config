@@ -157,6 +157,7 @@ in {
     ../modules/home/base/git.nix
     ../modules/home/base/ssh.nix
     ../modules/home/base/tmux.nix
+    ../modules/home/base/herdr.nix
     ../modules/home/base/gpg.nix
     ../modules/home/packages/cli/base.nix
     ../modules/home/features/gooskens-network-drives-darwin.nix

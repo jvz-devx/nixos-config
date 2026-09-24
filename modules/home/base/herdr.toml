@@ -1,0 +1,65 @@
+onboarding = false
+
+[experimental]
+pane_history = true
+switch_ascii_input_source_in_prefix = false
+
+[theme]
+name = "kanagawa"
+
+[ui]
+agent_panel_scope = "all"
+
+# Right side of the tab row. hostname resolves on the server, so it always
+# names the machine whose panes you are looking at.
+tab_bar_right = [
+  { type = "zoom" },
+  { type = "hostname" },
+  { type = "datetime", format = "%H:%M" },
+]
+tab_bar_right_separator = "  "
+
+# Machine labels are "<Home|Work> · <type icon> <name>" (Nerd Font icons).
+# Color = machine type (kanagawa palette), bold = work machine.
+#   F048B 󰒋 hypervisor       crystalBlue  #7E9CD8
+#   F10FE 󱃾 kubernetes       springBlue   #7FB4CA
+#   F0868 󰡨 docker/app host  springGreen  #98BB6C
+#   F01BC 󰆼 database         waveAqua2    #7AA89F
+#   F062F 󰘯 workflows (n8n)  sakuraPink   #D27E99
+#   F07D0 󰟐 home automation  carpYellow   #E6C384
+#   F06A9 󰚩 AI agent         oniViolet    #957FB8
+#   F0379 󰍹 kiosk/display    surimiOrange #FFA066
+# First matching rule wins, so "Work · <icon>" rules come before bare icons.
+[ui.sidebar.agents]
+row_gap = 0
+rows = [
+  [
+    "state_icon",
+    { token = "machine", fg = "#C8C093", rules = [
+      { equals = "Local", fg = "#DCD7BA", bold = true },
+      { contains = "Work · \U000F048B", fg = "#7E9CD8", bold = true },
+      { contains = "\U000F048B", fg = "#7E9CD8" },
+      { contains = "Work · \U000F10FE", fg = "#7FB4CA", bold = true },
+      { contains = "\U000F10FE", fg = "#7FB4CA" },
+      { contains = "Work · \U000F0868", fg = "#98BB6C", bold = true },
+      { contains = "\U000F0868", fg = "#98BB6C" },
+      { contains = "\U000F01BC", fg = "#7AA89F" },
+      { contains = "\U000F062F", fg = "#D27E99" },
+      { contains = "\U000F07D0", fg = "#E6C384" },
+      { contains = "\U000F06A9", fg = "#957FB8" },
+      { contains = "\U000F0379", fg = "#FFA066", bold = true },
+      { starts_with = "Work", bold = true },
+    ] },
+    "workspace",
+    "tab",
+  ],
+  [
+    { token = "agent", fg = "#DCD7BA" },
+    { token = "state_text", dim = true, rules = [
+      { equals = "blocked", fg = "#E46876", bold = true, dim = false },
+      { equals = "done", fg = "#98BB6C" },
+      { equals = "idle", hide = true },
+      { equals = "unknown", hide = true },
+    ] },
+  ],
+]
