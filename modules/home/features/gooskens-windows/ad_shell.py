@@ -16,6 +16,7 @@ import os
 import readline
 import shutil
 import signal
+import socket
 import subprocess
 import sys
 import threading
@@ -39,6 +40,14 @@ KEEPALIVE_SECONDS = 50
 # MaxShellsPerUser. Another client can't delete it sooner: WinRM refuses with
 # "connected to a different client" until the timeout.
 IDLE_TIMEOUT_SECONDS = 300
+# Reachability is checked with a plain TCP connect to WinRM, so a VPN drop shows
+# up within PROBE_SECONDS instead of after a 30 s request timeout. The status is
+# reported to herdr as workspace metadata ($winrm) with a TTL, so a killed shell
+# can never leave "online" behind.
+PROBE_SECONDS = 10
+STATUS_REFRESH_SECONDS = 45
+STATUS_TTL_MS = 120000
+CONNECT_TIMEOUT_SECONDS = 10
 # ConsoleColor (0-15) to ANSI foreground codes.
 ANSI_FG = [30, 34, 32, 36, 31, 35, 33, 37, 90, 94, 92, 96, 91, 95, 93, 97]
 DEFAULT_FG, DEFAULT_BG = 7, 0  # Gray on Black, what the host reports
@@ -50,6 +59,23 @@ def out(text, stream=None):
     stream = stream or sys.stdout
     stream.write(text)
     stream.flush()
+
+
+PRINT_LOCK = threading.Lock()
+AT_PROMPT = threading.Event()  # main thread is waiting in input()
+
+
+def notice(text):
+    """Print a status line from a background thread without garbling the prompt."""
+    with PRINT_LOCK:
+        if AT_PROMPT.is_set():
+            out(f"\r\033[K{text}\n")
+            try:
+                readline.redisplay()
+            except Exception:
+                pass
+        else:
+            out(f"{text}\n", sys.stderr)
 
 
 def terminal_size():
@@ -309,6 +335,7 @@ class Session:
         self.pool.open()
         self.lock = threading.Lock()
         self.last_used = time.monotonic()
+        self.location = "?"
         self.broken = False
         self.closed = threading.Event()
         threading.Thread(target=self._keepalive, daemon=True).start()
@@ -352,6 +379,19 @@ class Session:
                     STOP.clear()
                     raise KeyboardInterrupt
 
+    def ping(self):
+        """Quick health check from a background thread; None if a command is busy."""
+        if not self.lock.acquire(blocking=False):
+            return None
+        try:
+            self._invoke("$null")
+            return True
+        except Exception:
+            self.broken = True
+            return False
+        finally:
+            self.lock.release()
+
     def close(self):
         self.closed.set()
         try:
@@ -359,6 +399,99 @@ class Session:
                 self.pool.close()
         except Exception:  # connection gone: the server's idle timeout removes the shell
             pass
+
+
+class Monitor:
+    """Tracks whether the server is really reachable, heals the session, and
+    reports the state to herdr's sidebar as the $winrm workspace token.
+
+    States: online (session healthy), offline (WinRM port unreachable, e.g.
+    VPN down), reconnecting (reachable again, new session being set up).
+    """
+
+    def __init__(self, server, label, connect, holder):
+        self.server, self.label, self.connect, self.holder = server, label, connect, holder
+        self.reachable = None
+        self.state = None
+        self.reported_at = 0.0
+        self.swap_lock = threading.Lock()  # held by the main thread while it runs a command
+        self.stopped = threading.Event()
+        self.herdr = os.environ.get("HERDR_BIN_PATH") or shutil.which("herdr")
+        self.workspace = os.environ.get("HERDR_WORKSPACE_ID")
+        self.enabled = bool(os.environ.get("HERDR_ENV") == "1" and self.herdr and self.workspace)
+
+    def start(self):
+        threading.Thread(target=self._loop, daemon=True).start()
+
+    def probe(self):
+        try:
+            socket.create_connection((self.server, 5985), timeout=3).close()
+            return True
+        except OSError:
+            return False
+
+    def _loop(self):
+        while not self.stopped.is_set():
+            self.check()
+            self.stopped.wait(PROBE_SECONDS)
+
+    def check(self):
+        reachable = self.probe()
+        was = self.reachable
+        self.reachable = reachable
+        session = self.holder.get("session")
+        if not reachable:
+            if was:
+                notice(f"{RED}{self.label} is unreachable (VPN off?). Commands are held until it's back.{RESET}")
+            self.report("offline")
+            return
+        if was is False:
+            notice(f"{YELLOW}{self.label} is reachable again.{RESET}")
+            if session is not None and session.ping() is False:
+                pass  # the old connection died while offline; heal below
+        if session is None or session.broken:
+            self.report("reconnecting")
+            self.heal()
+            session = self.holder.get("session")
+        self.report("online" if session is not None and not session.broken else "reconnecting")
+
+    def heal(self):
+        """Replace a broken session in the background while the user is idle."""
+        if not self.swap_lock.acquire(blocking=False):
+            return  # a command is running; the main loop handles it
+        try:
+            old = self.holder.get("session")
+            if old is not None and not old.broken:
+                return
+            try:
+                new = self.connect()
+            except Exception:
+                return
+            self.holder["session"] = new
+            if old is not None:
+                old.close()
+                notice(f"{YELLOW}Reconnected to {self.label}. Variables and location from before were reset.{RESET}")
+        finally:
+            self.swap_lock.release()
+
+    def report(self, state, force=False):
+        if not self.enabled:
+            self.state = state
+            return
+        now = time.monotonic()
+        if not force and state == self.state and now - self.reported_at < STATUS_REFRESH_SECONDS:
+            return
+        args = [self.herdr, "workspace", "report-metadata", self.workspace, "--source", "gooskens-ad-shell"]
+        args += ["--clear-token", "winrm"] if state is None else ["--token", f"winrm={state}", "--ttl-ms", str(STATUS_TTL_MS)]
+        try:
+            subprocess.run(args, capture_output=True, timeout=5)
+        except Exception:
+            pass
+        self.state, self.reported_at = state, now
+
+    def close(self):
+        self.stopped.set()
+        self.report(None, force=True)
 
 
 def error_text(record):
@@ -416,6 +549,7 @@ def run(session, script):
                     ps.stop()
                     break
                 ps.poll_invoke(timeout=1)
+                session.last_used = time.monotonic()
             if not interrupted:
                 ps.end_invoke()
         finally:
@@ -452,13 +586,16 @@ def is_incomplete(session, text):
 class Completer:
     """Tab completion through the server's own TabExpansion2."""
 
-    def __init__(self, session_ref):
+    def __init__(self, session_ref, online=lambda: True):
         self.session_ref = session_ref
+        self.online = online
         self.matches = []
 
     def __call__(self, text, state):
         if state == 0:
             self.matches = []
+            if not self.online() or self.session_ref() is None:
+                return None
             try:
                 line = readline.get_line_buffer()
                 begin, end = readline.get_begidx(), readline.get_endidx()
@@ -474,32 +611,41 @@ class Completer:
         return self.matches[state] if state < len(self.matches) else None
 
 
-def read_command(session, label):
-    try:
-        location = session.call("(Get-Location).Path")
-        location = str(location[0]) if location else "?"
-    except Exception:
-        location = "?"
-    text = input(f"PS [{label}] {location}> ")
-    while text.strip() and is_incomplete(session, text):
+def read_command(holder, monitor, label):
+    session = holder["session"]
+    if monitor.reachable is not False:
         try:
-            text += "\n" + input(">> ")
+            location = session.call("(Get-Location).Path")
+            session.location = str(location[0]) if location else session.location
         except KeyboardInterrupt:
-            out("\n")
-            return ""
+            raise
+        except Exception:
+            pass
+    tag = label if monitor.reachable is not False else f"{label} {RED}offline{RESET}"
+    AT_PROMPT.set()
+    try:
+        text = input(f"PS [{tag}] {holder['session'].location}> ")
+        while text.strip() and monitor.reachable is not False and is_incomplete(holder["session"], text):
+            try:
+                text += "\n" + input(">> ")
+            except KeyboardInterrupt:
+                out("\n")
+                return ""
+    finally:
+        AT_PROMPT.clear()
     return text
 
 
-def interactive(session_ref, label, pending=None, banner=True):
-    session = session_ref()
+def interactive(holder, monitor, label, pending=None, banner=True):
     if banner:
         out(f"{DIM}Connected to {label}. Windows PowerShell over WinRM; 'exit' or Ctrl-D to leave, "
             f"Ctrl-C stops a command.{RESET}\n")
     if pending is not None:
-        run(session, pending)  # the command the old connection never received
+        with monitor.swap_lock:
+            run(holder["session"], pending)  # the command the old connection never received
     while True:
         try:
-            text = read_command(session, label)
+            text = read_command(holder, monitor, label)
         except KeyboardInterrupt:
             out("\n")
             continue
@@ -514,9 +660,16 @@ def interactive(session_ref, label, pending=None, banner=True):
         if stripped.lower() in ("clear", "cls", "clear-host"):
             out("\033[H\033[2J")
             continue
-        if session.broken:
-            raise NotStarted(text)
-        run(session, text)
+        if not monitor.probe():
+            monitor.reachable = False
+            monitor.report("offline")
+            out(f"{RED}{label} is unreachable (VPN off?); command not sent.{RESET}\n", sys.stderr)
+            continue
+        with monitor.swap_lock:
+            session = holder["session"]
+            if session.broken:
+                raise NotStarted(text)
+            run(session, text)
 
 
 # --------------------------------------------------------------------------
@@ -562,7 +715,7 @@ def get_password(service, account, password_file):
     sys.exit(f"Keychain lookup failed (exit {result.returncode}) and no password file at {password_file}.")
 
 
-def setup_readline(session_ref):
+def setup_readline(session_ref, online=lambda: True):
     os.makedirs(os.path.dirname(HISTORY_PATH), exist_ok=True)
     try:
         readline.read_history_file(HISTORY_PATH)
@@ -570,7 +723,7 @@ def setup_readline(session_ref):
         pass
     readline.set_history_length(5000)
     readline.set_completer_delims(" \t\n;|(){}")
-    readline.set_completer(Completer(session_ref))
+    readline.set_completer(Completer(session_ref, online))
     if "libedit" in (readline.__doc__ or ""):
         readline.parse_and_bind("bind ^I rl_complete")
     else:
@@ -606,6 +759,7 @@ def main():
             password=password,
             operation_timeout=20,
             read_timeout=30,
+            connection_timeout=CONNECT_TIMEOUT_SECONDS,
         )
 
     def connect():
@@ -621,7 +775,17 @@ def main():
     for sig in (signal.SIGTERM, signal.SIGHUP):
         signal.signal(sig, terminate)
 
+    def reachable():
+        try:
+            socket.create_connection((server, 5985), timeout=3).close()
+            return True
+        except OSError:
+            return False
+
     if args.command or args.file:
+        if not reachable():
+            out(f"{RED}{label} is unreachable on WinRM port 5985 (VPN off?).{RESET}\n", sys.stderr)
+            sys.exit(1)
         script = args.command
         if args.file:
             with open(args.file, encoding="utf-8-sig") as script_file:
@@ -644,51 +808,73 @@ def main():
             session.close()
         sys.exit(code)
 
-    current = {"session": None}
-    setup_readline(lambda: current["session"])
+    holder = {"session": None}
+    monitor = Monitor(server, label, connect, holder)
+    setup_readline(lambda: holder["session"], lambda: monitor.reachable is not False)
 
     # A dropped WinRM connection must not dump the user into the local shell.
-    # Reconnect with a fresh session and keep the prompt; a command the old
-    # connection never received is sent again on the new one.
-    first, pending, code = True, None, 0
+    # While the server is unreachable (VPN off) the shell waits and says so; a
+    # command the old connection never received is sent again on the new one.
+    first, pending, code, waiting_said = True, None, 0, False
+    monitor.report("reconnecting", force=True)
     try:
         while True:
             try:
-                current["session"] = connect()
+                with monitor.swap_lock:  # never race the background healer
+                    holder["session"] = connect()
             except KeyboardInterrupt:
                 break
             except Exception as error:
-                out(f"{RED}Can't connect to {label}: {type(error).__name__}: {error}{RESET}\n", sys.stderr)
-                if first:
-                    code = 1
+                if reachable():
+                    out(f"{RED}Can't connect to {label}: {type(error).__name__}: {error}{RESET}\n", sys.stderr)
+                    if first:
+                        code = 1
+                        break
+                else:
+                    monitor.reachable = False
+                    monitor.report("offline")
+                    if not waiting_said:
+                        out(f"{YELLOW}{label} is unreachable (VPN off?). Waiting for it; Ctrl-C to quit.{RESET}\n",
+                            sys.stderr)
+                        waiting_said = True
+                try:
+                    time.sleep(5)
+                except KeyboardInterrupt:
                     break
-                time.sleep(5)
                 continue
+            waiting_said = False
             if not first:
                 out(f"{YELLOW}Reconnected to {label}. Variables and location from before were reset.{RESET}\n")
             first_session, first = first, False
-            session = current["session"]
+            monitor.reachable = True
+            monitor.report("online", force=True)
+            if first_session:
+                monitor.start()
             try:
-                interactive(lambda: current["session"], label, pending, banner=first_session)
+                interactive(holder, monitor, label, pending, banner=first_session)
                 break
             except ShellExit as shell_exit:
                 code = int(shell_exit.args[0] or 0)
                 break
             except NotStarted as not_started:
                 pending = not_started.args[0]
+                monitor.report("reconnecting", force=True)
                 out(f"{YELLOW}Connection to {label} dropped before the command was sent; "
                     f"reconnecting and sending it again.{RESET}\n", sys.stderr)
             except Exception as error:
                 pending = None
+                monitor.report("reconnecting", force=True)
                 out(f"{RED}Connection to {label} lost ({type(error).__name__}: {error}); reconnecting...{RESET}\n",
                     sys.stderr)
                 time.sleep(2)
             finally:
-                session.close()
-                current["session"] = None
+                if holder["session"] is not None:
+                    holder["session"].close()
+                holder["session"] = None
     finally:
-        if current["session"] is not None:
-            current["session"].close()
+        monitor.close()
+        if holder["session"] is not None:
+            holder["session"].close()
         try:
             readline.write_history_file(HISTORY_PATH)
         except OSError:
