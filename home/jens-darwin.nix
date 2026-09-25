@@ -163,6 +163,7 @@ in {
     ../modules/home/features/gooskens-network-drives-darwin.nix
     ../modules/home/features/gooskens-windows
     ../modules/home/features/nzbget.nix
+    ../modules/home/features/macshot.nix
   ];
 
   home = {
@@ -476,16 +477,23 @@ in {
     hs.hotkey.bind(hyper, "up", snapUp)
     hs.hotkey.bind(hyper, "down", snapDown)
 
+    -- macshot URL actions, bound to the hotkeys Shottr used.
     local screenshotTimer
-    hs.hotkey.bind(hyper, "s", function()
-      screenshotTimer = hs.timer.waitUntil(function()
-        local modifiers = hs.eventtap.checkKeyboardModifiers()
-        return not (modifiers.ctrl or modifiers.alt or modifiers.cmd or modifiers.shift)
-      end, function()
-        screenshotTimer = nil
-        hs.task.new("/usr/bin/open", nil, { "shottr://grab/area?then=edit" }):start()
-      end, 0.05)
-    end)
+    local function macshot(action)
+      return function()
+        screenshotTimer = hs.timer.waitUntil(function()
+          local modifiers = hs.eventtap.checkKeyboardModifiers()
+          return not (modifiers.ctrl or modifiers.alt or modifiers.cmd or modifiers.shift)
+        end, function()
+          screenshotTimer = nil
+          hs.task.new("/usr/bin/open", nil, { "-g", "macshot://" .. action }):start()
+        end, 0.05)
+      end
+    end
+
+    hs.hotkey.bind(hyper, "s", macshot("capture"))
+    hs.hotkey.bind({ "cmd", "shift" }, "1", macshot("capture-fullscreen"))
+    hs.hotkey.bind({ "ctrl", "alt", "cmd" }, "o", macshot("ocr"))
 
     local recordingTimer
     hs.hotkey.bind(hyper, "g", function()

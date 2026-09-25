@@ -25,7 +25,6 @@
       "moonlight"
       "dockdoor"
       "betterdisplay"
-      "shottr"
       "stats"
       "macs-fan-control"
       "pearcleaner"

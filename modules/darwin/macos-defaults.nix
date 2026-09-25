@@ -35,8 +35,6 @@
         subsequentExecutionMode = 0;
       };
 
-      "cc.ffitch.shottr".allowDeeplinks = true;
-
       "com.jordanbaird.Ice" = {
         HideApplicationMenus = false;
         SUAutomaticallyUpdate = false;
