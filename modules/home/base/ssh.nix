@@ -1,4 +1,11 @@
-{
+let
+  # One key for every homelab and Hetzner host, pinned so logins never
+  # depend on what the SSH agent happens to hold.
+  homelab = {
+    IdentityFile = "~/.ssh/homelab";
+    IdentitiesOnly = true;
+  };
+in {
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
@@ -8,10 +15,12 @@
 
     settings = {
       # Fedora workstation
-      "fedora" = {
-        HostName = "192.168.1.57";
-        User = "jens";
-      };
+      "fedora" =
+        homelab
+        // {
+          HostName = "192.168.1.57";
+          User = "jens";
+        };
 
       "github.com" = {
         User = "git";
@@ -28,40 +37,50 @@
       };
 
       # Proxmox hosts
-      "node1" = {
-        HostName = "192.168.1.201";
-        User = "root";
-      };
+      "node1" =
+        homelab
+        // {
+          HostName = "192.168.1.201";
+          User = "root";
+        };
 
-      "node2" = {
-        HostName = "192.168.1.202";
-        User = "root";
-      };
+      "node2" =
+        homelab
+        // {
+          HostName = "192.168.1.202";
+          User = "root";
+        };
 
       # Proxmox guests on node1
-      "homeassistant" = {
-        HostName = "192.168.1.27";
-        User = "root";
-      };
+      "homeassistant" =
+        homelab
+        // {
+          HostName = "192.168.1.27";
+          User = "root";
+        };
 
-      "hermes" = {
-        HostName = "192.168.1.54";
-        User = "ubuntu";
-      };
+      "hermes" =
+        homelab
+        // {
+          HostName = "192.168.1.54";
+          User = "ubuntu";
+        };
 
       # Proxmox guests on node2
-      "k3s-node" = {
-        HostName = "192.168.1.100";
-        User = "root";
-      };
+      "k3s-node" =
+        homelab
+        // {
+          HostName = "192.168.1.100";
+          User = "root";
+        };
 
       # Hetzner k3s server, reached over Tailscale (public SSH is IP-restricted)
-      "hetzner" = {
-        HostName = "hetzner-k3s-1";
-        User = "root";
-        IdentityFile = "~/.ssh/hetzner-k3s";
-        IdentitiesOnly = true;
-      };
+      "hetzner" =
+        homelab
+        // {
+          HostName = "hetzner-k3s-1";
+          User = "root";
+        };
 
       "*" = {
         IdentityFile = "~/.ssh/id_ed25519";
